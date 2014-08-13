@@ -66,6 +66,14 @@ namespace Yggdrasil.Helpers
                     fontOrgHeight = fontImage.Height;
                     Convert4bpp(ref fontImage, fontRaw, palette);
                     break;
+
+                case GameDataManager.Versions.Japanese:
+                    CharacterSize = new Size(int.Parse(matches[1].Value), int.Parse(matches[0].Value));
+                    fontImage = new Bitmap(512, 512);
+                    fontOrgWidth = fontImage.Width;
+                    fontOrgHeight = fontImage.Height;
+                    Convert4bpp(ref fontImage, fontRaw, palette);
+                    break;
             }
 
             Characters = new List<Character>();

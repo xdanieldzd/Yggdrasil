@@ -18,7 +18,7 @@ namespace Yggdrasil
         static readonly string[] messageDirs = new string[] { "data\\Data\\CharaSel", "data\\Data\\Dungeon", "data\\Data\\Event", "data\\Data\\Opening", "data\\Data\\Param", "data\\Data\\SaveLoad" };
         static readonly string[] dataDirs = new string[] { "data\\Data\\Param", "data\\Data\\Battle" };
 
-        public enum Versions { Invalid, European, American };
+        public enum Versions { Invalid, European, American, Japanese };
         public enum Languages { German, English, Spanish, French, Italian };
 
         public string DataPath { get; private set; }
@@ -115,6 +115,51 @@ namespace Yggdrasil
                 case "AKYE":
                     Version = Versions.American;
                     mainFontFilename = "Font10x5_00.cmp";
+                    break;
+
+                case "AKYJ":
+                    Version = Versions.Japanese;
+                    mainFontFilename = "Font10x10_00.cmp";
+
+                    if (false)
+                    {
+                        ushort gameChar = 0x004C;
+                        ushort sjisChar = 0x824F;
+                        StreamWriter sw = File.CreateText(@"C:\temp\EOJPN-TABLE.txt");
+                        Encoding sjis = Encoding.GetEncoding(932);
+                        /*for (int i = sjisChar; i < 0xEAA2; i++)
+                        {
+                            string str = sjis.GetString(BitConverter.GetBytes(sjisChar.Reverse()));
+                            if (str != "・" &&
+                                str != "ゎ" && str != "ゐ" && str != "ゑ" &&
+                                str != "ヮ" && str != "ヰ" && str != "ヱ")
+                            {
+                                sw.WriteLine("{{ 0x{0:X4}, '{1}' }},", gameChar, str);
+                                gameChar++;
+                            }
+                            sjisChar++;
+                            if (gameChar == 0x012B)
+                            {
+                                sw.WriteLine("{{ 0x{0:X4}, '{1}' }},", gameChar++, "Ⅱ");
+                                sw.WriteLine("{{ 0x{0:X4}, '{1}' }},", gameChar++, "Ⅲ");
+                                sjisChar = 0x889F;
+                            }
+                        }*/
+
+                        gameChar = 0x12D; sjisChar = 0x889F;
+                        for (int i = sjisChar; i < 0xEAA2; i++)
+                        {
+                            string str = sjis.GetString(BitConverter.GetBytes(sjisChar.Reverse()));
+                            if (str != "・")
+                            {
+                                sw.WriteLine("{{ 0x{0:X4}, '{1}' }},", gameChar, str);
+                                gameChar++;
+                            }
+                            sjisChar++;
+                        }
+                        sw.Flush();
+                        sw.Close();
+                    }
                     break;
 
                 default: throw new Exception("Unsupported game data");

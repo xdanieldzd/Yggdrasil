@@ -36,5 +36,10 @@ namespace Yggdrasil
         {
             return value.Length <= maxChars ? value : value.Substring(0, maxChars) + " ..";
         }
+
+        public static ushort Reverse(this ushort value)
+        {
+            return (ushort)((value & 0xFFU) << 8 | (value & 0xFF00U) >> 8);
+        }
     }
 }
