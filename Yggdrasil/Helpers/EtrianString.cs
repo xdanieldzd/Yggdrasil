@@ -510,6 +510,49 @@ namespace Yggdrasil.Helpers
             { 0x012A, 'ヴ' },
             { 0x012B, 'Ⅱ' },
             { 0x012C, 'Ⅲ' },
+
+            { 0x02AF, '攻' },
+            { 0x0266, '撃' },
+            { 0x0596, '防' },
+            { 0x029A, '御' },
+            { 0x0619, '力' },
+            { 0x03CE, '世' },
+            { 0x019F, '界' },
+            { 0x0350, '樹' },
+            { 0x040A, '全' },
+            { 0x0388, '消' },
+            { 0x021A, '去' },
+            { 0x0554, '復' },
+            { 0x0281, '元' },
+            { 0x059D, '本' },
+            { 0x04C2, '当' },
+            { 0x026A, '決' },
+            { 0x0495, '定' },
+            { 0x05B5, '名' },
+            { 0x0408, '前' },
+            { 0x04E6, '入' },
+            { 0x0564, '文' },
+            { 0x031F, '字' },
+            { 0x03BB, '人' },
+            { 0x030A, '子' },
+            { 0x044B, '大' },
+            { 0x046A, '地' },
+            { 0x057F, '報' },
+            { 0x035C, '酬' },
+            { 0x0137, '依' },
+            { 0x05FA, '頼' },
+            { 0x06CA, 'Ⅰ' },
+            { 0x03AE, '森' },
+            { 0x0188, '火' },
+            { 0x016C, '炎' },
+            { 0x0381, '小' },
+            { 0x054E, '武' },
+            { 0x01E7, '器' },
+            { 0x0273, '剣' },
+            { 0x02AB, '広' },
+            { 0x0398, '場' },
+            { 0x06B7, '昼' },
+            { 0x05CB, '夜' },
         };
 
         static readonly Dictionary<ushort, char> characterMapCommon = new Dictionary<ushort, char>()
@@ -523,8 +566,8 @@ namespace Yggdrasil.Helpers
         public ushort[] RawData { get; private set; }
         public string ConvertedString { get; private set; }
 
-        GameDataManager.Versions gameVersion;
-        public GameDataManager.Versions GameVersion
+        static GameDataManager.Versions gameVersion;
+        public static GameDataManager.Versions GameVersion
         {
             get { return gameVersion; }
             set
@@ -537,27 +580,21 @@ namespace Yggdrasil.Helpers
             }
         }
 
-        public EtrianString(GameDataManager.Versions gameVersion, string textString)
+        public EtrianString(string textString)
         {
             ConvertedString = textString;
-
-            this.GameVersion = gameVersion;
 
             RawData = new ushort[ConvertedString.Length];
             for (int i = 0; i < ConvertedString.Length; i++) RawData[i] = CharacterMap.GetByValue(ConvertedString[i]);
         }
 
-        public EtrianString(GameDataManager.Versions gameVersion, ushort[] data)
+        public EtrianString(ushort[] data)
         {
-            this.GameVersion = gameVersion;
-
             ParseString(data);
         }
 
-        public EtrianString(GameDataManager.Versions gameVersion, byte[] data, int offset)
+        public EtrianString(byte[] data, int offset)
         {
-            this.GameVersion = gameVersion;
-
             int stringLength = -1;
             for (int i = 0; i < 0x2000; i += 2)
             {
@@ -611,14 +648,14 @@ namespace Yggdrasil.Helpers
         {
             if (textString == null) return null;
 
-            return new EtrianString(GameDataManager.Versions.European, textString);
+            return new EtrianString(textString);
         }
 
         public static implicit operator EtrianString(ushort[] data)
         {
             if (data == null) return null;
 
-            return new EtrianString(GameDataManager.Versions.European, data);
+            return new EtrianString(data);
         }
 
         public static implicit operator string(EtrianString etrianString)

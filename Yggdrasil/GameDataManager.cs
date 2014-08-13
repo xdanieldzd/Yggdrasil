@@ -66,7 +66,11 @@ namespace Yggdrasil
             loadWaitWorker.WorkerReportsProgress = true;
             loadWaitWorker.DoWork += ((s, e) =>
             {
-                FontRenderer = new FontRenderer(this, Directory.EnumerateFiles(path, mainFontFilename, SearchOption.AllDirectories).FirstOrDefault());
+                loadWaitWorker.ReportProgress(-1, "Generating character map...");
+                EtrianString.GameVersion = Version;
+
+                loadWaitWorker.ReportProgress(-1, "Initializing font renderer...");
+                FontRenderer = new FontRenderer(this, Path.Combine(path, mainFontFilename));
 
                 MessageFiles = ReadDataTablesByExtension(".mbb", messageDirs);
                 dataTableFiles = ReadDataTablesByExtension(".tbb", dataDirs);
@@ -109,17 +113,17 @@ namespace Yggdrasil
                 case "AKYP":
                     Version = Versions.European;
                     Language = Languages.English;
-                    mainFontFilename = "Font14x11_00.cmp";
+                    mainFontFilename = "data\\Data\\Tex\\Font\\Font14x11_00.cmp";
                     break;
 
                 case "AKYE":
                     Version = Versions.American;
-                    mainFontFilename = "Font10x5_00.cmp";
+                    mainFontFilename = "data\\Data\\Tex\\Font\\Font10x5_00.cmp";
                     break;
 
                 case "AKYJ":
                     Version = Versions.Japanese;
-                    mainFontFilename = "Font10x10_00.cmp";
+                    mainFontFilename = "data\\Data\\Tex\\Font\\Font10x10_00.cmp";
 
                     if (false)
                     {

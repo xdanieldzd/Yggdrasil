@@ -48,7 +48,7 @@ namespace Yggdrasil.FileTypes
                     if (MessageOffsets[i] == 0)
                         Messages[i] = string.Empty;
                     else
-                        Messages[i] = new EtrianString(parent.Game.Version, parent.Data, (int)(Offset + 0x10 + MessageOffsets[i]));
+                        Messages[i] = new EtrianString(parent.Data, (int)(Offset + 0x10 + MessageOffsets[i]));
                 }
             }
         }
