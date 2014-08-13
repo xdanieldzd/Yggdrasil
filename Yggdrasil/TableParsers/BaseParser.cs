@@ -18,15 +18,15 @@ namespace Yggdrasil.TableParsers
         [Browsable(false)]
         public TBB.TBL1 ParentTable { get; private set; }
         [Browsable(false)]
-        public byte[] RawData { get; private set; }
+        public int EntryNumber { get; private set; }
         [Browsable(false)]
         public bool HasChanged { get; private set; }
 
-        public BaseParser(GameDataManager game, TBB.TBL1 table, byte[] data, PropertyChangedEventHandler propertyChanged = null)
+        public BaseParser(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null)
         {
             Game = game;
             ParentTable = table;
-            RawData = data;
+            EntryNumber = entryNumber;
 
             HasChanged = false;
 
@@ -49,6 +49,8 @@ namespace Yggdrasil.TableParsers
                 if (handler != null) handler(this, new PropertyChangedEventArgs(memberExpression.Member.Name));
             }
         }
+
+        public void Save() { OnSave(); }
 
         protected virtual void OnLoad()
         {

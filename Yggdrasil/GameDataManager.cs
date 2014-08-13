@@ -95,14 +95,36 @@ namespace Yggdrasil
             loadWaitForm.ShowDialog(Program.MainForm);
         }
 
-        public void SaveAllChanges()
+        public int SaveAllChanges()
         {
-            if (parsedData == null) return;
+            if (parsedData == null) return 0;
+
+            List<TBB.ITable> needToSave = new List<TBB.ITable>();
+            List<string> changedFiles = new List<string>();
 
             foreach (BaseParser data in parsedData.Where(x => x.HasChanged))
             {
-                throw new NotImplementedException("Saving not implemented");
+                data.Save();
+                needToSave.Add(data.ParentTable);
             }
+
+            foreach (TBB.ITable table in needToSave.Distinct())
+            {
+                table.Save();
+
+                TBB file = table.GetParent();
+                if (!file.IsCompressed)
+                {
+                    changedFiles.Add(file.Filename);
+                    BinaryWriter writer = new BinaryWriter(File.Open(file.Filename, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite));
+                    writer.Write(file.Data);
+                    writer.Close();
+                }
+                else
+                    throw new NotImplementedException("Saving to compressed file not implemented");
+            }
+
+            return changedFiles.Distinct().Count();
         }
 
         private void ReadHeaderIdentify()
@@ -124,46 +146,6 @@ namespace Yggdrasil
                 case "AKYJ":
                     Version = Versions.Japanese;
                     mainFontFilename = "data\\Data\\Tex\\Font\\Font10x10_00.cmp";
-
-                    if (false)
-                    {
-                        ushort gameChar = 0x004C;
-                        ushort sjisChar = 0x824F;
-                        StreamWriter sw = File.CreateText(@"C:\temp\EOJPN-TABLE.txt");
-                        Encoding sjis = Encoding.GetEncoding(932);
-                        /*for (int i = sjisChar; i < 0xEAA2; i++)
-                        {
-                            string str = sjis.GetString(BitConverter.GetBytes(sjisChar.Reverse()));
-                            if (str != "・" &&
-                                str != "ゎ" && str != "ゐ" && str != "ゑ" &&
-                                str != "ヮ" && str != "ヰ" && str != "ヱ")
-                            {
-                                sw.WriteLine("{{ 0x{0:X4}, '{1}' }},", gameChar, str);
-                                gameChar++;
-                            }
-                            sjisChar++;
-                            if (gameChar == 0x012B)
-                            {
-                                sw.WriteLine("{{ 0x{0:X4}, '{1}' }},", gameChar++, "Ⅱ");
-                                sw.WriteLine("{{ 0x{0:X4}, '{1}' }},", gameChar++, "Ⅲ");
-                                sjisChar = 0x889F;
-                            }
-                        }*/
-
-                        gameChar = 0x12D; sjisChar = 0x889F;
-                        for (int i = sjisChar; i < 0xEAA2; i++)
-                        {
-                            string str = sjis.GetString(BitConverter.GetBytes(sjisChar.Reverse()));
-                            if (str != "・")
-                            {
-                                sw.WriteLine("{{ 0x{0:X4}, '{1}' }},", gameChar, str);
-                                gameChar++;
-                            }
-                            sjisChar++;
-                        }
-                        sw.Flush();
-                        sw.Close();
-                    }
                     break;
 
                 default: throw new Exception("Unsupported game data");
@@ -228,9 +210,9 @@ namespace Yggdrasil
                 {
                     TBB.TBL1 table = (tableFile.Tables[attrib.TableNo] as TBB.TBL1);
 
-                    foreach (byte[] data in table.Data)
+                    for (int i = 0; i < table.Data.Length; i++)
                     {
-                        parsedData.Add((BaseParser)Activator.CreateInstance(type, new object[] { this, table, data, (PropertyChangedEventHandler)ItemDataPropertyChanged }));
+                        parsedData.Add((BaseParser)Activator.CreateInstance(type, new object[] { this, table, i, (PropertyChangedEventHandler)ItemDataPropertyChanged }));
                     }
                 }
             }
@@ -239,6 +221,8 @@ namespace Yggdrasil
 
         private void ItemDataPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            return;
+
             System.Windows.Forms.MessageBox.Show(string.Format("Property {0} in {1} (0x{2:X}) changed; new value is {3} (0x{3:X})",
                 e.PropertyName, sender.GetType().Name, sender.GetHashCode(), sender.GetProperty(e.PropertyName)));
         }

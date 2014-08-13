@@ -81,22 +81,29 @@ namespace Yggdrasil.TableParsers
             set { base.SetProperty(ref sellPrice, value, () => this.SellPrice); }
         }
 
-        public MiscItemData(GameDataManager game, TBB.TBL1 table, byte[] data, PropertyChangedEventHandler propertyChanged = null) : base(game, table, data, propertyChanged) { OnLoad(); }
+        public MiscItemData(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { OnLoad(); }
 
         protected override void OnLoad()
         {
-            itemNumber = BitConverter.ToUInt16(RawData, 0);
-            unknown1 = BitConverter.ToUInt16(RawData, 2);
-            unknown2 = BitConverter.ToUInt16(RawData, 4);
-            recoveredHP = BitConverter.ToUInt16(RawData, 6);
-            recoveredTP = BitConverter.ToUInt16(RawData, 8);
-            unknown3 = BitConverter.ToUInt16(RawData, 10);
-            unknown4 = BitConverter.ToUInt16(RawData, 12);
-            unknown5 = BitConverter.ToUInt16(RawData, 14);
-            buyPrice = BitConverter.ToUInt32(RawData, 16);
-            sellPrice = BitConverter.ToUInt32(RawData, 20);
+            itemNumber = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 0);
+            unknown1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 2);
+            unknown2 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 4);
+            recoveredHP = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 6);
+            recoveredTP = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 8);
+            unknown3 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 10);
+            unknown4 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 12);
+            unknown5 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 14);
+            buyPrice = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 16);
+            sellPrice = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 20);
 
             base.OnLoad();
+        }
+
+        protected override void OnSave()
+        {
+            //
+
+            base.OnSave();
         }
     }
 }

@@ -41,5 +41,22 @@ namespace Yggdrasil
         {
             return (ushort)((value & 0xFFU) << 8 | (value & 0xFF00U) >> 8);
         }
+
+        public static void CopyTo(this object obj, byte[] data, int offset)
+        {
+            byte[] bytes = null;
+            Type type = obj.GetType();
+            if (type == typeof(byte))
+                bytes = new byte[1] { unchecked((byte)obj) };
+            else if (type == typeof(sbyte))
+                bytes = new byte[1] { unchecked((byte)((sbyte)obj)) };
+            else
+            {
+                MethodInfo mi = typeof(BitConverter).GetMethod("GetBytes", new Type[] { type });
+                if (mi == null) throw new ArgumentException(string.Format("Cannot get bytes from object of type {0}", type));
+                bytes = (mi.Invoke(null, new object[] { obj }) as byte[]);
+            }
+            Buffer.BlockCopy(bytes, 0, data, offset, bytes.Length);
+        }
     }
 }

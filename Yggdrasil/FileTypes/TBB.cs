@@ -50,6 +50,7 @@ namespace Yggdrasil.FileTypes
         {
             TBB GetParent();
             string GetTag();
+            void Save();
         }
     }
 }

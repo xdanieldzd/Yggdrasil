@@ -51,6 +51,11 @@ namespace Yggdrasil.FileTypes
                         Messages[i] = new EtrianString(parent.Data, (int)(Offset + 0x10 + MessageOffsets[i]));
                 }
             }
+
+            public void Save()
+            {
+                throw new NotImplementedException("Saving message tables not implemented");
+            }
         }
     }
 }

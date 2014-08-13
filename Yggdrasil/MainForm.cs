@@ -60,12 +60,19 @@ namespace Yggdrasil
             game.ReadGameDirectory(Configuration.LastDataPath = path);
             SetFormTitle();
 
+            saveToolStripMenuItem.Enabled = cmbEquipment.Enabled = pgEquipment.Enabled = messageEditor.Enabled = (game != null && game.IsInitialized);
+
             InitializeTabPage(tabControl.SelectedTab);
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            game.SaveAllChanges();
+            int changedFiles = game.SaveAllChanges();
+
+            if (changedFiles == 0)
+                tsslStatus.Text = "No changes to save";
+            else
+                tsslStatus.Text = string.Format("Saved; {0} file(s) changed", changedFiles);
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -87,7 +94,7 @@ namespace Yggdrasil
 
         private void InitializeTabPage(TabPage tabPage)
         {
-            if (tabPage.Tag == null)
+            if (game != null && game.IsInitialized && tabPage.Tag == null)
             {
                 if (tabPage == tpEquipment)
                 {

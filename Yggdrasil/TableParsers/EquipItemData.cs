@@ -391,47 +391,83 @@ namespace Yggdrasil.TableParsers
             set { ClassUsability = (ushort)((ClassUsability & (ushort)UsabilityMask.All) | value); }
         }
 
-        public EquipItemData(GameDataManager game, TBB.TBL1 table, byte[] data, PropertyChangedEventHandler propertyChanged = null) : base(game, table, data, propertyChanged) { OnLoad(); }
+        public EquipItemData(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { OnLoad(); }
 
         protected override void OnLoad()
         {
-            itemNumber = BitConverter.ToUInt16(RawData, 0);
-
-            itemType = BitConverter.ToUInt16(RawData, 2);
-            attack = BitConverter.ToUInt16(RawData, 4);
-            attackAlt = BitConverter.ToUInt16(RawData, 6);
-            defense = BitConverter.ToUInt16(RawData, 8);
-            group = (Groups)RawData[10];
-            unknown1 = (sbyte)RawData[11];
-            resistSlash = (sbyte)RawData[12];
-            resistBlunt = (sbyte)RawData[13];
-            resistPierce = (sbyte)RawData[14];
-            resistFire = (sbyte)RawData[15];
-            resistIce = (sbyte)RawData[16];
-            resistVolt = (sbyte)RawData[17];
-            resistDeath = (sbyte)RawData[18];
-            resistAilment = (sbyte)RawData[19];
-            resistHeadBind = (sbyte)RawData[20];
-            resistArmBind = (sbyte)RawData[21];
-            resistLegBind = (sbyte)RawData[22];
-            strModifier = (sbyte)RawData[23];
-            vitModifier = (sbyte)RawData[24];
-            agiModifier = (sbyte)RawData[25];
-            lucModifier = (sbyte)RawData[26];
-            tecModifier = (sbyte)RawData[27];
-            hpModifier = (sbyte)RawData[28];
-            tpModifier = (sbyte)RawData[29];
-            boostModifier = (sbyte)RawData[30];
-            unknown2 = RawData[31];
-            buyPrice = BitConverter.ToUInt32(RawData, 32);
-            sellPrice = BitConverter.ToUInt32(RawData, 36);
-            classUsability = BitConverter.ToUInt16(RawData, 40);
-            unknown3 = BitConverter.ToUInt16(RawData, 42);
+            itemNumber = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 0);
+            itemType = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 2);
+            attack = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 4);
+            attackAlt = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 6);
+            defense = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 8);
+            group = (Groups)ParentTable.Data[EntryNumber][10];
+            unknown1 = (sbyte)ParentTable.Data[EntryNumber][11];
+            resistSlash = (sbyte)ParentTable.Data[EntryNumber][12];
+            resistBlunt = (sbyte)ParentTable.Data[EntryNumber][13];
+            resistPierce = (sbyte)ParentTable.Data[EntryNumber][14];
+            resistFire = (sbyte)ParentTable.Data[EntryNumber][15];
+            resistIce = (sbyte)ParentTable.Data[EntryNumber][16];
+            resistVolt = (sbyte)ParentTable.Data[EntryNumber][17];
+            resistDeath = (sbyte)ParentTable.Data[EntryNumber][18];
+            resistAilment = (sbyte)ParentTable.Data[EntryNumber][19];
+            resistHeadBind = (sbyte)ParentTable.Data[EntryNumber][20];
+            resistArmBind = (sbyte)ParentTable.Data[EntryNumber][21];
+            resistLegBind = (sbyte)ParentTable.Data[EntryNumber][22];
+            strModifier = (sbyte)ParentTable.Data[EntryNumber][23];
+            vitModifier = (sbyte)ParentTable.Data[EntryNumber][24];
+            agiModifier = (sbyte)ParentTable.Data[EntryNumber][25];
+            lucModifier = (sbyte)ParentTable.Data[EntryNumber][26];
+            tecModifier = (sbyte)ParentTable.Data[EntryNumber][27];
+            hpModifier = (sbyte)ParentTable.Data[EntryNumber][28];
+            tpModifier = (sbyte)ParentTable.Data[EntryNumber][29];
+            boostModifier = (sbyte)ParentTable.Data[EntryNumber][30];
+            unknown2 = ParentTable.Data[EntryNumber][31];
+            buyPrice = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 32);
+            sellPrice = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 36);
+            classUsability = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 40);
+            unknown3 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 42);
 
             Name = Game.GetMessageString(this.GetAttribute<ItemNameDescriptionFiles>().NameFile, this.GetAttribute<ItemNameDescriptionFiles>().NameTableNo, itemNumber - 1);
             Description = Game.GetMessageString(this.GetAttribute<ItemNameDescriptionFiles>().DescriptionFile, this.GetAttribute<ItemNameDescriptionFiles>().DescriptionTableNo, itemNumber - 1);
 
             base.OnLoad();
+        }
+
+        protected override void OnSave()
+        {
+            itemNumber.CopyTo(ParentTable.Data[EntryNumber], 0);
+            itemType.CopyTo(ParentTable.Data[EntryNumber], 2);
+            attack.CopyTo(ParentTable.Data[EntryNumber], 4);
+            attackAlt.CopyTo(ParentTable.Data[EntryNumber], 6);
+            defense.CopyTo(ParentTable.Data[EntryNumber], 8);
+            Convert.ToByte(group).CopyTo(ParentTable.Data[EntryNumber], 10);
+            unknown1.CopyTo(ParentTable.Data[EntryNumber], 11);
+            resistSlash.CopyTo(ParentTable.Data[EntryNumber], 12);
+            resistBlunt.CopyTo(ParentTable.Data[EntryNumber], 13);
+            resistPierce.CopyTo(ParentTable.Data[EntryNumber], 14);
+            resistFire.CopyTo(ParentTable.Data[EntryNumber], 15);
+            resistIce.CopyTo(ParentTable.Data[EntryNumber], 16);
+            resistVolt.CopyTo(ParentTable.Data[EntryNumber], 17);
+            resistDeath.CopyTo(ParentTable.Data[EntryNumber], 18);
+            resistAilment.CopyTo(ParentTable.Data[EntryNumber], 19);
+            resistHeadBind.CopyTo(ParentTable.Data[EntryNumber], 20);
+            resistArmBind.CopyTo(ParentTable.Data[EntryNumber], 21);
+            resistLegBind.CopyTo(ParentTable.Data[EntryNumber], 22);
+            strModifier.CopyTo(ParentTable.Data[EntryNumber], 23);
+            vitModifier.CopyTo(ParentTable.Data[EntryNumber], 24);
+            agiModifier.CopyTo(ParentTable.Data[EntryNumber], 25);
+            lucModifier.CopyTo(ParentTable.Data[EntryNumber], 26);
+            tecModifier.CopyTo(ParentTable.Data[EntryNumber], 27);
+            hpModifier.CopyTo(ParentTable.Data[EntryNumber], 28);
+            tpModifier.CopyTo(ParentTable.Data[EntryNumber], 29);
+            boostModifier.CopyTo(ParentTable.Data[EntryNumber], 30);
+            unknown2.CopyTo(ParentTable.Data[EntryNumber], 31);
+            buyPrice.CopyTo(ParentTable.Data[EntryNumber], 32);
+            sellPrice.CopyTo(ParentTable.Data[EntryNumber], 36);
+            classUsability.CopyTo(ParentTable.Data[EntryNumber], 40);
+            unknown3.CopyTo(ParentTable.Data[EntryNumber], 42);
+
+            base.OnSave();
         }
     }
 }

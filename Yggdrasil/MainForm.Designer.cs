@@ -81,6 +81,7 @@
             // 
             // saveToolStripMenuItem
             // 
+            this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveToolStripMenuItem.Text = "&Save...";
@@ -109,7 +110,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -155,6 +156,7 @@
             // pgEquipment
             // 
             this.pgEquipment.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pgEquipment.Enabled = false;
             this.pgEquipment.Location = new System.Drawing.Point(3, 24);
             this.pgEquipment.Name = "pgEquipment";
             this.pgEquipment.PropertySort = System.Windows.Forms.PropertySort.Categorized;
@@ -166,6 +168,7 @@
             // 
             this.cmbEquipment.Dock = System.Windows.Forms.DockStyle.Top;
             this.cmbEquipment.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbEquipment.Enabled = false;
             this.cmbEquipment.FormattingEnabled = true;
             this.cmbEquipment.Location = new System.Drawing.Point(3, 3);
             this.cmbEquipment.Name = "cmbEquipment";
@@ -187,6 +190,7 @@
             // messageEditor
             // 
             this.messageEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.messageEditor.Enabled = false;
             this.messageEditor.Location = new System.Drawing.Point(3, 3);
             this.messageEditor.Name = "messageEditor";
             this.messageEditor.Size = new System.Drawing.Size(470, 384);

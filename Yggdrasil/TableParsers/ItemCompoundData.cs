@@ -95,24 +95,31 @@ namespace Yggdrasil.TableParsers
             set { base.SetProperty(ref unknown5, value, () => this.Unknown5); }
         }
 
-        public ItemCompoundData(GameDataManager game, TBB.TBL1 table, byte[] data, PropertyChangedEventHandler propertyChanged = null) : base(game, table, data, propertyChanged) { OnLoad(); }
+        public ItemCompoundData(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { OnLoad(); }
 
         protected override void OnLoad()
         {
-            itemNumber = BitConverter.ToUInt16(RawData, 0);
-            itemCompound1 = BitConverter.ToUInt16(RawData, 2);
-            itemCompound2 = BitConverter.ToUInt16(RawData, 4);
-            itemCompound3 = BitConverter.ToUInt16(RawData, 6);
-            unknown1 = BitConverter.ToUInt16(RawData, 8);
-            unknown2 = BitConverter.ToUInt16(RawData, 10);
-            itemCount1 = RawData[12];
-            itemCount2 = RawData[13];
-            itemCount3 = RawData[14];
-            unknown3 = RawData[15];
-            unknown4 = RawData[16];
-            Unknown4 = RawData[17];
+            itemNumber = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 0);
+            itemCompound1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 2);
+            itemCompound2 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 4);
+            itemCompound3 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 6);
+            unknown1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 8);
+            unknown2 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 10);
+            itemCount1 = ParentTable.Data[EntryNumber][12];
+            itemCount2 = ParentTable.Data[EntryNumber][13];
+            itemCount3 = ParentTable.Data[EntryNumber][14];
+            unknown3 = ParentTable.Data[EntryNumber][15];
+            unknown4 = ParentTable.Data[EntryNumber][16];
+            Unknown4 = ParentTable.Data[EntryNumber][17];
 
             base.OnLoad();
+        }
+
+        protected override void OnSave()
+        {
+            //
+
+            base.OnSave();
         }
     }
 }

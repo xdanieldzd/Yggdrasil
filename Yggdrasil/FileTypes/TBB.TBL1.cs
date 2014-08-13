@@ -46,6 +46,14 @@ namespace Yggdrasil.FileTypes
                     Buffer.BlockCopy(parent.Data, (int)(Offset + 16 + (i * EntrySize)), Data[i], 0, (int)EntrySize);
                 }
             }
+
+            public void Save()
+            {
+                for (int i = 0; i < numEntries; i++)
+                {
+                    Buffer.BlockCopy(Data[i], 0, parent.Data, (int)(Offset + 16 + (i * EntrySize)), (int)EntrySize);
+                }
+            }
         }
     }
 }
