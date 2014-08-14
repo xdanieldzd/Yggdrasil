@@ -36,10 +36,17 @@ namespace Yggdrasil.Controls
             txtString.Text = this.etrianString.ConvertedString.Replace("\r\n", "\n").Replace("\n", Environment.NewLine);
         }
 
+        public void Terminate()
+        {
+            etrianString = null;
+            if (renderedString != null) renderedString.Dispose();
+            txtString.Text = string.Empty;
+        }
+
         private void pbPreview_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.Black);
-            if (renderedString != null) e.Graphics.DrawImageUnscaled(renderedString, Point.Empty);
+            if (etrianString != null && renderedString != null) e.Graphics.DrawImageUnscaled(renderedString, Point.Empty);
         }
     }
 }

@@ -59,6 +59,13 @@
   <ItemGroup>
     <Compile Include="Attributes.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="Controls\IEditorControl.cs" />
+    <Compile Include="Controls\TableEntryEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TableEntryEditor.Designer.cs">
+      <DependentUpon>TableEntryEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="CustomConverters.cs" />
     <Compile Include="Forms\DataLoadWaitForm.cs">
       <SubType>Form</SubType>
@@ -116,6 +123,9 @@
     <Compile Include="Controls\TreeViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="Controls\TableEntryEditor.resx">
+      <DependentUpon>TableEntryEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\DataLoadWaitForm.resx">
       <DependentUpon>DataLoadWaitForm.cs</DependentUpon>
     </EmbeddedResource>

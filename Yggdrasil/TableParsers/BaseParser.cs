@@ -22,6 +22,8 @@ namespace Yggdrasil.TableParsers
         [Browsable(false)]
         public bool HasChanged { get; private set; }
 
+        public virtual string EntryDescription { get; private set; }
+
         public BaseParser(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null)
         {
             Game = game;
@@ -29,6 +31,8 @@ namespace Yggdrasil.TableParsers
             EntryNumber = entryNumber;
 
             HasChanged = false;
+
+            EntryDescription = string.Format("Entry #{0}", entryNumber);
 
             PropertyChanged = propertyChanged;
         }
@@ -50,14 +54,12 @@ namespace Yggdrasil.TableParsers
             }
         }
 
-        public void Save() { OnSave(); }
-
-        protected virtual void OnLoad()
+        protected virtual void Load()
         {
             HasChanged = false;
         }
 
-        protected virtual void OnSave()
+        public virtual void Save()
         {
             HasChanged = false;
         }

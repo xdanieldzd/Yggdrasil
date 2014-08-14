@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 using Yggdrasil.Helpers;
+using Yggdrasil.Controls;
 
 namespace Yggdrasil
 {
@@ -57,12 +58,21 @@ namespace Yggdrasil
 
         private void LoadGameData(string path)
         {
+            foreach (TabPage tabPage in tabControl.TabPages)
+            {
+                IEditorControl editorControl = (IEditorControl)tabPage.Controls.OfType<Control>().FirstOrDefault(x => x is IEditorControl);
+                if (editorControl.IsInitialized()) editorControl.Terminate();
+                tabPage.Tag = null;
+            }
+
             game.ReadGameDirectory(Configuration.LastDataPath = path);
             SetFormTitle();
 
-            saveToolStripMenuItem.Enabled = cmbEquipment.Enabled = pgEquipment.Enabled = messageEditor.Enabled = (game != null && game.IsInitialized);
+            saveToolStripMenuItem.Enabled = tableEntryEditor.Enabled = messageEditor.Enabled = (game != null && game.IsInitialized);
 
             InitializeTabPage(tabControl.SelectedTab);
+
+            tsslStatus.Text = "Data loaded";
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -72,7 +82,7 @@ namespace Yggdrasil
             if (changedFiles == 0)
                 tsslStatus.Text = "No changes to save";
             else
-                tsslStatus.Text = string.Format("Saved; {0} file(s) changed", changedFiles);
+                tsslStatus.Text = string.Format("Data saved; {0} file(s) changed", changedFiles);
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -94,19 +104,10 @@ namespace Yggdrasil
 
         private void InitializeTabPage(TabPage tabPage)
         {
-            if (game != null && game.IsInitialized && tabPage.Tag == null)
+            if ((game != null && game.IsInitialized) && tabPage.Tag == null)
             {
-                if (tabPage == tpEquipment)
-                {
-                    cmbEquipment.DisplayMember = "Name";
-                    cmbEquipment.DataSource = game.GetParsedData<Yggdrasil.TableParsers.EquipItemData>();
-                    pgEquipment.SelectedObject = ((dynamic)cmbEquipment.DataSource)[0];
-                }
-                else if (tabPage == tpMessages)
-                {
-                    if (!messageEditor.IsInitialized) messageEditor.Initialize(game);
-                }
-
+                IEditorControl editorControl = (IEditorControl)tabPage.Controls.OfType<Control>().FirstOrDefault(x => x is IEditorControl);
+                if (editorControl != null && !editorControl.IsInitialized()) editorControl.Initialize(game);
                 tabPage.Tag = game;
             }
         }
@@ -114,11 +115,6 @@ namespace Yggdrasil
         private void tabControl_Selected(object sender, TabControlEventArgs e)
         {
             InitializeTabPage(e.TabPage);
-        }
-
-        private void cmbEquipment_SelectionChangeCommitted(object sender, EventArgs e)
-        {
-            pgEquipment.SelectedObject = (sender as ComboBox).SelectedItem;
         }
     }
 }

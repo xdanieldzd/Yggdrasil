@@ -13,9 +13,9 @@ using Yggdrasil.Helpers;
 
 namespace Yggdrasil.Controls
 {
-    public partial class MessageEditor : UserControl
+    public partial class MessageEditor : UserControl, IEditorControl
     {
-        public bool IsInitialized { get { return (game != null); } }
+        public bool IsInitialized() { return (game != null); }
 
         GameDataManager game;
         BackgroundWorker treeViewWorker;
@@ -36,6 +36,7 @@ namespace Yggdrasil.Controls
                 treeViewWorker = new BackgroundWorker();
                 treeViewWorker.DoWork += ((s, e) =>
                 {
+                    tvMessageFiles.Invoke(new Action(() => { tvMessageFiles.Nodes.Clear(); }));
                     foreach (TBB messageFile in this.game.MessageFiles)
                     {
                         TreeNode fileNode = new TreeNode(Path.GetFileNameWithoutExtension(messageFile.Filename)) { Tag = messageFile };
@@ -57,18 +58,30 @@ namespace Yggdrasil.Controls
                                 tableNode.Nodes.Add(messageNode);
                             }
                         }
-
                         tvMessageFiles.Invoke(new Action(() => { tvMessageFiles.Nodes.Add(fileNode); }));
                     }
+                    tvMessageFiles.Invoke(new Action(() => { tvMessageFiles.Invalidate(); }));
                 });
 
                 treeViewWorker.RunWorkerAsync();
             }
         }
 
+        public void Terminate()
+        {
+            this.game = null;
+            treeViewWorker = null;
+
+            tvMessageFiles.Nodes.Clear();
+            stringPreviewControl.Terminate();
+        }
+
         private void tvMessageFiles_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Tag is EtrianString) stringPreviewControl.Initialize(game, e.Node.Tag as EtrianString);
+            if (e.Node.Tag is EtrianString)
+                stringPreviewControl.Initialize(game, e.Node.Tag as EtrianString);
+            else
+                stringPreviewControl.Terminate();
         }
     }
 }

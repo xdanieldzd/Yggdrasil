@@ -40,11 +40,12 @@
             this.stringPreviewControl.Size = new System.Drawing.Size(300, 400);
             this.stringPreviewControl.TabIndex = 2;
             // 
-            // tvMessages
+            // tvMessageFiles
             // 
             this.tvMessageFiles.Dock = System.Windows.Forms.DockStyle.Left;
+            this.tvMessageFiles.HideSelection = false;
             this.tvMessageFiles.Location = new System.Drawing.Point(0, 0);
-            this.tvMessageFiles.Name = "tvMessages";
+            this.tvMessageFiles.Name = "tvMessageFiles";
             this.tvMessageFiles.Size = new System.Drawing.Size(200, 400);
             this.tvMessageFiles.TabIndex = 1;
             this.tvMessageFiles.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvMessageFiles_AfterSelect);

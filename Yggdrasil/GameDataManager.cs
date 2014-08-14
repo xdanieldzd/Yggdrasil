@@ -246,5 +246,24 @@ namespace Yggdrasil
         {
             return parsedData.Where(x => x is T).Cast<T>().ToList();
         }
+
+        public IList<Tuple<Type, IList<BaseParser>>> GetAllParsedData(bool mustSupportSave)
+        {
+            List<Tuple<Type, IList<BaseParser>>> output = new List<Tuple<Type, IList<BaseParser>>>();
+
+            List<Type> typesWithAttrib = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.GetCustomAttributes(typeof(ParserUsage), false).Length > 0).ToList();
+            foreach (Type type in typesWithAttrib)
+            {
+                if (mustSupportSave)
+                {
+                    MethodInfo mi = type.GetMethod("Save", BindingFlags.Instance | BindingFlags.Public);
+                    if (mi.DeclaringType == typeof(BaseParser)) continue;
+                }
+
+                output.Add(new Tuple<Type, IList<BaseParser>>(type, parsedData.Where(x => x.GetType() == type).ToList()));
+            }
+
+            return output;
+        }
     }
 }

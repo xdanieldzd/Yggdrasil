@@ -9,6 +9,8 @@ using Yggdrasil.FileTypes;
 namespace Yggdrasil.TableParsers
 {
     [ParserUsage("Item.tbb", 1)]
+    [Description("General Items")]
+    [ItemNameDescriptionFiles("ItemName", 0, "ItemInfo", 0)]
     public class MiscItemData : BaseParser
     {
         ushort itemNumber;
@@ -81,9 +83,9 @@ namespace Yggdrasil.TableParsers
             set { base.SetProperty(ref sellPrice, value, () => this.SellPrice); }
         }
 
-        public MiscItemData(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { OnLoad(); }
+        public MiscItemData(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { Load(); }
 
-        protected override void OnLoad()
+        protected override void Load()
         {
             itemNumber = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 0);
             unknown1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 2);
@@ -96,14 +98,7 @@ namespace Yggdrasil.TableParsers
             buyPrice = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 16);
             sellPrice = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 20);
 
-            base.OnLoad();
-        }
-
-        protected override void OnSave()
-        {
-            //
-
-            base.OnSave();
+            base.Load();
         }
     }
 }

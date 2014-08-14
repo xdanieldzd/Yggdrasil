@@ -39,15 +39,14 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.tsslStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl = new System.Windows.Forms.TabControl();
-            this.tpEquipment = new System.Windows.Forms.TabPage();
-            this.pgEquipment = new System.Windows.Forms.PropertyGrid();
-            this.cmbEquipment = new System.Windows.Forms.ComboBox();
+            this.tpTableData = new System.Windows.Forms.TabPage();
             this.tpMessages = new System.Windows.Forms.TabPage();
+            this.tableEntryEditor = new Yggdrasil.Controls.TableEntryEditor();
             this.messageEditor = new Yggdrasil.Controls.MessageEditor();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.tabControl.SuspendLayout();
-            this.tpEquipment.SuspendLayout();
+            this.tpTableData.SuspendLayout();
             this.tpMessages.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,7 +57,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(484, 24);
+            this.menuStrip.Size = new System.Drawing.Size(534, 24);
             this.menuStrip.TabIndex = 0;
             // 
             // fileToolStripMenuItem
@@ -75,7 +74,7 @@
             // openFolderToolStripMenuItem
             // 
             this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
-            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.openFolderToolStripMenuItem.Text = "&Open Folder...";
             this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
             // 
@@ -83,19 +82,19 @@
             // 
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.saveToolStripMenuItem.Text = "&Save...";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(145, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -118,9 +117,9 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsslStatus});
-            this.statusStrip.Location = new System.Drawing.Point(0, 440);
+            this.statusStrip.Location = new System.Drawing.Point(0, 490);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(484, 22);
+            this.statusStrip.Size = new System.Drawing.Size(534, 22);
             this.statusStrip.TabIndex = 1;
             // 
             // tsslStatus
@@ -131,50 +130,26 @@
             // 
             // tabControl
             // 
-            this.tabControl.Controls.Add(this.tpEquipment);
+            this.tabControl.Controls.Add(this.tpTableData);
             this.tabControl.Controls.Add(this.tpMessages);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Location = new System.Drawing.Point(0, 24);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(484, 416);
+            this.tabControl.Size = new System.Drawing.Size(534, 466);
             this.tabControl.TabIndex = 2;
             this.tabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl_Selected);
             // 
-            // tpEquipment
+            // tpTableData
             // 
-            this.tpEquipment.Controls.Add(this.pgEquipment);
-            this.tpEquipment.Controls.Add(this.cmbEquipment);
-            this.tpEquipment.Location = new System.Drawing.Point(4, 22);
-            this.tpEquipment.Name = "tpEquipment";
-            this.tpEquipment.Padding = new System.Windows.Forms.Padding(3);
-            this.tpEquipment.Size = new System.Drawing.Size(476, 390);
-            this.tpEquipment.TabIndex = 1;
-            this.tpEquipment.Text = "Equipment";
-            this.tpEquipment.UseVisualStyleBackColor = true;
-            // 
-            // pgEquipment
-            // 
-            this.pgEquipment.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pgEquipment.Enabled = false;
-            this.pgEquipment.Location = new System.Drawing.Point(3, 24);
-            this.pgEquipment.Name = "pgEquipment";
-            this.pgEquipment.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.pgEquipment.Size = new System.Drawing.Size(470, 363);
-            this.pgEquipment.TabIndex = 4;
-            this.pgEquipment.ToolbarVisible = false;
-            // 
-            // cmbEquipment
-            // 
-            this.cmbEquipment.Dock = System.Windows.Forms.DockStyle.Top;
-            this.cmbEquipment.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbEquipment.Enabled = false;
-            this.cmbEquipment.FormattingEnabled = true;
-            this.cmbEquipment.Location = new System.Drawing.Point(3, 3);
-            this.cmbEquipment.Name = "cmbEquipment";
-            this.cmbEquipment.Size = new System.Drawing.Size(470, 21);
-            this.cmbEquipment.TabIndex = 5;
-            this.cmbEquipment.SelectionChangeCommitted += new System.EventHandler(this.cmbEquipment_SelectionChangeCommitted);
+            this.tpTableData.Controls.Add(this.tableEntryEditor);
+            this.tpTableData.Location = new System.Drawing.Point(4, 22);
+            this.tpTableData.Name = "tpTableData";
+            this.tpTableData.Padding = new System.Windows.Forms.Padding(3);
+            this.tpTableData.Size = new System.Drawing.Size(526, 440);
+            this.tpTableData.TabIndex = 1;
+            this.tpTableData.Text = "Data Tables";
+            this.tpTableData.UseVisualStyleBackColor = true;
             // 
             // tpMessages
             // 
@@ -182,10 +157,18 @@
             this.tpMessages.Location = new System.Drawing.Point(4, 22);
             this.tpMessages.Name = "tpMessages";
             this.tpMessages.Padding = new System.Windows.Forms.Padding(3);
-            this.tpMessages.Size = new System.Drawing.Size(476, 390);
+            this.tpMessages.Size = new System.Drawing.Size(576, 390);
             this.tpMessages.TabIndex = 0;
             this.tpMessages.Text = "Messages";
             this.tpMessages.UseVisualStyleBackColor = true;
+            // 
+            // tableEntryEditor
+            // 
+            this.tableEntryEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableEntryEditor.Location = new System.Drawing.Point(3, 3);
+            this.tableEntryEditor.Name = "tableEntryEditor";
+            this.tableEntryEditor.Size = new System.Drawing.Size(520, 434);
+            this.tableEntryEditor.TabIndex = 6;
             // 
             // messageEditor
             // 
@@ -193,14 +176,14 @@
             this.messageEditor.Enabled = false;
             this.messageEditor.Location = new System.Drawing.Point(3, 3);
             this.messageEditor.Name = "messageEditor";
-            this.messageEditor.Size = new System.Drawing.Size(470, 384);
+            this.messageEditor.Size = new System.Drawing.Size(570, 384);
             this.messageEditor.TabIndex = 0;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(484, 462);
+            this.ClientSize = new System.Drawing.Size(534, 512);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.menuStrip);
@@ -212,7 +195,7 @@
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.tabControl.ResumeLayout(false);
-            this.tpEquipment.ResumeLayout(false);
+            this.tpTableData.ResumeLayout(false);
             this.tpMessages.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -232,10 +215,9 @@
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tpMessages;
         private Controls.MessageEditor messageEditor;
-        private System.Windows.Forms.TabPage tpEquipment;
-        private System.Windows.Forms.ComboBox cmbEquipment;
-        private System.Windows.Forms.PropertyGrid pgEquipment;
+        private System.Windows.Forms.TabPage tpTableData;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private Controls.TableEntryEditor tableEntryEditor;
     }
 }

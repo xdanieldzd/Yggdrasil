@@ -9,6 +9,7 @@ using Yggdrasil.FileTypes;
 namespace Yggdrasil.TableParsers
 {
     [ParserUsage("ItemCompound.tbb", 0)]
+    [Description("Item Compounds")]
     public class ItemCompoundData : BaseParser
     {
         ushort itemNumber;
@@ -95,9 +96,9 @@ namespace Yggdrasil.TableParsers
             set { base.SetProperty(ref unknown5, value, () => this.Unknown5); }
         }
 
-        public ItemCompoundData(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { OnLoad(); }
+        public ItemCompoundData(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { Load(); }
 
-        protected override void OnLoad()
+        protected override void Load()
         {
             itemNumber = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 0);
             itemCompound1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 2);
@@ -112,14 +113,7 @@ namespace Yggdrasil.TableParsers
             unknown4 = ParentTable.Data[EntryNumber][16];
             Unknown4 = ParentTable.Data[EntryNumber][17];
 
-            base.OnLoad();
-        }
-
-        protected override void OnSave()
-        {
-            //
-
-            base.OnSave();
+            base.Load();
         }
     }
 }
