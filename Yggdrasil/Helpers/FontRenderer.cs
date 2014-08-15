@@ -188,7 +188,8 @@ namespace Yggdrasil.Helpers
                                 // Color
                                 //6==red??
                                 ushort color = str.RawData[i + 1];
-                                if (color == 4) colorMap[0].NewColor = palette[1];
+                                if (color == 0) colorMap[0].NewColor = colorMap[0].OldColor;
+                                else if (color == 4) colorMap[0].NewColor = palette[1];
                                 else if (color == 6) colorMap[0].NewColor = Color.FromArgb(0xF8, 0x70, 0x48);
                                 imageAttrib.SetRemapTable(colorMap);
                                 i++;

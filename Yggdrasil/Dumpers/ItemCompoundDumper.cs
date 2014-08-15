@@ -43,11 +43,11 @@ namespace Yggdrasil.Dumpers
                     item.ItemCompound2,
                     (item.ItemCompound3 == 0 ? "---" : (itemNameFile.Tables.FirstOrDefault() as TBB.MTBL).Messages[item.ItemCompound3 - 1].ConvertedString.Replace("\n", "<br>").Replace(" ", "&nbsp;")),
                     item.ItemCompound3,
-                    item.Unknown1, item.Unknown2
+                    item.ItemCompound4, item.ItemCompound5
                     );
 
                 builder.AppendFormat("<td>{0}</td> <td>{1}</td> <td>{2}</td> <td>0x{3:X2}</td> <td>0x{4:X2}</td> <td>0x{5:X2}</td>",
-                    item.ItemCount1, item.ItemCount2, item.ItemCount3, item.Unknown3, item.Unknown4, item.Unknown5);
+                    item.ItemCount1, item.ItemCount2, item.ItemCount3, item.ItemCount4, item.ItemCount5, item.Unknown5);
 
                 builder.AppendLine("</tr>\n");
             }

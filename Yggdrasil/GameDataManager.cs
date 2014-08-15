@@ -16,7 +16,7 @@ namespace Yggdrasil
     public class GameDataManager
     {
         static readonly string[] messageDirs = new string[] { "data\\Data\\CharaSel", "data\\Data\\Dungeon", "data\\Data\\Event", "data\\Data\\Opening", "data\\Data\\Param", "data\\Data\\SaveLoad" };
-        static readonly string[] dataDirs = new string[] { "data\\Data\\Param", "data\\Data\\Battle" };
+        static readonly string[] dataDirs = new string[] { "data\\Data\\Param", "data\\Data\\Battle", "data\\Data\\Event" };
 
         public enum Versions { Invalid, European, American, Japanese };
         public enum Languages { German, English, Spanish, French, Italian };
@@ -46,6 +46,7 @@ namespace Yggdrasil
         public FontRenderer FontRenderer { get; private set; }
         public List<TBB> MessageFiles { get; private set; }
 
+        List<BIN> fbinArchives;
         List<TBB> dataTableFiles;
         List<BaseParser> parsedData;
 
@@ -73,6 +74,8 @@ namespace Yggdrasil
 
                 loadWaitWorker.ReportProgress(-1, "Initializing font renderer...");
                 FontRenderer = new FontRenderer(this, Path.Combine(path, mainFontFilename));
+
+                //PreProcessFBINArchives();
 
                 MessageFiles = ReadDataTablesByExtension(".mbb", messageDirs);
                 dataTableFiles = ReadDataTablesByExtension(".tbb", dataDirs);
@@ -157,6 +160,22 @@ namespace Yggdrasil
             }
         }
 
+        private void PreProcessFBINArchives()
+        {
+            loadWaitWorker.ReportProgress(-1, "Pre-processing FBIN archives...");
+
+            fbinArchives = new List<BIN>();
+
+            foreach (string directory in dataDirs)
+            {
+                List<string> filePaths = Directory.EnumerateFiles(Path.Combine(DataPath, directory), "*.*", SearchOption.AllDirectories)
+                    .Where(x => x.ToLowerInvariant().EndsWith(".bin"))
+                    .ToList();
+
+                foreach (string filePath in filePaths) fbinArchives.Add(new BIN(this, filePath));
+            }
+        }
+
         private List<TBB> ReadDataTablesByExtension(string extension, string[] directories)
         {
             if (extension == null || extension == string.Empty) throw new ArgumentException("No extension given");
@@ -176,6 +195,21 @@ namespace Yggdrasil
                     if (tbb.IsValid()) dataTables.Add(tbb);
 
                     loadWaitWorker.ReportProgress(-1, string.Format("Reading {0}...", Path.GetFileName(filePath)));
+                }
+
+                if (fbinArchives != null)
+                {
+                    foreach (BIN fbin in fbinArchives)
+                    {
+                        if (Path.GetDirectoryName(fbin.Filename).EndsWith(directory) && !Path.GetFileName(fbin.Filename).StartsWith("2D_ObjData"))
+                        {
+                            foreach (uint offset in fbin.FileOffsets)
+                            {
+                                TBB tbb = new TBB(this, fbin, offset);
+                                if (tbb.IsValid()) dataTables.Add(tbb);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -260,7 +294,7 @@ namespace Yggdrasil
         public TBB GetMessageFile(string filename)
         {
             filename = (Version == Versions.European ? string.Format("{0}{1}", filename, langSuffixes[Language]) : filename);
-            TBB messageFile = MessageFiles.FirstOrDefault(x => Path.GetFileName(x.Filename).StartsWith(filename));
+            TBB messageFile = MessageFiles.FirstOrDefault(x => x.Filename != null && Path.GetFileName(x.Filename).StartsWith(filename));
 
             if (messageFile == null) throw new ArgumentException("Message file could not be found");
             return messageFile;

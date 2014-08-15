@@ -23,19 +23,26 @@ namespace Yggdrasil.Helpers
 
         public static byte[] Decompress(byte[] data, out bool isCompressed)
         {
+            return Decompress(data, 0, out isCompressed);
+        }
+
+        public static byte[] Decompress(byte[] data, int offset, out bool isCompressed)
+        {
             isCompressed = true;
 
-            switch (data[0])
+            switch (data[offset])
             {
-                case 0x10: return ProcessLZ77(data);
+                case 0x10: return ProcessLZ77(data, offset);
 
                 case 0x24:
-                case 0x28: return ProcessHuffman(data);
+                case 0x28: return ProcessHuffman(data, offset);
 
-                case 0x30: return ProcessRLE(data);
+                case 0x30: return ProcessRLE(data, offset);
 
                 default:
                     isCompressed = false;
+                    byte[] outData = new byte[data.Length - offset];
+                    Buffer.BlockCopy(data, offset, outData, 0, outData.Length);
                     return data;
             }
         }

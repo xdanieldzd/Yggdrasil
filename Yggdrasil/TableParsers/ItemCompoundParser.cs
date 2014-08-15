@@ -43,20 +43,22 @@ namespace Yggdrasil.TableParsers
             set { base.SetProperty(ref itemCompound3, value, () => this.ItemCompound3); }
         }
 
-        ushort unknown1;
-        [DisplayName("Unknown 1"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
-        public ushort Unknown1
+        ushort itemCompound4;
+        [DisplayName("4th Item"), TypeConverter(typeof(CustomConverters.ItemNameConverter)), PrioritizedCategory("Requirements", 0)]
+        [Description("Fourth item required to be sold before it becomes available for purchase.")]
+        public ushort ItemCompound4
         {
-            get { return unknown1; }
-            set { base.SetProperty(ref unknown1, value, () => this.Unknown1); }
+            get { return itemCompound4; }
+            set { base.SetProperty(ref itemCompound4, value, () => this.ItemCompound4); }
         }
 
-        ushort unknown2;
-        [DisplayName("Unknown 2"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
-        public ushort Unknown2
+        ushort itemCompound5;
+        [DisplayName("5th Item"), TypeConverter(typeof(CustomConverters.ItemNameConverter)), PrioritizedCategory("Requirements", 0)]
+        [Description("Fifth item required to be sold before it becomes available for purchase.")]
+        public ushort ItemCompound5
         {
-            get { return unknown2; }
-            set { base.SetProperty(ref unknown2, value, () => this.Unknown2); }
+            get { return itemCompound5; }
+            set { base.SetProperty(ref itemCompound5, value, () => this.ItemCompound5); }
         }
 
         byte itemCount1;
@@ -86,20 +88,22 @@ namespace Yggdrasil.TableParsers
             set { base.SetProperty(ref itemCount3, value, () => this.ItemCount3); }
         }
 
-        byte unknown3;
-        [DisplayName("Unknown 3"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
-        public byte Unknown3
+        byte itemCount4;
+        [DisplayName("Amount of 4th Item"), TypeConverter(typeof(CustomConverters.ByteItemCountConverter)), PrioritizedCategory("Requirements", 0)]
+        [Description("Amount of fourth item required to be sold before it becomes available for purchase.")]
+        public byte ItemCount4
         {
-            get { return unknown3; }
-            set { base.SetProperty(ref unknown3, value, () => this.Unknown3); }
+            get { return itemCount4; }
+            set { base.SetProperty(ref itemCount4, value, () => this.ItemCount4); }
         }
 
-        byte unknown4;
-        [DisplayName("Unknown 4"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
-        public byte Unknown4
+        byte itemCount5;
+        [DisplayName("Amount of 5th Item"), TypeConverter(typeof(CustomConverters.ByteItemCountConverter)), PrioritizedCategory("Requirements", 0)]
+        [Description("Amount of fifth item required to be sold before it becomes available for purchase.")]
+        public byte ItemCount5
         {
-            get { return unknown4; }
-            set { base.SetProperty(ref unknown4, value, () => this.Unknown4); }
+            get { return itemCount5; }
+            set { base.SetProperty(ref itemCount5, value, () => this.ItemCount5); }
         }
 
         byte unknown5;
@@ -117,14 +121,14 @@ namespace Yggdrasil.TableParsers
             itemCompound1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 2);
             itemCompound2 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 4);
             itemCompound3 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 6);
-            unknown1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 8);
-            unknown2 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 10);
+            itemCompound4 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 8);
+            itemCompound5 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 10);
             itemCount1 = ParentTable.Data[EntryNumber][12];
             itemCount2 = ParentTable.Data[EntryNumber][13];
             itemCount3 = ParentTable.Data[EntryNumber][14];
-            unknown3 = ParentTable.Data[EntryNumber][15];
-            unknown4 = ParentTable.Data[EntryNumber][16];
-            Unknown4 = ParentTable.Data[EntryNumber][17];
+            itemCount4 = ParentTable.Data[EntryNumber][15];
+            itemCount5 = ParentTable.Data[EntryNumber][16];
+            ItemCount5 = ParentTable.Data[EntryNumber][17];
 
             base.Load();
         }
@@ -134,14 +138,14 @@ namespace Yggdrasil.TableParsers
             itemCompound1.CopyTo(ParentTable.Data[EntryNumber], 2);
             itemCompound2.CopyTo(ParentTable.Data[EntryNumber], 4);
             itemCompound3.CopyTo(ParentTable.Data[EntryNumber], 6);
-            unknown1.CopyTo(ParentTable.Data[EntryNumber], 8);
-            unknown2.CopyTo(ParentTable.Data[EntryNumber], 10);
+            itemCompound4.CopyTo(ParentTable.Data[EntryNumber], 8);
+            itemCompound5.CopyTo(ParentTable.Data[EntryNumber], 10);
             itemCount1.CopyTo(ParentTable.Data[EntryNumber], 12);
             itemCount2.CopyTo(ParentTable.Data[EntryNumber], 13);
             itemCount3.CopyTo(ParentTable.Data[EntryNumber], 14);
-            unknown3.CopyTo(ParentTable.Data[EntryNumber], 15);
-            unknown4.CopyTo(ParentTable.Data[EntryNumber], 16);
-            Unknown4.CopyTo(ParentTable.Data[EntryNumber], 17);
+            itemCount4.CopyTo(ParentTable.Data[EntryNumber], 15);
+            itemCount5.CopyTo(ParentTable.Data[EntryNumber], 16);
+            ItemCount5.CopyTo(ParentTable.Data[EntryNumber], 17);
 
             base.Save();
         }

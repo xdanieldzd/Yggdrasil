@@ -7,13 +7,13 @@ namespace Yggdrasil.Helpers
 {
     public static partial class Decompressor
     {
-        public static byte[] ProcessLZ77(byte[] compData)
+        public static byte[] ProcessLZ77(byte[] compData, int compOffset)
         {
-            int dataLen = (BitConverter.ToInt32(compData, 1) & 0xFFFFFF);
+            int dataLen = (BitConverter.ToInt32(compData, compOffset + 1) & 0xFFFFFF);
             byte[] decData = new byte[dataLen];
 
             int i, j, xIn, xOut;
-            xIn = 4;
+            xIn = compOffset + 4;
             xOut = 0;
             int length, offset, windowOffset, data;
             byte d;

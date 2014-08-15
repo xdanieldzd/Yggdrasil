@@ -30,9 +30,9 @@ namespace Yggdrasil.Helpers
         //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
         //THE SOFTWARE.
 
-        public static byte[] ProcessHuffman(byte[] compData)
+        public static byte[] ProcessHuffman(byte[] compData, int compOffset)
         {
-            BinaryReader br = new BinaryReader(new MemoryStream(compData));
+            BinaryReader br = new BinaryReader(new MemoryStream(compData, compOffset, compData.Length - compOffset));
 
             byte firstByte = br.ReadByte();
             int dataSize = firstByte & 0x0F;

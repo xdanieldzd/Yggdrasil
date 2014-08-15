@@ -12,6 +12,9 @@ namespace Yggdrasil.FileTypes
         public string Filename { get; private set; }
         public byte[] Data { get; private set; }
 
+        public BIN ParentArchive { get; private set; }
+        public uint ParentArchiveOffset { get; private set; }
+
         bool isCompressed;
         public bool IsCompressed { get { return isCompressed; } }
 
@@ -21,6 +24,20 @@ namespace Yggdrasil.FileTypes
             Filename = path;
 
             Data = Helpers.Decompressor.Decompress(Filename, out isCompressed);
+
+            Parse();
+        }
+
+        public BaseFile(GameDataManager game, BIN parentArchive, uint offset)
+        {
+            Game = game;
+
+            ParentArchive = parentArchive;
+            ParentArchiveOffset = offset;
+
+            Filename = string.Format("{0}_0x{1:X}", ParentArchive.Filename, ParentArchiveOffset);
+
+            Data = Helpers.Decompressor.Decompress(ParentArchive.Data, (int)ParentArchiveOffset, out isCompressed);
 
             Parse();
         }

@@ -208,6 +208,8 @@ namespace Yggdrasil.Helpers
 
         #endregion
 
+        #region Japanese character map
+
         static readonly Dictionary<ushort, char> characterMapJapanese = new Dictionary<ushort, char>()
         {
             { 0x0001, ' ' },
@@ -555,6 +557,8 @@ namespace Yggdrasil.Helpers
             { 0x05CB, '夜' },
         };
 
+        #endregion
+
         static readonly Dictionary<ushort, char> characterMapCommon = new Dictionary<ushort, char>()
         {
             { 0x8001, '\n' },   //line feed / linebreak
@@ -596,9 +600,14 @@ namespace Yggdrasil.Helpers
         public EtrianString(byte[] data, int offset)
         {
             int stringLength = -1;
-            for (int i = 0; i < 0x2000; i += 2)
+            for (int i = 2; i < 0x2000; i += 2)
             {
-                if (BitConverter.ToUInt16(data, offset + i) == 0x0000) { stringLength = i / 2; break; }
+                if (BitConverter.ToUInt16(data, offset + i) == 0x0000 &&
+                    BitConverter.ToUInt16(data, offset + i - 2) != 0x8004)
+                {
+                    stringLength = i / 2;
+                    break;
+                }
             }
 
             ushort[] strData = new ushort[stringLength];
