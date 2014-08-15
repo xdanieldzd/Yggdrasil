@@ -29,7 +29,7 @@ namespace Yggdrasil.Dumpers
             builder.AppendLine("<table><tr>");
 
             builder.AppendLine(
-                "<th>Number</th><th>Item 1</th><th>Item 2</th><th>Item 3</th><th>Unk 1</th><th>Unk 2</th><th>Count 1</th><th>Count 2</th><th>Count 2</th><th>Unk 3</th><th>Unk 4</th><th>Unk 5</th></tr>");
+                "<th>Number</th><th>Item 1</th><th>Item 2</th><th>Item 3</th><th>Item 4</th><th>Item 5</th><th>Count 1</th><th>Count 2</th><th>Count 3</th><th>Count 4</th><th>Count 5</th><th>Unk/Padding</th></tr>");
 
             foreach (ItemCompoundParser item in game.GetParsedData<ItemCompoundParser>().OrderBy(x => x.ItemNumber))
             {
@@ -43,11 +43,14 @@ namespace Yggdrasil.Dumpers
                     item.ItemCompound2,
                     (item.ItemCompound3 == 0 ? "---" : (itemNameFile.Tables.FirstOrDefault() as TBB.MTBL).Messages[item.ItemCompound3 - 1].ConvertedString.Replace("\n", "<br>").Replace(" ", "&nbsp;")),
                     item.ItemCompound3,
-                    item.ItemCompound4, item.ItemCompound5
+                    (item.ItemCompound4 == 0 ? "---" : (itemNameFile.Tables.FirstOrDefault() as TBB.MTBL).Messages[item.ItemCompound4 - 1].ConvertedString.Replace("\n", "<br>").Replace(" ", "&nbsp;")),
+                    item.ItemCompound4,
+                    (item.ItemCompound5 == 0 ? "---" : (itemNameFile.Tables.FirstOrDefault() as TBB.MTBL).Messages[item.ItemCompound5 - 1].ConvertedString.Replace("\n", "<br>").Replace(" ", "&nbsp;")),
+                    item.ItemCompound5
                     );
 
-                builder.AppendFormat("<td>{0}</td> <td>{1}</td> <td>{2}</td> <td>0x{3:X2}</td> <td>0x{4:X2}</td> <td>0x{5:X2}</td>",
-                    item.ItemCount1, item.ItemCount2, item.ItemCount3, item.ItemCount4, item.ItemCount5, item.Unknown5);
+                builder.AppendFormat("<td>{0}</td> <td>{1}</td> <td>{2}</td> <td>{3}</td> <td>{4}</td> <td>0x{5:X2}</td>",
+                    item.ItemCount1, item.ItemCount2, item.ItemCount3, item.ItemCount4, item.ItemCount5, item.UnknownPadding);
 
                 builder.AppendLine("</tr>\n");
             }

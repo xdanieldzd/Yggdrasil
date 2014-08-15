@@ -106,12 +106,13 @@ namespace Yggdrasil.TableParsers
             set { base.SetProperty(ref itemCount5, value, () => this.ItemCount5); }
         }
 
-        byte unknown5;
-        [DisplayName("Unknown 5"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
-        public byte Unknown5
+        byte unknownPadding;
+        [DisplayName("Padding?"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
+        [Description("Unknown, possibly padding.")]
+        public byte UnknownPadding
         {
-            get { return unknown5; }
-            set { base.SetProperty(ref unknown5, value, () => this.Unknown5); }
+            get { return unknownPadding; }
+            set { base.SetProperty(ref unknownPadding, value, () => this.UnknownPadding); }
         }
 
         public ItemCompoundParser(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { Load(); }
@@ -128,7 +129,7 @@ namespace Yggdrasil.TableParsers
             itemCount3 = ParentTable.Data[EntryNumber][14];
             itemCount4 = ParentTable.Data[EntryNumber][15];
             itemCount5 = ParentTable.Data[EntryNumber][16];
-            unknown5 = ParentTable.Data[EntryNumber][17];
+            unknownPadding = ParentTable.Data[EntryNumber][17];
 
             base.Load();
         }
@@ -145,7 +146,7 @@ namespace Yggdrasil.TableParsers
             itemCount3.CopyTo(ParentTable.Data[EntryNumber], 14);
             itemCount4.CopyTo(ParentTable.Data[EntryNumber], 15);
             itemCount5.CopyTo(ParentTable.Data[EntryNumber], 16);
-            unknown5.CopyTo(ParentTable.Data[EntryNumber], 17);
+            unknownPadding.CopyTo(ParentTable.Data[EntryNumber], 17);
 
             base.Save();
         }
