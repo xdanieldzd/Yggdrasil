@@ -95,6 +95,7 @@
     <Compile Include="Forms\MainFormOLD.Designer.cs">
       <DependentUpon>MainFormOLD.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\GUIHelpers.cs" />
     <Compile Include="Helpers\VersionManagement.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

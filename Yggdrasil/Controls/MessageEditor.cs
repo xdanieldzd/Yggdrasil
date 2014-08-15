@@ -30,6 +30,7 @@ namespace Yggdrasil.Controls
         public void Initialize(GameDataManager game)
         {
             this.game = game;
+            this.Font = GUIHelpers.GetSuggestedGUIFont(game.Version);
 
             if (this.game.MessageFiles != null)
             {
