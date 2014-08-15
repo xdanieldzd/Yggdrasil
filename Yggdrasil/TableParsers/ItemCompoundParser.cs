@@ -128,7 +128,7 @@ namespace Yggdrasil.TableParsers
             itemCount3 = ParentTable.Data[EntryNumber][14];
             itemCount4 = ParentTable.Data[EntryNumber][15];
             itemCount5 = ParentTable.Data[EntryNumber][16];
-            ItemCount5 = ParentTable.Data[EntryNumber][17];
+            unknown5 = ParentTable.Data[EntryNumber][17];
 
             base.Load();
         }
@@ -145,7 +145,7 @@ namespace Yggdrasil.TableParsers
             itemCount3.CopyTo(ParentTable.Data[EntryNumber], 14);
             itemCount4.CopyTo(ParentTable.Data[EntryNumber], 15);
             itemCount5.CopyTo(ParentTable.Data[EntryNumber], 16);
-            ItemCount5.CopyTo(ParentTable.Data[EntryNumber], 17);
+            unknown5.CopyTo(ParentTable.Data[EntryNumber], 17);
 
             base.Save();
         }
