@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Windows.Forms;
 
 using Yggdrasil.FileTypes;
 
@@ -10,15 +11,10 @@ namespace Yggdrasil.TableParsers
 {
     [ParserUsage("Item.tbb", 1)]
     [Description("General Items")]
-    [ItemNameDescriptionFiles("ItemName", 0, "ItemInfo", 0)]
-    public class MiscItemData : BaseParser
+    public class MiscItemParser : BaseItemParser
     {
-        ushort itemNumber;
-        public ushort ItemNumber
-        {
-            get { return itemNumber; }
-            set { base.SetProperty(ref itemNumber, value, () => this.ItemNumber); }
-        }
+        [Browsable(false)]
+        public override string EntryDescription { get { return Name; } }
 
         ushort unknown1;
         public ushort Unknown1
@@ -83,11 +79,10 @@ namespace Yggdrasil.TableParsers
             set { base.SetProperty(ref sellPrice, value, () => this.SellPrice); }
         }
 
-        public MiscItemData(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { Load(); }
+        public MiscItemParser(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { Load(); }
 
         protected override void Load()
         {
-            itemNumber = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 0);
             unknown1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 2);
             unknown2 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 4);
             recoveredHP = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 6);
@@ -100,5 +95,22 @@ namespace Yggdrasil.TableParsers
 
             base.Load();
         }
+        /*
+        public override void Save()
+        {
+            //
+            base.Save();
+        }
+
+        public static TreeNode GenerateTreeNode(GameDataManager game, IList<BaseParser> parsedData)
+        {
+            string description = (typeof(MiscItemParser).GetCustomAttributes(false).FirstOrDefault(x => x is DescriptionAttribute) as DescriptionAttribute).Description;
+            TreeNode node = new TreeNode(description) { Tag = parsedData };
+
+            foreach (BaseParser parsed in parsedData)
+                node.Nodes.Add(new TreeNode(parsed.EntryDescription) { Tag = parsed });
+
+            return node;
+        }*/
     }
 }

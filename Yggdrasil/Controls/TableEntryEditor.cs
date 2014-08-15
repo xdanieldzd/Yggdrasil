@@ -38,12 +38,12 @@ namespace Yggdrasil.Controls
                 tvParsers.Invoke(new Action(() => { tvParsers.Nodes.Clear(); }));
                 foreach (Tuple<Type, IList<BaseParser>> parsedTuple in this.game.GetAllParsedData(true))
                 {
-                    TreeNode dataNode =
-                        (TreeNode)parsedTuple.Item1
-                        .GetMethod("GenerateTreeNode", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public)
-                        .Invoke(null, new object[] { parsedTuple.Item2 });
-
-                    tvParsers.Invoke(new Action(() => { tvParsers.Nodes.Add(dataNode); }));
+                    System.Reflection.MethodInfo mi = parsedTuple.Item1.GetMethod("GenerateTreeNode", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+                    if (mi != null)
+                    {
+                        TreeNode dataNode = (TreeNode)mi.Invoke(null, new object[] { game, parsedTuple.Item2 });
+                        tvParsers.Invoke(new Action(() => { tvParsers.Nodes.Add(dataNode); }));
+                    }
                 }
                 tvParsers.Invoke(new Action(() => { tvParsers.Invalidate(); }));
             });

@@ -18,7 +18,7 @@ namespace Yggdrasil.Dumpers
             TBB itemNameFile = game.GetMessageFile("ItemName");
             TBB itemInfoFile = game.GetMessageFile("ItemInfo");
 
-            string equipFileName = game.GetParsedData<EquipItemData>().FirstOrDefault().ParentTable.GetParent().Filename;
+            string equipFileName = game.GetParsedData<EquipItemParser>().FirstOrDefault().ParentTable.GetParent().Filename;
 
             StringBuilder builder = new StringBuilder();
             builder.AppendLine("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">");
@@ -45,7 +45,7 @@ namespace Yggdrasil.Dumpers
 
             builder.AppendLine("<th>Str</th> <th>Vit</th> <th>Agi</th> <th>Luc</th> <th>Tec</th> <th>HP</th> <th>TP</th> <th>Boost</th></tr>");
 
-            foreach (EquipItemData item in game.GetParsedData<EquipItemData>().OrderBy(x => x.ItemNumber))
+            foreach (EquipItemParser item in game.GetParsedData<EquipItemParser>().OrderBy(x => x.ItemNumber))
             {
                 string name = (itemNameFile.Tables.FirstOrDefault() as TBB.MTBL).Messages[item.ItemNumber - 1].ConvertedString.Replace("\n", "<br>").Replace(" ", "&nbsp;");
                 string description = (itemInfoFile.Tables.FirstOrDefault() as TBB.MTBL).Messages[item.ItemNumber - 1].ConvertedString.Replace("\n", "<br>").Replace(" ", "&nbsp;");
@@ -74,7 +74,7 @@ namespace Yggdrasil.Dumpers
                 "<th>Number</th> <th>Name</th> <th>Description</th> " +
                 "<th>Unk 1</th> <th>Unk 2</th> <th>Recovered HP</th> <th>Recovered TP</th> <th>Unk 3</th> <th>Unk 4</th> <th>Unk 5</th> <th>Buy Price</th> <th>Sell Price</th>");
 
-            foreach (MiscItemData item in game.GetParsedData<MiscItemData>().OrderBy(x => x.ItemNumber))
+            foreach (MiscItemParser item in game.GetParsedData<MiscItemParser>().OrderBy(x => x.ItemNumber))
             {
                 string name = (itemNameFile.Tables.FirstOrDefault() as TBB.MTBL).Messages[item.ItemNumber - 1].ConvertedString.Replace("\n", "<br>").Replace(" ", "&nbsp;");
                 string description = (itemInfoFile.Tables.FirstOrDefault() as TBB.MTBL).Messages[item.ItemNumber - 1].ConvertedString.Replace("\n", "<br>").Replace(" ", "&nbsp;");

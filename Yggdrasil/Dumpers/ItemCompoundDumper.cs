@@ -16,7 +16,7 @@ namespace Yggdrasil.Dumpers
             if (!Directory.Exists(Path.GetDirectoryName(file))) Directory.CreateDirectory(Path.GetDirectoryName(file));
 
             TBB itemNameFile = game.GetMessageFile("ItemName");
-            string compoundFileName = game.GetParsedData<ItemCompoundData>().FirstOrDefault().ParentTable.GetParent().Filename;
+            string compoundFileName = game.GetParsedData<ItemCompoundParser>().FirstOrDefault().ParentTable.GetParent().Filename;
 
             StringBuilder builder = new StringBuilder();
             builder.AppendLine("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">");
@@ -31,7 +31,7 @@ namespace Yggdrasil.Dumpers
             builder.AppendLine(
                 "<th>Number</th><th>Item 1</th><th>Item 2</th><th>Item 3</th><th>Unk 1</th><th>Unk 2</th><th>Count 1</th><th>Count 2</th><th>Count 2</th><th>Unk 3</th><th>Unk 4</th><th>Unk 5</th></tr>");
 
-            foreach (ItemCompoundData item in game.GetParsedData<ItemCompoundData>().OrderBy(x => x.ItemNumber))
+            foreach (ItemCompoundParser item in game.GetParsedData<ItemCompoundParser>().OrderBy(x => x.ItemNumber))
             {
                 builder.AppendLine("<tr>");
                 builder.AppendFormat("<td>{0} ({1})</td> <td>{2} ({3})</td> <td>{4} ({5})</td> <td>{6} ({7})</td> <td>0x{8:X4}</td> <td>0x{9:X4}</td>",

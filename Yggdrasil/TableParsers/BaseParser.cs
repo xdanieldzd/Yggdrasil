@@ -22,6 +22,7 @@ namespace Yggdrasil.TableParsers
         [Browsable(false)]
         public bool HasChanged { get; private set; }
 
+        [Browsable(false)]
         public virtual string EntryDescription { get; private set; }
 
         public BaseParser(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null)

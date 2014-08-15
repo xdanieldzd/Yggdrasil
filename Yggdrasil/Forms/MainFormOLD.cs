@@ -60,7 +60,7 @@ namespace Yggdrasil.Forms
                 character.Image.Save(string.Format(@"E:\Translations\NDS Etrian Odyssey Hacking\_font\{0:X4}.png", character.ID));
             }
             */
-            dataGridView1.DataSource = new BindingList<Yggdrasil.TableParsers.EquipItemData>(game.GetParsedData<Yggdrasil.TableParsers.EquipItemData>());
+            dataGridView1.DataSource = new BindingList<Yggdrasil.TableParsers.EquipItemParser>(game.GetParsedData<Yggdrasil.TableParsers.EquipItemParser>());
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCellsExceptHeader;
             foreach (DataGridViewColumn column in dataGridView1.Columns)
             {
@@ -68,7 +68,7 @@ namespace Yggdrasil.Forms
             }
 
             comboBox1.DisplayMember = "Name";
-            comboBox1.DataSource = game.GetParsedData<Yggdrasil.TableParsers.EquipItemData>();
+            comboBox1.DataSource = game.GetParsedData<Yggdrasil.TableParsers.EquipItemParser>();
 
             propertyGrid1.SelectedObject = ((dynamic)comboBox1.DataSource)[0];
 

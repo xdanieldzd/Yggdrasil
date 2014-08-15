@@ -11,8 +11,7 @@ namespace Yggdrasil.TableParsers
 {
     [ParserUsage("Item.tbb", 0)]
     [Description("Equipment")]
-    [ItemNameDescriptionFiles("ItemName", 0, "ItemInfo", 0)]
-    public class EquipItemData : BaseParser
+    public class EquipItemParser : BaseItemParser
     {
         public enum Groups : byte
         {
@@ -33,23 +32,8 @@ namespace Yggdrasil.TableParsers
             All = 0x01FF,
         };
 
-        public override string EntryDescription { get { return (Name != string.Empty ? Name : "(Unnamed)"); } }
-
-        ushort itemNumber;
         [Browsable(false)]
-        public ushort ItemNumber
-        {
-            get { return itemNumber; }
-            set { base.SetProperty(ref itemNumber, value, () => this.ItemNumber); }
-        }
-
-        [DisplayName("(Name)"), PrioritizedCategory("Information", 7)]
-        [Description("In-game item name.")]
-        public string Name { get; private set; }
-
-        [DisplayName("(Description)"), Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor)), PrioritizedCategory("Information", 7)]
-        [Description("In-game item description.")]
-        public string Description { get; private set; }
+        public override string EntryDescription { get { return Name; } }
 
         ushort itemType;
         [DisplayName("Item Type"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("General", 6)]
@@ -395,11 +379,10 @@ namespace Yggdrasil.TableParsers
             set { ClassUsability = (ushort)((ClassUsability & (ushort)UsabilityMask.All) | value); }
         }
 
-        public EquipItemData(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { Load(); }
+        public EquipItemParser(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { Load(); }
 
         protected override void Load()
         {
-            itemNumber = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 0);
             itemType = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 2);
             attack = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 4);
             attackAlt = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 6);
@@ -431,15 +414,11 @@ namespace Yggdrasil.TableParsers
             classUsability = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 40);
             unknown3 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 42);
 
-            Name = Game.GetMessageString(this.GetAttribute<ItemNameDescriptionFiles>().NameFile, this.GetAttribute<ItemNameDescriptionFiles>().NameTableNo, itemNumber - 1);
-            Description = Game.GetMessageString(this.GetAttribute<ItemNameDescriptionFiles>().DescriptionFile, this.GetAttribute<ItemNameDescriptionFiles>().DescriptionTableNo, itemNumber - 1);
-
             base.Load();
         }
 
         public override void Save()
         {
-            itemNumber.CopyTo(ParentTable.Data[EntryNumber], 0);
             itemType.CopyTo(ParentTable.Data[EntryNumber], 2);
             attack.CopyTo(ParentTable.Data[EntryNumber], 4);
             attackAlt.CopyTo(ParentTable.Data[EntryNumber], 6);
@@ -474,15 +453,15 @@ namespace Yggdrasil.TableParsers
             base.Save();
         }
 
-        public static TreeNode GenerateTreeNode(IList<BaseParser> parsedData)
+        public static TreeNode GenerateTreeNode(GameDataManager game, IList<BaseParser> parsedData)
         {
-            string description = (typeof(EquipItemData).GetCustomAttributes(false).FirstOrDefault(x => x is DescriptionAttribute) as DescriptionAttribute).Description;
+            string description = (typeof(EquipItemParser).GetCustomAttributes(false).FirstOrDefault(x => x is DescriptionAttribute) as DescriptionAttribute).Description;
             TreeNode node = new TreeNode(description) { Tag = parsedData };
 
             foreach (Groups group in (Groups[])Enum.GetValues(typeof(Groups)))
             {
                 TreeNode groupNode = new TreeNode(group.ToString()) { Tag = group };
-                foreach (BaseParser parsed in parsedData.Where(x => (x as EquipItemData).Group == group))
+                foreach (BaseParser parsed in parsedData.Where(x => (x as EquipItemParser).Group == group))
                     groupNode.Nodes.Add(new TreeNode(parsed.EntryDescription.Truncate(20)) { Tag = parsed });
                 node.Nodes.Add(groupNode);
             }

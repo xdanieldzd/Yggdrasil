@@ -49,6 +49,8 @@ namespace Yggdrasil
         List<TBB> dataTableFiles;
         List<BaseParser> parsedData;
 
+        public static Dictionary<ushort, string> ItemNames { get; private set; }
+
         public GameDataManager()
         {
             MessageFiles = null;
@@ -80,6 +82,9 @@ namespace Yggdrasil
                 parsedData = new List<BaseParser>();
                 parsedData.AddRange(ParseDataTable("Item.tbb"));
                 parsedData.AddRange(ParseDataTable("ItemCompound.tbb"));
+
+                loadWaitWorker.ReportProgress(-1, "Fetching item names...");
+                FetchItemNames();
             });
             loadWaitWorker.ProgressChanged += ((s, e) =>
             {
@@ -217,6 +222,31 @@ namespace Yggdrasil
                 }
             }
             return parsedData;
+        }
+
+        private void FetchItemNames()
+        {
+            ItemNames = new Dictionary<ushort, string>();
+
+            ItemNames.Add(0, "(None)");
+
+            foreach (BaseParser parser in parsedData.Where(x => x is BaseItemParser && !(x is ItemCompoundParser)))
+            {
+                ushort itemNumber = (parser as BaseItemParser).ItemNumber;
+                ItemNames.Add(itemNumber, GetItemName(itemNumber));
+            }
+        }
+
+        public string GetItemName(ushort itemNumber)
+        {
+            string value = GetMessageString("ItemName", 0, itemNumber - 1);
+            return (value != string.Empty ? value : "(Unnamed)");
+        }
+
+        public string GetItemDescription(ushort itemNumber)
+        {
+            string value = GetMessageString("ItemInfo", 0, itemNumber - 1);
+            return (value != string.Empty ? value : "(Unnamed)");
         }
 
         private void ItemDataPropertyChanged(object sender, PropertyChangedEventArgs e)

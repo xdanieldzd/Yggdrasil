@@ -117,9 +117,10 @@
       <DependentUpon>StringPreviewControl.cs</DependentUpon>
     </Compile>
     <Compile Include="TableParsers\BaseParser.cs" />
-    <Compile Include="TableParsers\EquipItemData.cs" />
-    <Compile Include="TableParsers\ItemCompoundData.cs" />
-    <Compile Include="TableParsers\MiscItemData.cs" />
+    <Compile Include="TableParsers\EquipItemParser.cs" />
+    <Compile Include="TableParsers\ItemCompoundParser.cs" />
+    <Compile Include="TableParsers\BaseItemParser.cs" />
+    <Compile Include="TableParsers\MiscItemParser.cs" />
     <Compile Include="Controls\TreeViewEx.cs">
       <SubType>Component</SubType>
     </Compile>

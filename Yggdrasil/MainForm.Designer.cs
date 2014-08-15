@@ -40,8 +40,8 @@
             this.tsslStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tpTableData = new System.Windows.Forms.TabPage();
-            this.tpMessages = new System.Windows.Forms.TabPage();
             this.tableEntryEditor = new Yggdrasil.Controls.TableEntryEditor();
+            this.tpMessages = new System.Windows.Forms.TabPage();
             this.messageEditor = new Yggdrasil.Controls.MessageEditor();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -74,7 +74,8 @@
             // openFolderToolStripMenuItem
             // 
             this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
-            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.openFolderToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.openFolderToolStripMenuItem.Text = "&Open Folder...";
             this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
             // 
@@ -82,19 +83,20 @@
             // 
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.saveToolStripMenuItem.Text = "&Save...";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(145, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(190, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -151,17 +153,6 @@
             this.tpTableData.Text = "Data Tables";
             this.tpTableData.UseVisualStyleBackColor = true;
             // 
-            // tpMessages
-            // 
-            this.tpMessages.Controls.Add(this.messageEditor);
-            this.tpMessages.Location = new System.Drawing.Point(4, 22);
-            this.tpMessages.Name = "tpMessages";
-            this.tpMessages.Padding = new System.Windows.Forms.Padding(3);
-            this.tpMessages.Size = new System.Drawing.Size(576, 390);
-            this.tpMessages.TabIndex = 0;
-            this.tpMessages.Text = "Messages";
-            this.tpMessages.UseVisualStyleBackColor = true;
-            // 
             // tableEntryEditor
             // 
             this.tableEntryEditor.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -170,13 +161,24 @@
             this.tableEntryEditor.Size = new System.Drawing.Size(520, 434);
             this.tableEntryEditor.TabIndex = 6;
             // 
+            // tpMessages
+            // 
+            this.tpMessages.Controls.Add(this.messageEditor);
+            this.tpMessages.Location = new System.Drawing.Point(4, 22);
+            this.tpMessages.Name = "tpMessages";
+            this.tpMessages.Padding = new System.Windows.Forms.Padding(3);
+            this.tpMessages.Size = new System.Drawing.Size(526, 440);
+            this.tpMessages.TabIndex = 0;
+            this.tpMessages.Text = "Messages";
+            this.tpMessages.UseVisualStyleBackColor = true;
+            // 
             // messageEditor
             // 
             this.messageEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.messageEditor.Enabled = false;
             this.messageEditor.Location = new System.Drawing.Point(3, 3);
             this.messageEditor.Name = "messageEditor";
-            this.messageEditor.Size = new System.Drawing.Size(570, 384);
+            this.messageEditor.Size = new System.Drawing.Size(520, 434);
             this.messageEditor.TabIndex = 0;
             // 
             // MainForm
