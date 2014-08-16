@@ -106,7 +106,7 @@ namespace Yggdrasil
                 catch (Exception exception)
                 {
                     MessageBox.Show(
-                        string.Format("Exception occured:{0}{0}{1}{2}", Environment.NewLine, exception.GetType().Name, exception.Message), "Exception",
+                        string.Format("{0} occured: {1}{2}{2}{3}", exception.GetType().FullName, exception.Message, Environment.NewLine, "Please contact a developer about this message."), "Exception",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             });

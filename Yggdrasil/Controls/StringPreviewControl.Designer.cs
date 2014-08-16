@@ -50,7 +50,7 @@
             this.txtString.Multiline = true;
             this.txtString.Name = "txtString";
             this.txtString.Size = new System.Drawing.Size(400, 200);
-            this.txtString.TabIndex = 1;
+            this.txtString.TabIndex = 0;
             // 
             // StringPreviewControl
             // 
