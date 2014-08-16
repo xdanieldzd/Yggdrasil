@@ -23,8 +23,10 @@ namespace Yggdrasil
             InitializeComponent();
 
             SetFormTitle();
-
             tsslStatus.Text = "Ready";
+
+            if (Configuration.TableEntryEditorSplitter != -1) tableEntryEditor.SplitterPosition = Configuration.TableEntryEditorSplitter;
+            if (Configuration.MessageEditorSplitter != -1) messageEditor.SplitterPosition = Configuration.MessageEditorSplitter;
 
             game = new GameDataManager();
         }
@@ -66,13 +68,16 @@ namespace Yggdrasil
             }
 
             game.ReadGameDirectory(Configuration.LastDataPath = path);
-            SetFormTitle();
 
             saveToolStripMenuItem.Enabled = tableEntryEditor.Enabled = messageEditor.Enabled = (game != null && game.IsInitialized);
 
-            InitializeTabPage(tabControl.SelectedTab);
+            if (game.IsInitialized)
+            {
+                SetFormTitle();
+                InitializeTabPage(tabControl.SelectedTab);
 
-            tsslStatus.Text = "Data loaded";
+                tsslStatus.Text = "Data loaded";
+            }
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)

@@ -40,8 +40,8 @@
             this.tsslStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tpTableData = new System.Windows.Forms.TabPage();
-            this.tableEntryEditor = new Yggdrasil.Controls.TableEntryEditor();
             this.tpMessages = new System.Windows.Forms.TabPage();
+            this.tableEntryEditor = new Yggdrasil.Controls.TableEntryEditor();
             this.messageEditor = new Yggdrasil.Controls.MessageEditor();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -57,7 +57,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(534, 24);
+            this.menuStrip.Size = new System.Drawing.Size(684, 24);
             this.menuStrip.TabIndex = 0;
             // 
             // fileToolStripMenuItem
@@ -119,9 +119,9 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsslStatus});
-            this.statusStrip.Location = new System.Drawing.Point(0, 490);
+            this.statusStrip.Location = new System.Drawing.Point(0, 540);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(534, 22);
+            this.statusStrip.Size = new System.Drawing.Size(684, 22);
             this.statusStrip.TabIndex = 1;
             // 
             // tsslStatus
@@ -138,7 +138,7 @@
             this.tabControl.Location = new System.Drawing.Point(0, 24);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(534, 466);
+            this.tabControl.Size = new System.Drawing.Size(684, 516);
             this.tabControl.TabIndex = 2;
             this.tabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl_Selected);
             // 
@@ -148,18 +148,10 @@
             this.tpTableData.Location = new System.Drawing.Point(4, 22);
             this.tpTableData.Name = "tpTableData";
             this.tpTableData.Padding = new System.Windows.Forms.Padding(3);
-            this.tpTableData.Size = new System.Drawing.Size(526, 440);
+            this.tpTableData.Size = new System.Drawing.Size(676, 490);
             this.tpTableData.TabIndex = 1;
             this.tpTableData.Text = "Data Tables";
             this.tpTableData.UseVisualStyleBackColor = true;
-            // 
-            // tableEntryEditor
-            // 
-            this.tableEntryEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableEntryEditor.Location = new System.Drawing.Point(3, 3);
-            this.tableEntryEditor.Name = "tableEntryEditor";
-            this.tableEntryEditor.Size = new System.Drawing.Size(520, 434);
-            this.tableEntryEditor.TabIndex = 6;
             // 
             // tpMessages
             // 
@@ -167,10 +159,20 @@
             this.tpMessages.Location = new System.Drawing.Point(4, 22);
             this.tpMessages.Name = "tpMessages";
             this.tpMessages.Padding = new System.Windows.Forms.Padding(3);
-            this.tpMessages.Size = new System.Drawing.Size(526, 440);
+            this.tpMessages.Size = new System.Drawing.Size(676, 490);
             this.tpMessages.TabIndex = 0;
             this.tpMessages.Text = "Messages";
             this.tpMessages.UseVisualStyleBackColor = true;
+            // 
+            // tableEntryEditor
+            // 
+            this.tableEntryEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableEntryEditor.Enabled = false;
+            this.tableEntryEditor.Location = new System.Drawing.Point(3, 3);
+            this.tableEntryEditor.Name = "tableEntryEditor";
+            this.tableEntryEditor.Size = new System.Drawing.Size(670, 484);
+            this.tableEntryEditor.SplitterPosition = 222;
+            this.tableEntryEditor.TabIndex = 6;
             // 
             // messageEditor
             // 
@@ -178,14 +180,15 @@
             this.messageEditor.Enabled = false;
             this.messageEditor.Location = new System.Drawing.Point(3, 3);
             this.messageEditor.Name = "messageEditor";
-            this.messageEditor.Size = new System.Drawing.Size(520, 434);
+            this.messageEditor.Size = new System.Drawing.Size(670, 484);
+            this.messageEditor.SplitterPosition = 222;
             this.messageEditor.TabIndex = 0;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(534, 512);
+            this.ClientSize = new System.Drawing.Size(684, 562);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.menuStrip);

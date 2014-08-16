@@ -17,6 +17,12 @@ namespace Yggdrasil.Controls
     {
         public bool IsInitialized() { return (game != null); }
 
+        public int SplitterPosition
+        {
+            get { return splitContainer1.SplitterDistance; }
+            set { splitContainer1.SplitterDistance = value; }
+        }
+
         GameDataManager game;
         BackgroundWorker treeViewWorker;
 
@@ -25,6 +31,11 @@ namespace Yggdrasil.Controls
             InitializeComponent();
 
             tvMessageFiles.DoubleBuffered(true);
+        }
+
+        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            if (IsInitialized()) Configuration.MessageEditorSplitter = e.SplitX;
         }
 
         public void Initialize(GameDataManager game)
@@ -55,7 +66,9 @@ namespace Yggdrasil.Controls
                             {
                                 if (messageTable.MessageOffsets[j] == 0) continue;
 
-                                TreeNode messageNode = new TreeNode(messageTable.Messages[j].ConvertedString.Truncate(16)) { Tag = messageTable.Messages[j] };
+                                int truncatePosition = messageTable.Messages[j].ConvertedString.IndexOf('\n');
+                                if (truncatePosition == -1) truncatePosition = (game.Version == GameDataManager.Versions.Japanese ? 12 : 24);
+                                TreeNode messageNode = new TreeNode(messageTable.Messages[j].ConvertedString.Truncate(truncatePosition)) { Tag = messageTable.Messages[j] };
                                 tableNode.Nodes.Add(messageNode);
                             }
                         }

@@ -33,6 +33,18 @@ namespace Yggdrasil
             set { source.Configs[ConfigName].Set("LastDataPath", value); }
         }
 
+        public static int TableEntryEditorSplitter
+        {
+            get { return (source.Configs[ConfigName].GetInt("TableEntryEditorSplitter", -1)); }
+            set { source.Configs[ConfigName].Set("TableEntryEditorSplitter", value); }
+        }
+
+        public static int MessageEditorSplitter
+        {
+            get { return (source.Configs[ConfigName].GetInt("MessageEditorSplitter", -1)); }
+            set { source.Configs[ConfigName].Set("MessageEditorSplitter", value); }
+        }
+
         static Configuration()
         {
             PrepareConfig();

@@ -29,26 +29,49 @@
         private void InitializeComponent()
         {
             this.pgData = new System.Windows.Forms.PropertyGrid();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tvParsers = new Yggdrasil.Controls.TreeViewEx();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // pgData
             // 
             this.pgData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pgData.Location = new System.Drawing.Point(165, 0);
+            this.pgData.Location = new System.Drawing.Point(0, 0);
             this.pgData.Name = "pgData";
             this.pgData.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.pgData.Size = new System.Drawing.Size(335, 400);
+            this.pgData.Size = new System.Drawing.Size(330, 400);
             this.pgData.TabIndex = 5;
             this.pgData.ToolbarVisible = false;
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.tvParsers);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.pgData);
+            this.splitContainer1.Size = new System.Drawing.Size(500, 400);
+            this.splitContainer1.SplitterDistance = 166;
+            this.splitContainer1.TabIndex = 6;
+            this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
+            // 
             // tvParsers
             // 
-            this.tvParsers.Dock = System.Windows.Forms.DockStyle.Left;
+            this.tvParsers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tvParsers.HideSelection = false;
             this.tvParsers.Location = new System.Drawing.Point(0, 0);
             this.tvParsers.Name = "tvParsers";
-            this.tvParsers.Size = new System.Drawing.Size(165, 400);
+            this.tvParsers.Size = new System.Drawing.Size(166, 400);
             this.tvParsers.TabIndex = 2;
             this.tvParsers.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvParsers_AfterSelect);
             // 
@@ -56,10 +79,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.pgData);
-            this.Controls.Add(this.tvParsers);
+            this.Controls.Add(this.splitContainer1);
             this.Name = "TableEntryEditor";
             this.Size = new System.Drawing.Size(500, 400);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -68,5 +94,6 @@
 
         private TreeViewEx tvParsers;
         private System.Windows.Forms.PropertyGrid pgData;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }

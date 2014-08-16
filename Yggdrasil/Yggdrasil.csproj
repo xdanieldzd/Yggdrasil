@@ -84,6 +84,7 @@
     <Compile Include="FileTypes\TBB.cs" />
     <Compile Include="FileTypes\TBB.MTBL.cs" />
     <Compile Include="GameDataManager.cs" />
+    <Compile Include="GameDataManagerException.cs" />
     <Compile Include="Helpers\Decompressor.cs" />
     <Compile Include="Helpers\Decompressor.Huffman.cs" />
     <Compile Include="Helpers\Decompressor.RLE.cs" />

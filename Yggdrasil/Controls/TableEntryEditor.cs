@@ -18,6 +18,12 @@ namespace Yggdrasil.Controls
     {
         public bool IsInitialized() { return (game != null); }
 
+        public int SplitterPosition
+        {
+            get { return splitContainer1.SplitterDistance; }
+            set { splitContainer1.SplitterDistance = value; }
+        }
+
         GameDataManager game;
         BackgroundWorker treeViewWorker;
 
@@ -26,6 +32,11 @@ namespace Yggdrasil.Controls
             InitializeComponent();
 
             tvParsers.DoubleBuffered(true);
+        }
+
+        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            if (IsInitialized()) Configuration.TableEntryEditorSplitter = e.SplitX;
         }
 
         public void Initialize(GameDataManager game)

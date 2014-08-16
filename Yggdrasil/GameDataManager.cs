@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.ComponentModel;
 using System.Reflection;
+using System.Windows.Forms;
 
 using Yggdrasil.Forms;
 using Yggdrasil.FileTypes;
@@ -40,7 +41,7 @@ namespace Yggdrasil
         DataLoadWaitForm loadWaitForm;
         BackgroundWorker loadWaitWorker;
 
-        public bool IsInitialized { get { return (Version != Versions.Invalid); } }
+        public bool IsInitialized { get; private set; }
         public bool DataHasChanged { get { return (parsedData != null && parsedData.Any(x => x.HasChanged)); } }
 
         public FontRenderer FontRenderer { get; private set; }
@@ -62,34 +63,52 @@ namespace Yggdrasil
         public void ReadGameDirectory(string path)
         {
             DataPath = path;
-
-            ReadHeaderIdentify();
+            IsInitialized = false;
 
             loadWaitWorker = new BackgroundWorker();
             loadWaitWorker.WorkerReportsProgress = true;
             loadWaitWorker.DoWork += ((s, e) =>
             {
-                PrepareDirectoryUnpack();
+                try
+                {
+                    ReadHeaderIdentify();
 
-                loadWaitWorker.ReportProgress(-1, "Generating character map...");
-                EtrianString.GameVersion = Version;
+                    PrepareDirectoryUnpack();
 
-                loadWaitWorker.ReportProgress(-1, "Initializing font renderer...");
-                FontRenderer = new FontRenderer(this, Path.Combine(path, mainFontFilename));
+                    loadWaitWorker.ReportProgress(-1, "Generating character map...");
+                    EtrianString.GameVersion = Version;
 
-                //PreProcessFBINArchives();
+                    loadWaitWorker.ReportProgress(-1, "Initializing font renderer...");
+                    FontRenderer = new FontRenderer(this, Path.Combine(path, mainFontFilename));
 
-                MessageFiles = ReadDataTablesByExtension(".mbb", messageDirs);
-                dataTableFiles = ReadDataTablesByExtension(".tbb", dataDirs);
+                    //PreProcessFBINArchives();
 
-                EnsureMessageTableIntegrity();
+                    MessageFiles = ReadDataTablesByExtension(".mbb", messageDirs);
+                    dataTableFiles = ReadDataTablesByExtension(".tbb", dataDirs);
 
-                parsedData = new List<BaseParser>();
-                parsedData.AddRange(ParseDataTable("Item.tbb"));
-                parsedData.AddRange(ParseDataTable("ItemCompound.tbb"));
+                    EnsureMessageTableIntegrity();
 
-                loadWaitWorker.ReportProgress(-1, "Fetching item names...");
-                FetchItemNames();
+                    parsedData = new List<BaseParser>();
+                    parsedData.AddRange(ParseDataTable("Item.tbb"));
+                    parsedData.AddRange(ParseDataTable("ItemCompound.tbb"));
+
+                    loadWaitWorker.ReportProgress(-1, "Fetching item names...");
+                    FetchItemNames();
+
+                    IsInitialized = true;
+                }
+                catch (GameDataManagerException gameException)
+                {
+                    MessageBox.Show(
+                        string.Format("{0}{1}{1}{2}", gameException.Message, Environment.NewLine, "Please ensure you've selected a valid game data directory."), "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show(
+                        string.Format("Exception occured:{0}{0}{1}{2}", Environment.NewLine, exception.GetType().Name, exception.Message), "Exception",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             });
             loadWaitWorker.ProgressChanged += ((s, e) =>
             {
@@ -139,6 +158,10 @@ namespace Yggdrasil
 
         private void ReadHeaderIdentify()
         {
+            loadWaitWorker.ReportProgress(-1, "Reading header data...");
+
+            if (!File.Exists(Path.Combine(DataPath, "header.bin"))) throw new GameDataManagerException("File header.bin not found.");
+
             Header = new FileTypes.Header(this, Path.Combine(DataPath, "header.bin"));
             switch (Header.GameCode)
             {
@@ -158,7 +181,7 @@ namespace Yggdrasil
                     mainFontFilename = "data\\Data\\Tex\\Font\\Font10x10_00.cmp";
                     break;
 
-                default: throw new Exception("Unsupported game data");
+                default: throw new GameDataManagerException("Unsupported game data.");
             }
         }
 
