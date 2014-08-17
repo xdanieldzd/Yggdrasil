@@ -58,5 +58,11 @@ namespace Yggdrasil
             }
             Buffer.BlockCopy(bytes, 0, data, offset, bytes.Length);
         }
+
+        public static T1 GetByValue<T1, T2>(this Dictionary<T1, T2> dict, T2 val)
+        {
+            if (!dict.ContainsValue(val)) throw new Exception("Value not found");
+            return dict.FirstOrDefault(x => x.Value.Equals(val)).Key;
+        }
     }
 }

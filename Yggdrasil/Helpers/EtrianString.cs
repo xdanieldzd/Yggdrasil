@@ -559,12 +559,6 @@ namespace Yggdrasil.Helpers
 
         #endregion
 
-        static readonly Dictionary<ushort, char> characterMapCommon = new Dictionary<ushort, char>()
-        {
-            { 0x8001, '\n' },   //line feed / linebreak
-            { 0x8002, '\f' },   //form feed / next page ??
-        };
-
         public static Dictionary<ushort, char> CharacterMap { get; private set; }
 
         public ushort[] RawData { get; private set; }
@@ -577,10 +571,9 @@ namespace Yggdrasil.Helpers
             set
             {
                 gameVersion = value;
-                if (gameVersion != GameDataManager.Versions.Japanese)
-                    CharacterMap = characterMapEnglish.Concat(characterMapCommon).ToDictionary(x => x.Key, x => x.Value);
-                else
-                    CharacterMap = characterMapJapanese.Concat(characterMapCommon).ToDictionary(x => x.Key, x => x.Value);
+
+                if (gameVersion != GameDataManager.Versions.Japanese) CharacterMap = characterMapEnglish;
+                else CharacterMap = characterMapJapanese;
             }
         }
 
@@ -588,8 +581,34 @@ namespace Yggdrasil.Helpers
         {
             ConvertedString = textString;
 
-            RawData = new ushort[ConvertedString.Length];
-            for (int i = 0; i < ConvertedString.Length; i++) RawData[i] = CharacterMap.GetByValue(ConvertedString[i]);
+            List<ushort> newRaw = new List<ushort>();
+
+            for (int src = 0; src < ConvertedString.Length; src++)
+            {
+                int tagLength = ConvertedString.IndexOf('>', src) - src - 2;
+                if (src + 1 < ConvertedString.Length && tagLength >= 0 && (ConvertedString[src] == '<' && ConvertedString[src + 1] == '!'))
+                {
+                    string tag = ConvertedString.Substring(src + 2, tagLength);
+
+                    if (tag.StartsWith("br")) newRaw.Add(0x8001);
+                    else if (tag.StartsWith("pg")) newRaw.Add(0x8002);
+                    else if (tag.StartsWith("color"))
+                    {
+                        newRaw.Add(0x8004);
+                        newRaw.Add(ushort.Parse(tag.Substring(tag.IndexOf('=') + 1), System.Globalization.NumberStyles.HexNumber));
+                    }
+                    else
+                        newRaw.Add(ushort.Parse(tag, System.Globalization.NumberStyles.HexNumber));
+
+                    src += (tag.Length + 2);
+                }
+                else
+                    newRaw.Add(CharacterMap.GetByValue(ConvertedString[src]));
+            }
+
+            newRaw.Add(0x0000);
+
+            RawData = newRaw.ToArray();
         }
 
         public EtrianString(ushort[] data)
@@ -626,25 +645,18 @@ namespace Yggdrasil.Helpers
                 {
                     if ((RawData[i] & 0x8000) == 0x8000 && !CharacterMap.ContainsKey(RawData[i]))
                     {
-                        /* TODO  control codes go HERE */
                         switch (RawData[i] & 0xFF)
                         {
-                            case 0x04:
-                                // color?
-                                i++;
-                                break;
-
-                            default:
-                                builder.AppendFormat("({0:X4})", RawData[i]);
-                                break;
+                            case 0x01: builder.AppendFormat("<!br>{0}", Environment.NewLine); break;
+                            case 0x02: builder.Append("<!pg>"); break;
+                            case 0x04: builder.AppendFormat("<!color={0:X4}>", RawData[i + 1]); i++; break;
+                            default: builder.AppendFormat("<!{0:X4}>", RawData[i]); break;
                         }
                     }
                     else
                     {
-                        if (CharacterMap.ContainsKey(RawData[i]))
-                            builder.Append(CharacterMap[RawData[i]]);
-                        else
-                            builder.AppendFormat("({0:X4})", RawData[i]);
+                        if (CharacterMap.ContainsKey(RawData[i])) builder.Append(CharacterMap[RawData[i]]);
+                        else builder.AppendFormat("<!{0:X4}>", RawData[i]);
                     }
                 }
                 ConvertedString = builder.ToString();
@@ -677,15 +689,6 @@ namespace Yggdrasil.Helpers
         public override string ToString()
         {
             return ConvertedString;
-        }
-    }
-
-    public static class Extensions
-    {
-        public static T1 GetByValue<T1, T2>(this Dictionary<T1, T2> dict, T2 val)
-        {
-            if (!dict.ContainsValue(val)) throw new Exception("Value not found");
-            return dict.FirstOrDefault(x => x.Value.Equals(val)).Key;
         }
     }
 }

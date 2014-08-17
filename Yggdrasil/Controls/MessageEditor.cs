@@ -66,7 +66,7 @@ namespace Yggdrasil.Controls
                             {
                                 if (messageTable.MessageOffsets[j] == 0) continue;
 
-                                int truncatePosition = messageTable.Messages[j].ConvertedString.IndexOf('\n');
+                                int truncatePosition = messageTable.Messages[j].ConvertedString.IndexOf(Environment.NewLine);
                                 if (truncatePosition == -1) truncatePosition = (game.Version == GameDataManager.Versions.Japanese ? 12 : 24);
                                 TreeNode messageNode = new TreeNode(messageTable.Messages[j].ConvertedString.Truncate(truncatePosition)) { Tag = messageTable.Messages[j] };
                                 tableNode.Nodes.Add(messageNode);

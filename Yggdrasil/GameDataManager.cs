@@ -96,6 +96,11 @@ namespace Yggdrasil
                     FetchItemNames();
 
                     IsInitialized = true;
+
+                    /*EtrianString testString = new EtrianString("test!<!br><!pg><!color=0001>colored!<!color=0004>something else~<!8123><!8ABC><!0456><!1DEF>");
+                    StringBuilder builder = new StringBuilder();
+                    foreach (ushort val in testString.RawData) builder.AppendFormat("{0:X4} ", val);
+                    MessageBox.Show(builder.ToString());*/
                 }
                 catch (GameDataManagerException gameException)
                 {

@@ -30,10 +30,7 @@ namespace Yggdrasil.Controls
             this.game = game;
             this.etrianString = etrianString;
 
-            if (renderedString != null) renderedString.Dispose();
-
-            renderedString = game.FontRenderer.RenderString(this.etrianString, 256, 1);
-            txtString.Text = this.etrianString.ConvertedString.Replace("\r\n", "\n").Replace("\n", Environment.NewLine);
+            UpdateString();
         }
 
         public void Terminate()
@@ -43,10 +40,24 @@ namespace Yggdrasil.Controls
             txtString.Text = string.Empty;
         }
 
+        private void UpdateString()
+        {
+            if (renderedString != null) renderedString.Dispose();
+
+            renderedString = game.FontRenderer.RenderString(this.etrianString, 256, 1);
+            txtString.Text = this.etrianString.ConvertedString;
+        }
+
         private void pbPreview_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.Black);
             if (etrianString != null && renderedString != null) e.Graphics.DrawImageUnscaled(renderedString, Point.Empty);
+        }
+
+        private void txtString_TextChanged(object sender, EventArgs e)
+        {
+            this.etrianString = txtString.Text;
+            UpdateString();
         }
     }
 }

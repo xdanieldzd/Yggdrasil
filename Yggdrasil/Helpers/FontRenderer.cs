@@ -167,7 +167,7 @@ namespace Yggdrasil.Helpers
 
         public Bitmap RenderString(EtrianString str, int width = 256, int spacingModifier = 0)
         {
-            int newLines = str.RawData.Count(xx => xx == EtrianString.CharacterMap.GetByValue('\n')) + 1;
+            int newLines = str.RawData.Count(xx => (xx == 0x8001 || xx == 0x8002)) + 1;
 
             Bitmap rendered = new Bitmap(width, Math.Max(newLines, 1) * CharacterSize.Height);
 
@@ -181,16 +181,17 @@ namespace Yggdrasil.Helpers
                 {
                     if ((str.RawData[i] & 0x8000) == 0x8000 && !EtrianString.CharacterMap.ContainsKey(str.RawData[i]))
                     {
-                        /* TODO  control codes go HERE */
+                        /* TODO: Figure out at least colors, not sure what else might be needed for preview here... */
                         switch (str.RawData[i] & 0xFF)
                         {
                             case 0x04:
                                 // Color
-                                //6==red??
                                 ushort color = str.RawData[i + 1];
                                 if (color == 0) colorMap[0].NewColor = colorMap[0].OldColor;
                                 else if (color == 4) colorMap[0].NewColor = palette[1];
                                 else if (color == 6) colorMap[0].NewColor = Color.FromArgb(0xF8, 0x70, 0x48);
+                                else if (color == 9) colorMap[0].NewColor = Color.FromArgb(0xEF, 0xF7, 0xAD);
+                                else if (color == 0xA) colorMap[0].NewColor = Color.FromArgb(0x5A, 0xEF, 0xCE);
                                 imageAttrib.SetRemapTable(colorMap);
                                 i++;
                                 continue;
@@ -200,9 +201,8 @@ namespace Yggdrasil.Helpers
                         }
                     }
 
-                    if (str.RawData[i] == EtrianString.CharacterMap.GetByValue('\n'))
+                    if (str.RawData[i] == 0x8001 || str.RawData[i] == 0x8002)
                     {
-                        colorMap[0].NewColor = colorMap[0].OldColor;
                         y += (CharacterSize.Height - 1);
                         x = 0;
                     }
