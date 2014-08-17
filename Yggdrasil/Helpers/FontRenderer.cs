@@ -201,7 +201,17 @@ namespace Yggdrasil.Helpers
                         }
                     }
 
-                    if (str.RawData[i] == 0x8001 || str.RawData[i] == 0x8002)
+                    if (str.RawData[i] == 0x8001 && str.RawData[i + 1] == 0x8002)
+                    {
+                        y += (CharacterSize.Height - 1);
+                        using (Pen pen = new Pen(Color.FromArgb(128, Color.White)))
+                        {
+                            g.DrawLine(pen, new Point(0, y + 1), new Point(rendered.Width, y + 1));
+                        }
+                        y++;
+                        x = 0;
+                    }
+                    else if (str.RawData[i] == 0x8001)
                     {
                         y += (CharacterSize.Height - 1);
                         x = 0;

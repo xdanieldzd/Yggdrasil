@@ -56,7 +56,7 @@ namespace Yggdrasil.Controls
         private void pbPreview_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.Black);
-            if (etrianString != null && renderedString != null) e.Graphics.DrawImageUnscaled(renderedString, Point.Empty);
+            if (etrianString != null && renderedString != null) e.Graphics.DrawImageUnscaled(renderedString, 1, 1);
         }
 
         private void txtString_TextChanged(object sender, EventArgs e)
