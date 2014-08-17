@@ -16,6 +16,7 @@ namespace Yggdrasil.Controls
         GameDataManager game;
         EtrianString etrianString;
 
+        bool isInitializing;
         Bitmap renderedString;
 
         public StringPreviewControl()
@@ -23,6 +24,8 @@ namespace Yggdrasil.Controls
             InitializeComponent();
 
             Application.Idle += ((s, e) => { pbPreview.Invalidate(); });
+
+            this.txtString.TextChanged += new EventHandler(txtString_TextChanged);
         }
 
         public void Initialize(GameDataManager game, EtrianString etrianString)
@@ -30,7 +33,9 @@ namespace Yggdrasil.Controls
             this.game = game;
             this.etrianString = etrianString;
 
+            isInitializing = true;
             UpdateString();
+            isInitializing = false;
         }
 
         public void Terminate()
@@ -56,6 +61,8 @@ namespace Yggdrasil.Controls
 
         private void txtString_TextChanged(object sender, EventArgs e)
         {
+            if (isInitializing) return;
+
             this.etrianString = txtString.Text;
             UpdateString();
         }

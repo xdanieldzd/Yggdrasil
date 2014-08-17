@@ -51,7 +51,6 @@
             this.txtString.Name = "txtString";
             this.txtString.Size = new System.Drawing.Size(400, 200);
             this.txtString.TabIndex = 0;
-            this.txtString.TextChanged += new System.EventHandler(this.txtString_TextChanged);
             // 
             // StringPreviewControl
             // 

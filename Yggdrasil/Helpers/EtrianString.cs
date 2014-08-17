@@ -590,8 +590,7 @@ namespace Yggdrasil.Helpers
                 {
                     string tag = ConvertedString.Substring(src + 2, tagLength);
 
-                    if (tag.StartsWith("br")) newRaw.Add(0x8001);
-                    else if (tag.StartsWith("pg")) newRaw.Add(0x8002);
+                    if (tag.StartsWith("pg")) newRaw.Add(0x8002);
                     else if (tag.StartsWith("color"))
                     {
                         newRaw.Add(0x8004);
@@ -602,11 +601,18 @@ namespace Yggdrasil.Helpers
 
                     src += (tag.Length + 2);
                 }
+                else if (ConvertedString[src] == '\r' && ConvertedString[src + 1] == '\n')
+                {
+                    newRaw.Add(0x8001);
+                    src++;
+                }
+                else if (ConvertedString[src] == '\n')
+                {
+                    newRaw.Add(0x8001);
+                }
                 else
                     newRaw.Add(CharacterMap.GetByValue(ConvertedString[src]));
             }
-
-            newRaw.Add(0x0000);
 
             RawData = newRaw.ToArray();
         }
@@ -647,7 +653,7 @@ namespace Yggdrasil.Helpers
                     {
                         switch (RawData[i] & 0xFF)
                         {
-                            case 0x01: builder.AppendFormat("<!br>{0}", Environment.NewLine); break;
+                            case 0x01: builder.Append(Environment.NewLine); break;
                             case 0x02: builder.Append("<!pg>"); break;
                             case 0x04: builder.AppendFormat("<!color={0:X4}>", RawData[i + 1]); i++; break;
                             default: builder.AppendFormat("<!{0:X4}>", RawData[i]); break;
