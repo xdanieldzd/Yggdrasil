@@ -43,6 +43,8 @@
             this.tableEntryEditor = new Yggdrasil.Controls.TableEntryEditor();
             this.tpMessages = new System.Windows.Forms.TabPage();
             this.messageEditor = new Yggdrasil.Controls.MessageEditor();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showMessageLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -54,6 +56,7 @@
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.toolsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -184,6 +187,21 @@
             this.messageEditor.SplitterPosition = 222;
             this.messageEditor.TabIndex = 0;
             // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showMessageLogToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.toolsToolStripMenuItem.Text = "&Tools";
+            // 
+            // showMessageLogToolStripMenuItem
+            // 
+            this.showMessageLogToolStripMenuItem.Name = "showMessageLogToolStripMenuItem";
+            this.showMessageLogToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.showMessageLogToolStripMenuItem.Text = "Show Message &Log...";
+            this.showMessageLogToolStripMenuItem.Click += new System.EventHandler(this.showMessageLogToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -224,5 +242,7 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private Controls.TableEntryEditor tableEntryEditor;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showMessageLogToolStripMenuItem;
     }
 }

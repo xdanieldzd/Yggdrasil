@@ -31,12 +31,15 @@ namespace Yggdrasil
             game = new GameDataManager();
         }
 
-        private void SetFormTitle()
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendFormat("{0} {1}", Application.ProductName, VersionManagement.CreateVersionString(Application.ProductVersion));
-            if (game != null && game.IsInitialized) stringBuilder.AppendFormat(" - [{0}]", game.Header.GameTitle);
-            this.Text = stringBuilder.ToString();
+            e.Cancel = (game.DataHasChanged &&
+                MessageBox.Show("Data has been changed. Discard changes and quit without saving?", "Unsaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No);
+        }
+
+        private void tabControl_Selected(object sender, TabControlEventArgs e)
+        {
+            InitializeTabPage(e.TabPage);
         }
 
         private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -56,6 +59,40 @@ namespace Yggdrasil
                 fbd.ShowNewFolderButton = false;
                 if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK) LoadGameData(fbd.SelectedPath);
             }
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int changedFiles = game.SaveAllChanges();
+
+            if (changedFiles == 0)
+                tsslStatus.Text = "No changes to save";
+            else
+                tsslStatus.Text = string.Format("Data saved; {0} file(s) changed", changedFiles);
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void showMessageLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.Logger.ShowDialog();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(string.Format("{0} {1}\n\nWritten 2014 by xdaniel - https://github.com/xdanieldzd/", Application.ProductName, VersionManagement.CreateVersionString(Application.ProductVersion)),
+                "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void SetFormTitle()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendFormat("{0} {1}", Application.ProductName, VersionManagement.CreateVersionString(Application.ProductVersion));
+            if (game != null && game.IsInitialized) stringBuilder.AppendFormat(" - [{0}]", game.Header.GameTitle);
+            this.Text = stringBuilder.ToString();
         }
 
         private void LoadGameData(string path)
@@ -80,33 +117,6 @@ namespace Yggdrasil
             }
         }
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            int changedFiles = game.SaveAllChanges();
-
-            if (changedFiles == 0)
-                tsslStatus.Text = "No changes to save";
-            else
-                tsslStatus.Text = string.Format("Data saved; {0} file(s) changed", changedFiles);
-        }
-
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show(string.Format("{0} {1}\n\nWritten 2014 by xdaniel - https://github.com/xdanieldzd/", Application.ProductName, VersionManagement.CreateVersionString(Application.ProductVersion)),
-                "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            e.Cancel = (game.DataHasChanged &&
-                MessageBox.Show("Data has been changed. Discard changes and quit without saving?", "Unsaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No);
-        }
-
         private void InitializeTabPage(TabPage tabPage)
         {
             if ((game != null && game.IsInitialized) && tabPage.Tag == null)
@@ -115,11 +125,6 @@ namespace Yggdrasil
                 if (editorControl != null && !editorControl.IsInitialized()) editorControl.Initialize(game);
                 tabPage.Tag = game;
             }
-        }
-
-        private void tabControl_Selected(object sender, TabControlEventArgs e)
-        {
-            InitializeTabPage(e.TabPage);
         }
     }
 }

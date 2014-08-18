@@ -71,12 +71,16 @@ namespace Yggdrasil
             DataPath = path;
             IsInitialized = false;
 
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+
             loadWaitWorker = new BackgroundWorker();
             loadWaitWorker.WorkerReportsProgress = true;
             loadWaitWorker.DoWork += ((s, e) =>
             {
                 try
                 {
+                    loadWaitWorker.ReportProgress(-1, "Reading game directory...");
                     ReadHeaderIdentify();
 
                     PrepareDirectoryUnpack();
@@ -92,9 +96,7 @@ namespace Yggdrasil
 
                     EnsureMessageTableIntegrity();
 
-                    parsedData = new List<BaseParser>();
-                    parsedData.AddRange(ParseDataTable("Item.tbb"));
-                    parsedData.AddRange(ParseDataTable("ItemCompound.tbb"));
+                    parsedData = ParseDataTables();
 
                     loadWaitWorker.ReportProgress(-1, "Fetching item names...");
                     FetchItemNames();
@@ -117,10 +119,13 @@ namespace Yggdrasil
             loadWaitWorker.ProgressChanged += ((s, e) =>
             {
                 loadWaitForm.PrintStatus(e.UserState as string);
+                Program.Logger.LogMessage(e.UserState as string);
             });
             loadWaitWorker.RunWorkerCompleted += ((s, e) =>
             {
                 loadWaitForm.Close();
+                stopwatch.Stop();
+                Program.Logger.LogMessage("Game directory read in {0:0.000} sec...", stopwatch.Elapsed.TotalSeconds);
             });
             loadWaitWorker.RunWorkerAsync();
 
@@ -187,6 +192,8 @@ namespace Yggdrasil
 
                 default: throw new GameDataManagerException("Unsupported game data.");
             }
+
+            loadWaitWorker.ReportProgress(-1, string.Format("Identified '{0} {1}' as {2} version...", Header.GameTitle, Header.GameCode, Version));
         }
 
         private void PrepareDirectoryUnpack()
@@ -384,38 +391,42 @@ namespace Yggdrasil
             foreach (TBB file in filesToRemove) MessageFiles.Remove(file);
         }
 
-        private List<BaseParser> ParseDataTable(string tableFileName)
+        private List<BaseParser> ParseDataTables()
         {
-            TBB tableFile = dataTableFiles.FirstOrDefault(x => Path.GetFileName(x.Filename) == tableFileName);
-            if (tableFile == null) throw new ArgumentException("Invalid table file name");
-
-            loadWaitWorker.ReportProgress(-1, string.Format("Parsing {0}...", tableFileName));
-
             List<BaseParser> parsedData = new List<BaseParser>();
 
             List<Type> typesWithAttrib = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.GetCustomAttributes(typeof(ParserUsage), false).Length > 0).ToList();
             foreach (Type type in typesWithAttrib)
             {
-                foreach (ParserUsage attrib in type.GetCustomAttributes(false).Where(x => x is ParserUsage && (x as ParserUsage).FileName == tableFileName))
+                foreach (ParserUsage attrib in type.GetCustomAttributes(false).Where(x => x is ParserUsage))
                 {
-                    TBB.TBL1 table = (tableFile.Tables[attrib.TableNo] as TBB.TBL1);
+                    loadWaitWorker.ReportProgress(-1, string.Format("Parsing {0}...", attrib.FileName));
 
+                    TBB tableFile = dataTableFiles.FirstOrDefault(x => Path.GetFileName(x.Filename) == attrib.FileName);
+
+                    if (tableFile == null)
+                        throw new FileNotFoundException(string.Format("Table file {0} not found in loaded files", attrib.FileName));
+
+                    if (attrib.TableNo >= tableFile.NumTables)
+                        throw new ArgumentException(string.Format("Table number {0} does not exist in file", attrib.TableNo));
+
+                    if (!(tableFile.Tables[attrib.TableNo] is TBB.TBL1))
+                        throw new InvalidCastException(string.Format("Table number {0} is of wrong type {1}", attrib.TableNo, tableFile.Tables[attrib.TableNo].GetType().Name));
+
+                    TBB.TBL1 table = (tableFile.Tables[attrib.TableNo] as TBB.TBL1);
                     for (int i = 0; i < table.Data.Length; i++)
-                    {
                         parsedData.Add((BaseParser)Activator.CreateInstance(type, new object[] { this, table, i, (PropertyChangedEventHandler)ItemDataPropertyChanged }));
-                    }
                 }
             }
+
             return parsedData;
         }
 
         private void FetchItemNames()
         {
             ItemNames = new Dictionary<ushort, string>();
-
             ItemNames.Add(0, "(None)");
-
-            foreach (BaseParser parser in parsedData.Where(x => x is BaseItemParser && !(x is ItemCompoundParser)))
+            foreach (BaseParser parser in parsedData.Where(x => (x is EquipItemParser || x is MiscItemParser)))
             {
                 ushort itemNumber = (parser as BaseItemParser).ItemNumber;
                 ItemNames.Add(itemNumber, GetItemName(itemNumber));
