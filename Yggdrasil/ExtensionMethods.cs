@@ -17,7 +17,10 @@ namespace Yggdrasil
 
         public static dynamic GetAttribute<T>(this object obj)
         {
-            return obj.GetType().GetCustomAttributes(typeof(T), false).FirstOrDefault();
+            if (obj is Type)
+                return (obj as Type).GetCustomAttributes(typeof(T), false).FirstOrDefault();
+            else
+                return obj.GetType().GetCustomAttributes(typeof(T), false).FirstOrDefault();
         }
 
         public static int Round(this int value, int roundTo)

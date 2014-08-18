@@ -67,7 +67,6 @@
       <DependentUpon>TableEntryEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomConverters.cs" />
-    <Compile Include="FileTypes\BIN.cs" />
     <Compile Include="Forms\DataLoadWaitForm.cs">
       <SubType>Form</SubType>
     </Compile>

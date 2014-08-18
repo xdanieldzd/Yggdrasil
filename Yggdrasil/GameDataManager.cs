@@ -16,8 +16,15 @@ namespace Yggdrasil
 {
     public class GameDataManager
     {
-        static readonly string[] messageDirs = new string[] { "data\\Data\\CharaSel", "data\\Data\\Dungeon", "data\\Data\\Event", "data\\Data\\Opening", "data\\Data\\Param", "data\\Data\\SaveLoad" };
-        static readonly string[] dataDirs = new string[] { "data\\Data\\Param", "data\\Data\\Battle", "data\\Data\\Event" };
+        static readonly string[] messageDirs = new string[]
+        {
+            "data\\Data\\CharaSel", "data\\Data\\Dungeon", "data\\Data\\Event", "data\\Data\\Opening", "data\\Data\\Param", "data\\Data\\SaveLoad", "data\\Data\\Battle"
+        };
+
+        static readonly string[] dataDirs = new string[]
+        {
+            "data\\Data\\Param", "data\\Data\\Battle", "data\\Data\\Event"
+        };
 
         public enum Versions { Invalid, European, American, Japanese };
         public enum Languages { German, English, Spanish, French, Italian };
@@ -47,7 +54,6 @@ namespace Yggdrasil
         public FontRenderer FontRenderer { get; private set; }
         public List<TBB> MessageFiles { get; private set; }
 
-        List<BIN> fbinArchives;
         List<TBB> dataTableFiles;
         List<BaseParser> parsedData;
 
@@ -81,8 +87,6 @@ namespace Yggdrasil
                     loadWaitWorker.ReportProgress(-1, "Initializing font renderer...");
                     FontRenderer = new FontRenderer(this, Path.Combine(path, mainFontFilename));
 
-                    //PreProcessFBINArchives();
-
                     MessageFiles = ReadDataTablesByExtension(".mbb", messageDirs);
                     dataTableFiles = ReadDataTablesByExtension(".tbb", dataDirs);
 
@@ -96,11 +100,6 @@ namespace Yggdrasil
                     FetchItemNames();
 
                     IsInitialized = true;
-
-                    /*EtrianString testString = new EtrianString("test!<!br><!pg><!color=0001>colored!<!color=0004>something else~<!8123><!8ABC><!0456><!1DEF>");
-                    StringBuilder builder = new StringBuilder();
-                    foreach (ushort val in testString.RawData) builder.AppendFormat("{0:X4} ", val);
-                    MessageBox.Show(builder.ToString());*/
                 }
                 catch (GameDataManagerException gameException)
                 {
@@ -221,6 +220,8 @@ namespace Yggdrasil
                     new Tuple<string, string, string, bool, bool>("data\\Data\\Param", "itemIllInfo.cmp", "itemIllInfo.mbb", true, true),
                     new Tuple<string, string, string, bool, bool>("data\\Data\\Param", "ItemInfo.cmp", "ItemInfo.mbb", true, true),
                     new Tuple<string, string, string, bool, bool>("data\\Data\\Param", "ItemName.cmp", "ItemName.mbb", true, true),
+                    
+                    new Tuple<string, string, string, bool, bool>("data\\Data\\Battle", "BtlMess.cmp", "BtlMess.mbb", true, true),
                 };
 
                 List<Tuple<string, string, string, bool, bool>> dirExtTuplesLocalized = new List<Tuple<string, string, string, bool, bool>>();
@@ -341,22 +342,6 @@ namespace Yggdrasil
             }
         }
 
-        private void PreProcessFBINArchives()
-        {
-            loadWaitWorker.ReportProgress(-1, "Pre-processing FBIN archives...");
-
-            fbinArchives = new List<BIN>();
-
-            foreach (string directory in dataDirs)
-            {
-                List<string> filePaths = Directory.EnumerateFiles(Path.Combine(DataPath, directory), "*.*", SearchOption.AllDirectories)
-                    .Where(x => x.ToLowerInvariant().EndsWith(".bin"))
-                    .ToList();
-
-                foreach (string filePath in filePaths) fbinArchives.Add(new BIN(this, filePath));
-            }
-        }
-
         private List<TBB> ReadDataTablesByExtension(string extension, string[] directories)
         {
             if (extension == null || extension == string.Empty) throw new ArgumentException("No extension given");
@@ -376,21 +361,6 @@ namespace Yggdrasil
                     if (tbb.IsValid()) dataTables.Add(tbb);
 
                     loadWaitWorker.ReportProgress(-1, string.Format("Reading {0}...", Path.GetFileName(filePath)));
-                }
-
-                if (fbinArchives != null)
-                {
-                    foreach (BIN fbin in fbinArchives)
-                    {
-                        if (Path.GetDirectoryName(fbin.Filename).EndsWith(directory) && !Path.GetFileName(fbin.Filename).StartsWith("2D_ObjData"))
-                        {
-                            foreach (uint offset in fbin.FileOffsets)
-                            {
-                                TBB tbb = new TBB(this, fbin, offset);
-                                if (tbb.IsValid()) dataTables.Add(tbb);
-                            }
-                        }
-                    }
                 }
             }
 

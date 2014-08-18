@@ -190,6 +190,7 @@ namespace Yggdrasil.Helpers
                                 if (color == 0) colorMap[0].NewColor = colorMap[0].OldColor;
                                 else if (color == 4) colorMap[0].NewColor = palette[1];
                                 else if (color == 6) colorMap[0].NewColor = Color.FromArgb(0xF8, 0x70, 0x48);
+                                else if (color == 7) colorMap[0].NewColor = Color.FromArgb(0x4A, 0xBD, 0xA5);
                                 else if (color == 9) colorMap[0].NewColor = Color.FromArgb(0xEF, 0xF7, 0xAD);
                                 else if (color == 0xA) colorMap[0].NewColor = Color.FromArgb(0x5A, 0xEF, 0xCE);
                                 imageAttrib.SetRemapTable(colorMap);
@@ -201,7 +202,7 @@ namespace Yggdrasil.Helpers
                         }
                     }
 
-                    if (str.RawData[i] == 0x8001 && str.RawData[i + 1] == 0x8002)
+                    if (i + 1 < str.RawData.Length && (str.RawData[i] == 0x8001 && str.RawData[i + 1] == 0x8002))
                     {
                         y += (CharacterSize.Height - 1);
                         using (Pen pen = new Pen(Color.FromArgb(128, Color.White)))
