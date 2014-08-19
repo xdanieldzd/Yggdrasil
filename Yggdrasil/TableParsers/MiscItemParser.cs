@@ -25,6 +25,8 @@ namespace Yggdrasil.TableParsers
             get { return unknown1; }
             set { base.SetProperty(ref unknown1, value, () => this.Unknown1); }
         }
+        public bool ShouldSerializeUnknown1() { return !(this.Unknown1 == (dynamic)base.originalValues["Unknown1"]); }
+        public void ResetUnknown1() { this.Unknown1 = (dynamic)base.originalValues["Unknown1"]; }
 
         // "special item variable" ??
         ushort unknown2;
@@ -34,6 +36,8 @@ namespace Yggdrasil.TableParsers
             get { return unknown2; }
             set { base.SetProperty(ref unknown2, value, () => this.Unknown2); }
         }
+        public bool ShouldSerializeUnknown2() { return !(this.Unknown2 == (dynamic)base.originalValues["Unknown2"]); }
+        public void ResetUnknown2() { this.Unknown2 = (dynamic)base.originalValues["Unknown2"]; }
 
         ushort recoveredHP;
         [DisplayName("Recovered HP"), PrioritizedCategory("Modifiers", 2)]
@@ -43,6 +47,8 @@ namespace Yggdrasil.TableParsers
             get { return recoveredHP; }
             set { base.SetProperty(ref recoveredHP, value, () => this.RecoveredHP); }
         }
+        public bool ShouldSerializeRecoveredHP() { return !(this.RecoveredHP == (dynamic)base.originalValues["RecoveredHP"]); }
+        public void ResetRecoveredHP() { this.RecoveredHP = (dynamic)base.originalValues["RecoveredHP"]; }
 
         ushort recoveredTP;
         [DisplayName("Recovered TP"), PrioritizedCategory("Modifiers", 2)]
@@ -52,6 +58,8 @@ namespace Yggdrasil.TableParsers
             get { return recoveredTP; }
             set { base.SetProperty(ref recoveredTP, value, () => this.RecoveredTP); }
         }
+        public bool ShouldSerializeRecoveredTP() { return !(this.RecoveredTP == (dynamic)base.originalValues["RecoveredTP"]); }
+        public void ResetRecoveredTP() { this.RecoveredTP = (dynamic)base.originalValues["RecoveredTP"]; }
 
         ushort recoveredBoost;
         [DisplayName("Boost Modifier"), PrioritizedCategory("Modifiers", 2)]
@@ -61,6 +69,8 @@ namespace Yggdrasil.TableParsers
             get { return recoveredBoost; }
             set { base.SetProperty(ref recoveredBoost, value, () => this.RecoveredBoost); }
         }
+        public bool ShouldSerializeRecoveredBoost() { return !(this.RecoveredBoost == (dynamic)base.originalValues["RecoveredBoost"]); }
+        public void ResetRecoveredBoost() { this.RecoveredBoost = (dynamic)base.originalValues["RecoveredBoost"]; }
 
         // 0004 -> can USE
         ushort unknown3;
@@ -70,6 +80,8 @@ namespace Yggdrasil.TableParsers
             get { return unknown3; }
             set { base.SetProperty(ref unknown3, value, () => this.Unknown3); }
         }
+        public bool ShouldSerializeUnknown3() { return !(this.Unknown3 == (dynamic)base.originalValues["Unknown3"]); }
+        public void ResetUnknown3() { this.Unknown3 = (dynamic)base.originalValues["Unknown3"]; }
 
         byte unknown4;
         [DisplayName("Unknown 4"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
@@ -78,6 +90,8 @@ namespace Yggdrasil.TableParsers
             get { return unknown4; }
             set { base.SetProperty(ref unknown4, value, () => this.Unknown4); }
         }
+        public bool ShouldSerializeUnknown4() { return !(this.Unknown4 == (dynamic)base.originalValues["Unknown4"]); }
+        public void ResetUnknown4() { this.Unknown4 = (dynamic)base.originalValues["Unknown4"]; }
 
         // 01 -> BUY: if unlocked, sold out?!
         // 08 -> can't DISCARD nor SELL
@@ -89,6 +103,8 @@ namespace Yggdrasil.TableParsers
             get { return unknown5; }
             set { base.SetProperty(ref unknown5, value, () => this.Unknown5); }
         }
+        public bool ShouldSerializeUnknown5() { return !(this.Unknown5 == (dynamic)base.originalValues["Unknown5"]); }
+        public void ResetUnknown5() { this.Unknown5 = (dynamic)base.originalValues["Unknown5"]; }
 
         uint buyPrice;
         [DisplayName("Buy Price"), TypeConverter(typeof(CustomConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 1)]
@@ -98,6 +114,8 @@ namespace Yggdrasil.TableParsers
             get { return buyPrice; }
             set { base.SetProperty(ref buyPrice, value, () => this.BuyPrice); }
         }
+        public bool ShouldSerializeBuyPrice() { return !(this.BuyPrice == (dynamic)base.originalValues["BuyPrice"]); }
+        public void ResetBuyPrice() { this.BuyPrice = (dynamic)base.originalValues["BuyPrice"]; }
 
         uint sellPrice;
         [DisplayName("Sell Price"), TypeConverter(typeof(CustomConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 1)]
@@ -107,8 +125,11 @@ namespace Yggdrasil.TableParsers
             get { return sellPrice; }
             set { base.SetProperty(ref sellPrice, value, () => this.SellPrice); }
         }
+        public bool ShouldSerializeSellPrice() { return !(this.SellPrice == (dynamic)base.originalValues["SellPrice"]); }
+        public void ResetSellPrice() { this.SellPrice = (dynamic)base.originalValues["SellPrice"]; }
 
-        public MiscItemParser(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { Load(); }
+        public MiscItemParser(GameDataManager gameDataManager, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
+            base(gameDataManager, table, entryNumber, propertyChanged) { Load(); }
 
         protected override void Load()
         {
@@ -142,7 +163,7 @@ namespace Yggdrasil.TableParsers
             base.Save();
         }
 
-        public static TreeNode GenerateTreeNode(GameDataManager game, IList<BaseParser> parsedData)
+        public static TreeNode GenerateTreeNode(GameDataManager gameDataManager, IList<BaseParser> parsedData)
         {
             string description = (typeof(MiscItemParser).GetCustomAttributes(false).FirstOrDefault(x => x is DescriptionAttribute) as DescriptionAttribute).Description;
             TreeNode node = new TreeNode(description) { Tag = parsedData };

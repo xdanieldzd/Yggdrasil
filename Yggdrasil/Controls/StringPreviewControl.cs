@@ -13,7 +13,7 @@ namespace Yggdrasil.Controls
 {
     public partial class StringPreviewControl : UserControl
     {
-        GameDataManager game;
+        GameDataManager gameDataManager;
         EtrianString etrianString;
 
         bool isInitializing;
@@ -30,7 +30,7 @@ namespace Yggdrasil.Controls
 
         public void Initialize(GameDataManager game, EtrianString etrianString)
         {
-            this.game = game;
+            this.gameDataManager = game;
             this.etrianString = etrianString;
 
             isInitializing = true;
@@ -49,7 +49,7 @@ namespace Yggdrasil.Controls
         {
             if (renderedString != null) renderedString.Dispose();
 
-            renderedString = game.FontRenderer.RenderString(this.etrianString, 256, 1);
+            renderedString = gameDataManager.FontRenderer.RenderString(this.etrianString, 256, 1);
             txtString.Text = this.etrianString.ConvertedString;
         }
 

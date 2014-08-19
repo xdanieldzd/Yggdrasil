@@ -8,7 +8,7 @@ namespace Yggdrasil.Controls
     interface IEditorControl
     {
         bool IsInitialized();
-        void Initialize(GameDataManager game);
+        void Initialize(GameDataManager gameDataManager);
         void Terminate();
     }
 }

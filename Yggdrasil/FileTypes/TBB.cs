@@ -8,7 +8,7 @@ namespace Yggdrasil.FileTypes
 {
     public partial class TBB : BaseFile
     {
-        public TBB(GameDataManager game, string path) : base(game, path) { }
+        public TBB(GameDataManager gameDataManager, string path) : base(gameDataManager, path) { }
 
         public string Tag { get; private set; }
         public uint Unknown { get; private set; }

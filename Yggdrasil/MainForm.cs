@@ -16,7 +16,7 @@ namespace Yggdrasil
 {
     public partial class MainForm : Form
     {
-        GameDataManager game;
+        GameDataManager gameDataManager;
 
         public MainForm()
         {
@@ -28,12 +28,13 @@ namespace Yggdrasil
             if (Configuration.TableEntryEditorSplitter != -1) tableEntryEditor.SplitterPosition = Configuration.TableEntryEditorSplitter;
             if (Configuration.MessageEditorSplitter != -1) messageEditor.SplitterPosition = Configuration.MessageEditorSplitter;
 
-            game = new GameDataManager();
+            gameDataManager = new GameDataManager();
+            gameDataManager.ItemDataPropertyChangedEvent += new PropertyChangedEventHandler(gameDataManager_ItemDataPropertyChangedEvent);
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            e.Cancel = (game.DataHasChanged &&
+            e.Cancel = (gameDataManager.DataHasChanged &&
                 MessageBox.Show("Data has been changed. Discard changes and quit without saving?", "Unsaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No);
         }
 
@@ -63,12 +64,18 @@ namespace Yggdrasil
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int changedFiles = game.SaveAllChanges();
+            if (gameDataManager.DataHasChanged)
+            {
+                int changedFiles = gameDataManager.SaveAllChanges();
 
-            if (changedFiles == 0)
-                tsslStatus.Text = "No changes to save";
-            else
-                tsslStatus.Text = string.Format("Data saved; {0} file(s) changed", changedFiles);
+                if (changedFiles == 0)
+                    tsslStatus.Text = "No changes to save";
+                else
+                    tsslStatus.Text = string.Format("Data saved; {0} {1} changed", changedFiles, (changedFiles == 1 ? "file" : "files"));
+
+                tableEntryEditor.Refresh();
+                saveToolStripMenuItem.Enabled = false;
+            }
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -87,11 +94,25 @@ namespace Yggdrasil
                 "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        private void gameDataManager_ItemDataPropertyChangedEvent(object sender, PropertyChangedEventArgs e)
+        {
+            if (gameDataManager.DataHasChanged)
+            {
+                tsslStatus.Text = string.Format("Ready; {0} {1} changed", gameDataManager.ChangedDataCount, (gameDataManager.ChangedDataCount != 1 ? "entries" : "entry"));
+                saveToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                tsslStatus.Text = "Ready";
+                saveToolStripMenuItem.Enabled = false;
+            }
+        }
+
         private void SetFormTitle()
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendFormat("{0} {1}", Application.ProductName, VersionManagement.CreateVersionString(Application.ProductVersion));
-            if (game != null && game.IsInitialized) stringBuilder.AppendFormat(" - [{0}]", game.Header.GameTitle);
+            if (gameDataManager != null && gameDataManager.IsInitialized) stringBuilder.AppendFormat(" - [{0}]", gameDataManager.Header.GameTitle);
             this.Text = stringBuilder.ToString();
         }
 
@@ -104,11 +125,11 @@ namespace Yggdrasil
                 tabPage.Tag = null;
             }
 
-            game.ReadGameDirectory(Configuration.LastDataPath = path);
+            gameDataManager.ReadGameDirectory(Configuration.LastDataPath = path);
 
-            saveToolStripMenuItem.Enabled = tableEntryEditor.Enabled = messageEditor.Enabled = (game != null && game.IsInitialized);
+            tableEntryEditor.Enabled = messageEditor.Enabled = (gameDataManager != null && gameDataManager.IsInitialized);
 
-            if (game.IsInitialized)
+            if (gameDataManager.IsInitialized)
             {
                 SetFormTitle();
                 InitializeTabPage(tabControl.SelectedTab);
@@ -119,11 +140,11 @@ namespace Yggdrasil
 
         private void InitializeTabPage(TabPage tabPage)
         {
-            if ((game != null && game.IsInitialized) && tabPage.Tag == null)
+            if ((gameDataManager != null && gameDataManager.IsInitialized) && tabPage.Tag == null)
             {
                 IEditorControl editorControl = (IEditorControl)tabPage.Controls.OfType<Control>().FirstOrDefault(x => x is IEditorControl);
-                if (editorControl != null && !editorControl.IsInitialized()) editorControl.Initialize(game);
-                tabPage.Tag = game;
+                if (editorControl != null && !editorControl.IsInitialized()) editorControl.Initialize(gameDataManager);
+                tabPage.Tag = gameDataManager;
             }
         }
     }

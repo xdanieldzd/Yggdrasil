@@ -11,14 +11,14 @@ namespace Yggdrasil.Dumpers
 {
     public static class ItemDataDumper
     {
-        public static void DumpToDirectory(GameDataManager game, string file)
+        public static void DumpToDirectory(GameDataManager gameDataManager, string file)
         {
             if (!Directory.Exists(Path.GetDirectoryName(file))) Directory.CreateDirectory(Path.GetDirectoryName(file));
 
-            TBB itemNameFile = game.GetMessageFile("ItemName");
-            TBB itemInfoFile = game.GetMessageFile("ItemInfo");
+            TBB itemNameFile = gameDataManager.GetMessageFile("ItemName");
+            TBB itemInfoFile = gameDataManager.GetMessageFile("ItemInfo");
 
-            string equipFileName = game.GetParsedData<EquipItemParser>().FirstOrDefault().ParentTable.GetParent().Filename;
+            string equipFileName = gameDataManager.GetParsedData<EquipItemParser>().FirstOrDefault().ParentTable.GetParent().Filename;
 
             StringBuilder builder = new StringBuilder();
             builder.AppendLine("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">");
@@ -26,7 +26,7 @@ namespace Yggdrasil.Dumpers
             builder.AppendFormat("<html>\n<head><title>Item Data</title><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">{0}</head>\n<body>\n", style);
 
             builder.AppendFormat("Game title: {0}, ID: {1}<br><br>\nItem data file: {2}, names file: {3}, info file: {4}<br><br>\n",
-                game.Header.GameTitle, game.Header.GameCode, Path.GetFileName(equipFileName), Path.GetFileName(itemNameFile.Filename), Path.GetFileName(itemInfoFile.Filename));
+                gameDataManager.Header.GameTitle, gameDataManager.Header.GameCode, Path.GetFileName(equipFileName), Path.GetFileName(itemNameFile.Filename), Path.GetFileName(itemInfoFile.Filename));
 
             builder.AppendLine("Table #0; equipable items:<br><br>\n");
             builder.AppendLine("<table><tr>");
@@ -45,7 +45,7 @@ namespace Yggdrasil.Dumpers
 
             builder.AppendLine("<th>Str</th> <th>Vit</th> <th>Agi</th> <th>Luc</th> <th>Tec</th> <th>HP</th> <th>TP</th> <th>Boost</th></tr>");
 
-            foreach (EquipItemParser item in game.GetParsedData<EquipItemParser>().OrderBy(x => x.ItemNumber))
+            foreach (EquipItemParser item in gameDataManager.GetParsedData<EquipItemParser>().OrderBy(x => x.ItemNumber))
             {
                 string name = (itemNameFile.Tables.FirstOrDefault() as TBB.MTBL).Messages[item.ItemNumber - 1].ConvertedString.Replace("\n", "<br>").Replace(" ", "&nbsp;");
                 string description = (itemInfoFile.Tables.FirstOrDefault() as TBB.MTBL).Messages[item.ItemNumber - 1].ConvertedString.Replace("\n", "<br>").Replace(" ", "&nbsp;");
@@ -74,7 +74,7 @@ namespace Yggdrasil.Dumpers
                 "<th>Number</th> <th>Name</th> <th>Description</th> " +
                 "<th>Unk 1</th> <th>Unk 2</th> <th>Recovered HP</th> <th>Recovered TP</th> <th>Recovered Boost</th> <th>Unk 3</th> <th>Unk 4</th> <th>Unk 5</th> <th>Buy Price</th> <th>Sell Price</th>");
 
-            foreach (MiscItemParser item in game.GetParsedData<MiscItemParser>().OrderBy(x => x.ItemNumber))
+            foreach (MiscItemParser item in gameDataManager.GetParsedData<MiscItemParser>().OrderBy(x => x.ItemNumber))
             {
                 string name = (itemNameFile.Tables.FirstOrDefault() as TBB.MTBL).Messages[item.ItemNumber - 1].ConvertedString.Replace("\n", "<br>").Replace(" ", "&nbsp;");
                 string description = (itemInfoFile.Tables.FirstOrDefault() as TBB.MTBL).Messages[item.ItemNumber - 1].ConvertedString.Replace("\n", "<br>").Replace(" ", "&nbsp;");

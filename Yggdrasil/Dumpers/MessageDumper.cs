@@ -10,13 +10,13 @@ namespace Yggdrasil.Dumpers
 {
     public static class MessageDumper
     {
-        public static void DumpToDirectory(GameDataManager game, string path, bool skipNulls)
+        public static void DumpToDirectory(GameDataManager gameDataManager, string path, bool skipNulls)
         {
-            path = Path.Combine(path, game.Header.GameCode);
+            path = Path.Combine(path, gameDataManager.Header.GameCode);
 
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
-            foreach (TBB tbb in game.MessageFiles)
+            foreach (TBB tbb in gameDataManager.MessageFiles)
             {
                 string filePath = Path.Combine(path, Path.GetFileNameWithoutExtension(tbb.Filename) + ".htm");
 

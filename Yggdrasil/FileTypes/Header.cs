@@ -7,7 +7,7 @@ namespace Yggdrasil.FileTypes
 {
     public class Header : BaseFile
     {
-        public Header(GameDataManager game, string path) : base(game, path) { }
+        public Header(GameDataManager gameDataManager, string path) : base(gameDataManager, path) { }
 
         public string GameTitle { get; private set; }
         public string GameCode { get; private set; }

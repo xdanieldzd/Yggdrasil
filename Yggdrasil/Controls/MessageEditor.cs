@@ -15,7 +15,7 @@ namespace Yggdrasil.Controls
 {
     public partial class MessageEditor : UserControl, IEditorControl
     {
-        public bool IsInitialized() { return (game != null); }
+        public bool IsInitialized() { return (gameDataManager != null); }
 
         public int SplitterPosition
         {
@@ -23,7 +23,7 @@ namespace Yggdrasil.Controls
             set { splitContainer1.SplitterDistance = value; }
         }
 
-        GameDataManager game;
+        GameDataManager gameDataManager;
         BackgroundWorker treeViewWorker;
 
         public MessageEditor()
@@ -38,18 +38,18 @@ namespace Yggdrasil.Controls
             if (IsInitialized()) Configuration.MessageEditorSplitter = e.SplitX;
         }
 
-        public void Initialize(GameDataManager game)
+        public void Initialize(GameDataManager gameDataManager)
         {
-            this.game = game;
-            this.Font = GUIHelpers.GetSuggestedGUIFont(game.Version);
+            this.gameDataManager = gameDataManager;
+            this.Font = GUIHelpers.GetSuggestedGUIFont(gameDataManager.Version);
 
-            if (this.game.MessageFiles != null)
+            if (this.gameDataManager.MessageFiles != null)
             {
                 treeViewWorker = new BackgroundWorker();
                 treeViewWorker.DoWork += ((s, e) =>
                 {
                     tvMessageFiles.Invoke(new Action(() => { tvMessageFiles.Nodes.Clear(); }));
-                    foreach (TBB messageFile in this.game.MessageFiles)
+                    foreach (TBB messageFile in this.gameDataManager.MessageFiles)
                     {
                         TreeNode fileNode = new TreeNode(Path.GetFileNameWithoutExtension(messageFile.Filename)) { Tag = messageFile };
 
@@ -67,7 +67,7 @@ namespace Yggdrasil.Controls
                                 if (messageTable.MessageOffsets[j] == 0) continue;
 
                                 int truncatePosition = messageTable.Messages[j].ConvertedString.IndexOf(Environment.NewLine);
-                                if (truncatePosition == -1) truncatePosition = (game.Version == GameDataManager.Versions.Japanese ? 12 : 24);
+                                if (truncatePosition == -1) truncatePosition = (gameDataManager.Version == GameDataManager.Versions.Japanese ? 12 : 24);
                                 TreeNode messageNode = new TreeNode(messageTable.Messages[j].ConvertedString.Truncate(truncatePosition)) { Tag = messageTable.Messages[j] };
                                 tableNode.Nodes.Add(messageNode);
                             }
@@ -83,7 +83,7 @@ namespace Yggdrasil.Controls
 
         public void Terminate()
         {
-            this.game = null;
+            this.gameDataManager = null;
             treeViewWorker = null;
 
             tvMessageFiles.Nodes.Clear();
@@ -93,7 +93,7 @@ namespace Yggdrasil.Controls
         private void tvMessageFiles_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (e.Node.Tag is EtrianString)
-                stringPreviewControl.Initialize(game, e.Node.Tag as EtrianString);
+                stringPreviewControl.Initialize(gameDataManager, e.Node.Tag as EtrianString);
             else
                 stringPreviewControl.Terminate();
         }

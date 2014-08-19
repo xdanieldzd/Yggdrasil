@@ -43,6 +43,7 @@
             this.progressBar.Size = new System.Drawing.Size(270, 23);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBar.TabIndex = 0;
+            this.progressBar.UseWaitCursor = true;
             // 
             // lblDescription
             // 
@@ -52,6 +53,7 @@
             this.lblDescription.TabIndex = 1;
             this.lblDescription.Text = "Loading game data; please wait...";
             this.lblDescription.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lblDescription.UseWaitCursor = true;
             // 
             // lblStatus
             // 
@@ -61,6 +63,7 @@
             this.lblStatus.TabIndex = 2;
             this.lblStatus.Text = "Please wait...";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lblStatus.UseWaitCursor = true;
             // 
             // DataLoadWaitForm
             // 
@@ -80,6 +83,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Loading Data";
+            this.UseWaitCursor = true;
             this.ResumeLayout(false);
 
         }

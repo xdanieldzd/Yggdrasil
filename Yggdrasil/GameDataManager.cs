@@ -49,13 +49,17 @@ namespace Yggdrasil
         BackgroundWorker loadWaitWorker;
 
         public bool IsInitialized { get; private set; }
-        public bool DataHasChanged { get { return (parsedData != null && parsedData.Any(x => x.HasChanged)); } }
 
         public FontRenderer FontRenderer { get; private set; }
         public List<TBB> MessageFiles { get; private set; }
 
         List<TBB> dataTableFiles;
         List<BaseParser> parsedData;
+
+        List<BaseParser> changedParsedData;
+        public bool DataHasChanged { get { return (changedParsedData != null && changedParsedData.Count > 0); } }
+        public int ChangedDataCount { get { return (changedParsedData != null ? changedParsedData.Count : -1); } }
+        public event PropertyChangedEventHandler ItemDataPropertyChangedEvent;
 
         public static Dictionary<ushort, string> ItemNames { get; private set; }
 
@@ -97,6 +101,7 @@ namespace Yggdrasil
                     EnsureMessageTableIntegrity();
 
                     parsedData = ParseDataTables();
+                    changedParsedData = new List<BaseParser>();
 
                     loadWaitWorker.ReportProgress(-1, "Fetching item names...");
                     FetchItemNames();
@@ -135,12 +140,12 @@ namespace Yggdrasil
 
         public int SaveAllChanges()
         {
-            if (parsedData == null) return 0;
+            if (parsedData == null || changedParsedData == null) return 0;
 
             List<TBB.ITable> needToSave = new List<TBB.ITable>();
             List<string> changedFiles = new List<string>();
 
-            foreach (BaseParser data in parsedData.Where(x => x.HasChanged))
+            foreach (BaseParser data in changedParsedData)
             {
                 data.Save();
                 needToSave.Add(data.ParentTable);
@@ -161,6 +166,8 @@ namespace Yggdrasil
                 else
                     throw new NotImplementedException("Saving to compressed file not implemented");
             }
+
+            changedParsedData.Clear();
 
             return changedFiles.Distinct().Count();
         }
@@ -447,6 +454,10 @@ namespace Yggdrasil
 
         private void ItemDataPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            changedParsedData = parsedData.Where(x => x.HasChanged).ToList();
+
+            var handler = ItemDataPropertyChangedEvent;
+            if (handler != null) handler(sender, e);
             return;
 
             System.Windows.Forms.MessageBox.Show(string.Format("Property {0} in {1} (0x{2:X}) changed; new value is {3} (0x{3:X})",

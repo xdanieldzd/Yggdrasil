@@ -12,11 +12,11 @@ namespace Yggdrasil.TableParsers
     {
         [DisplayName("(Name)"), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("In-game item name.")]
-        public string Name { get { return Game.GetItemName(ItemNumber); } }
+        public string Name { get { return GameDataManager.GetItemName(ItemNumber); } }
 
         [DisplayName("(Description)"), Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor)), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("In-game item description.")]
-        public string Description { get { return Game.GetItemDescription(ItemNumber); } }
+        public string Description { get { return GameDataManager.GetItemDescription(ItemNumber); } }
 
         ushort itemNumber;
         [DisplayName("(ID)"), ReadOnly(true), PrioritizedCategory("Information", byte.MaxValue)]
@@ -27,7 +27,8 @@ namespace Yggdrasil.TableParsers
             set { base.SetProperty(ref itemNumber, value, () => this.ItemNumber); }
         }
 
-        public BaseItemParser(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { Load(); }
+        public BaseItemParser(GameDataManager gameDataManager, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
+            base(gameDataManager, table, entryNumber, propertyChanged) { Load(); }
 
         protected override void Load()
         {

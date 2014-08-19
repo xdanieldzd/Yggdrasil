@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Linq.Expressions;
+using System.Reflection;
 
 using Yggdrasil.FileTypes;
 
@@ -14,24 +15,25 @@ namespace Yggdrasil.TableParsers
         public event PropertyChangedEventHandler PropertyChanged;
 
         [Browsable(false)]
-        public GameDataManager Game { get; private set; }
+        public GameDataManager GameDataManager { get; private set; }
         [Browsable(false)]
         public TBB.TBL1 ParentTable { get; private set; }
         [Browsable(false)]
         public int EntryNumber { get; private set; }
-        [Browsable(false)]
-        public bool HasChanged { get; private set; }
 
         [Browsable(false)]
         public virtual string EntryDescription { get; private set; }
 
-        public BaseParser(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null)
+        protected Dictionary<string, object> originalValues;
+
+        [Browsable(false)]
+        public bool HasChanged { get { return this.GetType().GetProperties().Any(x => originalValues.ContainsKey(x.Name) && (dynamic)x.GetValue(this, null) != (dynamic)originalValues[x.Name]); } }
+
+        public BaseParser(GameDataManager gameDataManager, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null)
         {
-            Game = game;
+            GameDataManager = gameDataManager;
             ParentTable = table;
             EntryNumber = entryNumber;
-
-            HasChanged = false;
 
             EntryDescription = string.Format("Entry #{0}", entryNumber);
 
@@ -48,21 +50,26 @@ namespace Yggdrasil.TableParsers
             if (!EqualityComparer<T>.Default.Equals(field, value))
             {
                 field = value;
-                this.HasChanged = true;
 
                 var handler = PropertyChanged;
                 if (handler != null) handler(this, new PropertyChangedEventArgs(memberExpression.Member.Name));
             }
         }
 
+        private void GetOriginalValues()
+        {
+            originalValues = new Dictionary<string, object>();
+            foreach (PropertyInfo prop in this.GetType().GetProperties().Where(x => x.CanWrite)) originalValues.Add(prop.Name, prop.GetValue(this, null));
+        }
+
         protected virtual void Load()
         {
-            HasChanged = false;
+            GetOriginalValues();
         }
 
         public virtual void Save()
         {
-            HasChanged = false;
+            GetOriginalValues();
         }
     }
 }

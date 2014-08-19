@@ -11,12 +11,12 @@ namespace Yggdrasil.Dumpers
 {
     public static class ItemCompoundDumper
     {
-        public static void DumpToDirectory(GameDataManager game, string file)
+        public static void DumpToDirectory(GameDataManager gameDataManager, string file)
         {
             if (!Directory.Exists(Path.GetDirectoryName(file))) Directory.CreateDirectory(Path.GetDirectoryName(file));
 
-            TBB itemNameFile = game.GetMessageFile("ItemName");
-            string compoundFileName = game.GetParsedData<ItemCompoundParser>().FirstOrDefault().ParentTable.GetParent().Filename;
+            TBB itemNameFile = gameDataManager.GetMessageFile("ItemName");
+            string compoundFileName = gameDataManager.GetParsedData<ItemCompoundParser>().FirstOrDefault().ParentTable.GetParent().Filename;
 
             StringBuilder builder = new StringBuilder();
             builder.AppendLine("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">");
@@ -24,14 +24,14 @@ namespace Yggdrasil.Dumpers
             builder.AppendFormat("<html>\n<head><title>Item Compounds</title><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">{0}</head>\n<body>\n", style);
 
             builder.AppendFormat("Game title: {0}, ID: {1}<br><br>\nItem compound file: {2}, names file: {3}<br><br>\n",
-                game.Header.GameTitle, game.Header.GameCode, Path.GetFileName(compoundFileName), Path.GetFileName(itemNameFile.Filename));
+                gameDataManager.Header.GameTitle, gameDataManager.Header.GameCode, Path.GetFileName(compoundFileName), Path.GetFileName(itemNameFile.Filename));
 
             builder.AppendLine("<table><tr>");
 
             builder.AppendLine(
                 "<th>Number</th><th>Item 1</th><th>Item 2</th><th>Item 3</th><th>Item 4</th><th>Item 5</th><th>Count 1</th><th>Count 2</th><th>Count 3</th><th>Count 4</th><th>Count 5</th><th>Unk/Padding</th></tr>");
 
-            foreach (ItemCompoundParser item in game.GetParsedData<ItemCompoundParser>().OrderBy(x => x.ItemNumber))
+            foreach (ItemCompoundParser item in gameDataManager.GetParsedData<ItemCompoundParser>().OrderBy(x => x.ItemNumber))
             {
                 builder.AppendLine("<tr>");
                 builder.AppendFormat("<td>{0} ({1})</td> <td>{2} ({3})</td> <td>{4} ({5})</td> <td>{6} ({7})</td> <td>0x{8:X4}</td> <td>0x{9:X4}</td>",

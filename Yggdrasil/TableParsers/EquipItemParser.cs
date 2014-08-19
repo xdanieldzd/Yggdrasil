@@ -42,6 +42,8 @@ namespace Yggdrasil.TableParsers
             get { return itemType; }
             set { base.SetProperty(ref itemType, value, () => this.ItemType); }
         }
+        public bool ShouldSerializeItemType() { return !(this.ItemType == (dynamic)base.originalValues["ItemType"]); }
+        public void ResetItemType() { this.ItemType = (dynamic)base.originalValues["ItemType"]; }
 
         ushort attack;
         [DisplayName("Attack"), PrioritizedCategory("Stats", 5)]
@@ -51,6 +53,8 @@ namespace Yggdrasil.TableParsers
             get { return attack; }
             set { base.SetProperty(ref attack, value, () => this.Attack); }
         }
+        public bool ShouldSerializeAttack() { return !(this.Attack == (dynamic)base.originalValues["Attack"]); }
+        public void ResetAttack() { this.Attack = (dynamic)base.originalValues["Attack"]; }
 
         ushort attackAlt;
         [DisplayName("Attack (Alternative)"), PrioritizedCategory("Stats", 5)]
@@ -60,6 +64,8 @@ namespace Yggdrasil.TableParsers
             get { return attackAlt; }
             set { base.SetProperty(ref attackAlt, value, () => this.AttackAlt); }
         }
+        public bool ShouldSerializeAttackAlt() { return !(this.AttackAlt == (dynamic)base.originalValues["AttackAlt"]); }
+        public void ResetAttackAlt() { this.AttackAlt = (dynamic)base.originalValues["AttackAlt"]; }
 
         ushort defense;
         [DisplayName("Defense"), PrioritizedCategory("Stats", 5)]
@@ -69,6 +75,8 @@ namespace Yggdrasil.TableParsers
             get { return defense; }
             set { base.SetProperty(ref defense, value, () => this.Defense); }
         }
+        public bool ShouldSerializeDefense() { return !(this.Defense == (dynamic)base.originalValues["Defense"]); }
+        public void ResetDefense() { this.Defense = (dynamic)base.originalValues["Defense"]; }
 
         Groups group;
         [DisplayName("Group"), TypeConverter(typeof(EnumConverter)), PrioritizedCategory("General", 6)]
@@ -78,6 +86,8 @@ namespace Yggdrasil.TableParsers
             get { return group; }
             set { base.SetProperty(ref group, value, () => this.Group); }
         }
+        public bool ShouldSerializeGroup() { return !(this.Group == (dynamic)base.originalValues["Group"]); }
+        public void ResetGroup() { this.Group = (dynamic)base.originalValues["Group"]; }
 
         sbyte unknown1;
         [DisplayName("Unknown 1"), TypeConverter(typeof(SByteConverter)), PrioritizedCategory("Unknown", 0)]
@@ -86,6 +96,8 @@ namespace Yggdrasil.TableParsers
             get { return unknown1; }
             set { base.SetProperty(ref unknown1, value, () => this.Unknown1); }
         }
+        public bool ShouldSerializeUnknown1() { return !(this.Unknown1 == (dynamic)base.originalValues["Unknown1"]); }
+        public void ResetUnknown1() { this.Unknown1 = (dynamic)base.originalValues["Unknown1"]; }
 
         sbyte resistSlash;
         [DisplayName("Slash Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
@@ -95,6 +107,8 @@ namespace Yggdrasil.TableParsers
             get { return resistSlash; }
             set { base.SetProperty(ref resistSlash, value, () => this.ResistSlash); }
         }
+        public bool ShouldSerializeResistSlash() { return !(this.ResistSlash == (dynamic)base.originalValues["ResistSlash"]); }
+        public void ResetResistSlash() { this.ResistSlash = (dynamic)base.originalValues["ResistSlash"]; }
 
         sbyte resistBlunt;
         [DisplayName("Blunt Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
@@ -104,6 +118,8 @@ namespace Yggdrasil.TableParsers
             get { return resistBlunt; }
             set { base.SetProperty(ref resistBlunt, value, () => this.ResistBlunt); }
         }
+        public bool ShouldSerializeResistBlunt() { return !(this.ResistBlunt == (dynamic)base.originalValues["ResistBlunt"]); }
+        public void ResetResistBlunt() { this.ResistBlunt = (dynamic)base.originalValues["ResistBlunt"]; }
 
         sbyte resistPierce;
         [DisplayName("Pierce Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
@@ -113,6 +129,8 @@ namespace Yggdrasil.TableParsers
             get { return resistPierce; }
             set { base.SetProperty(ref resistPierce, value, () => this.ResistPierce); }
         }
+        public bool ShouldSerializeResistPierce() { return !(this.ResistPierce == (dynamic)base.originalValues["ResistPierce"]); }
+        public void ResetResistPierce() { this.ResistPierce = (dynamic)base.originalValues["ResistPierce"]; }
 
         sbyte resistFire;
         [DisplayName("Fire Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
@@ -122,6 +140,8 @@ namespace Yggdrasil.TableParsers
             get { return resistFire; }
             set { base.SetProperty(ref resistFire, value, () => this.ResistFire); }
         }
+        public bool ShouldSerializeResistFire() { return !(this.ResistFire == (dynamic)base.originalValues["ResistFire"]); }
+        public void ResetResistFire() { this.ResistFire = (dynamic)base.originalValues["ResistFire"]; }
 
         sbyte resistIce;
         [DisplayName("Ice Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
@@ -131,6 +151,8 @@ namespace Yggdrasil.TableParsers
             get { return resistIce; }
             set { base.SetProperty(ref resistIce, value, () => this.ResistIce); }
         }
+        public bool ShouldSerializeResistIce() { return !(this.ResistIce == (dynamic)base.originalValues["ResistIce"]); }
+        public void ResetResistIce() { this.ResistIce = (dynamic)base.originalValues["ResistIce"]; }
 
         sbyte resistVolt;
         [DisplayName("Volt Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
@@ -140,6 +162,8 @@ namespace Yggdrasil.TableParsers
             get { return resistVolt; }
             set { base.SetProperty(ref resistVolt, value, () => this.ResistVolt); }
         }
+        public bool ShouldSerializeResistVolt() { return !(this.ResistVolt == (dynamic)base.originalValues["ResistVolt"]); }
+        public void ResetResistVolt() { this.ResistVolt = (dynamic)base.originalValues["ResistVolt"]; }
 
         sbyte resistDeath;
         [DisplayName("OHKO Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
@@ -149,6 +173,8 @@ namespace Yggdrasil.TableParsers
             get { return resistDeath; }
             set { base.SetProperty(ref resistDeath, value, () => this.ResistDeath); }
         }
+        public bool ShouldSerializeResistDeath() { return !(this.ResistDeath == (dynamic)base.originalValues["ResistDeath"]); }
+        public void ResetResistDeath() { this.ResistDeath = (dynamic)base.originalValues["ResistDeath"]; }
 
         sbyte resistAilment;
         [DisplayName("Ailment Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
@@ -158,6 +184,8 @@ namespace Yggdrasil.TableParsers
             get { return resistAilment; }
             set { base.SetProperty(ref resistAilment, value, () => this.ResistAilment); }
         }
+        public bool ShouldSerializeResistAilment() { return !(this.ResistAilment == (dynamic)base.originalValues["ResistAilment"]); }
+        public void ResetResistAilment() { this.ResistAilment = (dynamic)base.originalValues["ResistAilment"]; }
 
         sbyte resistHeadBind;
         [DisplayName("Head Bind Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
@@ -167,6 +195,8 @@ namespace Yggdrasil.TableParsers
             get { return resistHeadBind; }
             set { base.SetProperty(ref resistHeadBind, value, () => this.ResistHeadBind); }
         }
+        public bool ShouldSerializeResistHeadBind() { return !(this.ResistHeadBind == (dynamic)base.originalValues["ResistHeadBind"]); }
+        public void ResetResistHeadBind() { this.ResistHeadBind = (dynamic)base.originalValues["ResistHeadBind"]; }
 
         sbyte resistArmBind;
         [DisplayName("Arm Bind Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
@@ -176,6 +206,8 @@ namespace Yggdrasil.TableParsers
             get { return resistArmBind; }
             set { base.SetProperty(ref resistArmBind, value, () => this.ResistArmBind); }
         }
+        public bool ShouldSerializeResistArmBind() { return !(this.ResistArmBind == (dynamic)base.originalValues["ResistArmBind"]); }
+        public void ResetResistArmBind() { this.ResistArmBind = (dynamic)base.originalValues["ResistArmBind"]; }
 
         sbyte resistLegBind;
         [DisplayName("Leg Bind Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
@@ -185,6 +217,8 @@ namespace Yggdrasil.TableParsers
             get { return resistLegBind; }
             set { base.SetProperty(ref resistLegBind, value, () => this.ResistLegBind); }
         }
+        public bool ShouldSerializeResistLegBind() { return !(this.ResistLegBind == (dynamic)base.originalValues["ResistLegBind"]); }
+        public void ResetResistLegBind() { this.ResistLegBind = (dynamic)base.originalValues["ResistLegBind"]; }
 
         sbyte strModifier;
         [DisplayName("STR Modifier"), TypeConverter(typeof(SByteConverter)), PrioritizedCategory("Modifiers", 3)]
@@ -194,6 +228,8 @@ namespace Yggdrasil.TableParsers
             get { return strModifier; }
             set { base.SetProperty(ref strModifier, value, () => this.StrModifier); }
         }
+        public bool ShouldSerializeStrModifier() { return !(this.StrModifier == (dynamic)base.originalValues["StrModifier"]); }
+        public void ResetStrModifier() { this.StrModifier = (dynamic)base.originalValues["StrModifier"]; }
 
         sbyte vitModifier;
         [DisplayName("VIT Modifier"), TypeConverter(typeof(SByteConverter)), PrioritizedCategory("Modifiers", 3)]
@@ -203,6 +239,8 @@ namespace Yggdrasil.TableParsers
             get { return vitModifier; }
             set { base.SetProperty(ref vitModifier, value, () => this.VitModifier); }
         }
+        public bool ShouldSerializeVitModifier() { return !(this.VitModifier == (dynamic)base.originalValues["VitModifier"]); }
+        public void ResetVitModifier() { this.VitModifier = (dynamic)base.originalValues["VitModifier"]; }
 
         sbyte agiModifier;
         [DisplayName("AGI Modifier"), TypeConverter(typeof(SByteConverter)), PrioritizedCategory("Modifiers", 3)]
@@ -212,6 +250,8 @@ namespace Yggdrasil.TableParsers
             get { return agiModifier; }
             set { base.SetProperty(ref agiModifier, value, () => this.AgiModifier); }
         }
+        public bool ShouldSerializeAgiModifier() { return !(this.AgiModifier == (dynamic)base.originalValues["AgiModifier"]); }
+        public void ResetAgiModifier() { this.AgiModifier = (dynamic)base.originalValues["AgiModifier"]; }
 
         sbyte lucModifier;
         [DisplayName("LUC Modifier"), TypeConverter(typeof(SByteConverter)), PrioritizedCategory("Modifiers", 3)]
@@ -221,6 +261,8 @@ namespace Yggdrasil.TableParsers
             get { return lucModifier; }
             set { base.SetProperty(ref lucModifier, value, () => this.LucModifier); }
         }
+        public bool ShouldSerializeLucModifier() { return !(this.LucModifier == (dynamic)base.originalValues["LucModifier"]); }
+        public void ResetLucModifier() { this.LucModifier = (dynamic)base.originalValues["LucModifier"]; }
 
         sbyte tecModifier;
         [DisplayName("TEC Modifier"), TypeConverter(typeof(SByteConverter)), PrioritizedCategory("Modifiers", 3)]
@@ -230,6 +272,8 @@ namespace Yggdrasil.TableParsers
             get { return tecModifier; }
             set { base.SetProperty(ref tecModifier, value, () => this.TecModifier); }
         }
+        public bool ShouldSerializeTecModifier() { return !(this.TecModifier == (dynamic)base.originalValues["TecModifier"]); }
+        public void ResetTecModifier() { this.TecModifier = (dynamic)base.originalValues["TecModifier"]; }
 
         sbyte hpModifier;
         [DisplayName("HP Modifier"), TypeConverter(typeof(SByteConverter)), PrioritizedCategory("Modifiers", 3)]
@@ -239,6 +283,8 @@ namespace Yggdrasil.TableParsers
             get { return hpModifier; }
             set { base.SetProperty(ref hpModifier, value, () => this.HPModifier); }
         }
+        public bool ShouldSerializeHPModifier() { return !(this.HPModifier == (dynamic)base.originalValues["HPModifier"]); }
+        public void ResetHPModifier() { this.HPModifier = (dynamic)base.originalValues["HPModifier"]; }
 
         sbyte tpModifier;
         [DisplayName("TP Modifier"), TypeConverter(typeof(SByteConverter)), PrioritizedCategory("Modifiers", 3)]
@@ -248,6 +294,8 @@ namespace Yggdrasil.TableParsers
             get { return tpModifier; }
             set { base.SetProperty(ref tpModifier, value, () => this.TPModifier); }
         }
+        public bool ShouldSerializeTPModifier() { return !(this.TPModifier == (dynamic)base.originalValues["TPModifier"]); }
+        public void ResetTPModifier() { this.TPModifier = (dynamic)base.originalValues["TPModifier"]; }
 
         sbyte boostModifier;
         [DisplayName("Boost Modifier"), TypeConverter(typeof(SByteConverter)), PrioritizedCategory("Modifiers", 3)]
@@ -257,6 +305,8 @@ namespace Yggdrasil.TableParsers
             get { return boostModifier; }
             set { base.SetProperty(ref boostModifier, value, () => this.BoostModifier); }
         }
+        public bool ShouldSerializeBoostModifier() { return !(this.BoostModifier == (dynamic)base.originalValues["BoostModifier"]); }
+        public void ResetBoostModifier() { this.BoostModifier = (dynamic)base.originalValues["BoostModifier"]; }
 
         byte unknown2;
         [DisplayName("Unknown 2"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
@@ -265,6 +315,8 @@ namespace Yggdrasil.TableParsers
             get { return unknown2; }
             set { base.SetProperty(ref unknown2, value, () => this.Unknown2); }
         }
+        public bool ShouldSerializeUnknown2() { return !(this.Unknown2 == (dynamic)base.originalValues["Unknown2"]); }
+        public void ResetUnknown2() { this.Unknown2 = (dynamic)base.originalValues["Unknown2"]; }
 
         uint buyPrice;
         [DisplayName("Buy Price"), TypeConverter(typeof(CustomConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 4)]
@@ -274,6 +326,8 @@ namespace Yggdrasil.TableParsers
             get { return buyPrice; }
             set { base.SetProperty(ref buyPrice, value, () => this.BuyPrice); }
         }
+        public bool ShouldSerializeBuyPrice() { return !(this.BuyPrice == (dynamic)base.originalValues["BuyPrice"]); }
+        public void ResetBuyPrice() { this.BuyPrice = (dynamic)base.originalValues["BuyPrice"]; }
 
         uint sellPrice;
         [DisplayName("Sell Price"), TypeConverter(typeof(CustomConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 4)]
@@ -283,6 +337,8 @@ namespace Yggdrasil.TableParsers
             get { return sellPrice; }
             set { base.SetProperty(ref sellPrice, value, () => this.SellPrice); }
         }
+        public bool ShouldSerializeSellPrice() { return !(this.SellPrice == (dynamic)base.originalValues["SellPrice"]); }
+        public void ResetSellPrice() { this.SellPrice = (dynamic)base.originalValues["SellPrice"]; }
 
         ushort classUsability;
         [Browsable(false)]
@@ -299,6 +355,8 @@ namespace Yggdrasil.TableParsers
             get { return (classUsability & (ushort)UsabilityMask.Landsknecht) != 0; }
             set { base.SetProperty(ref classUsability, (ushort)((ClassUsability & ~(ushort)UsabilityMask.Landsknecht) | (value ? (ushort)UsabilityMask.Landsknecht : 0)), () => this.ClassUsability); }
         }
+        public bool ShouldSerializeUseableByLandsknecht() { return !(this.UseableByLandsknecht == (dynamic)base.originalValues["UseableByLandsknecht"]); }
+        public void ResetUseableByLandsknecht() { this.UseableByLandsknecht = (dynamic)base.originalValues["UseableByLandsknecht"]; }
 
         [DisplayName("Survivalist"), PrioritizedCategory("Class Usability", 1)]
         [Description("Determines if item can be equipped by Survivalist.")]
@@ -307,6 +365,8 @@ namespace Yggdrasil.TableParsers
             get { return (classUsability & (ushort)UsabilityMask.Survivalist) != 0; }
             set { base.SetProperty(ref classUsability, (ushort)((ClassUsability & ~(ushort)UsabilityMask.Survivalist) | (value ? (ushort)UsabilityMask.Survivalist : 0)), () => this.ClassUsability); }
         }
+        public bool ShouldSerializeUseableBySurvivalist() { return !(this.UseableBySurvivalist == (dynamic)base.originalValues["UseableBySurvivalist"]); }
+        public void ResetUseableBySurvivalist() { this.UseableBySurvivalist = (dynamic)base.originalValues["UseableBySurvivalist"]; }
 
         [DisplayName("Protector"), PrioritizedCategory("Class Usability", 1)]
         [Description("Determines if item can be equipped by Protector.")]
@@ -315,6 +375,8 @@ namespace Yggdrasil.TableParsers
             get { return (classUsability & (ushort)UsabilityMask.Protector) != 0; }
             set { base.SetProperty(ref classUsability, (ushort)((ClassUsability & ~(ushort)UsabilityMask.Protector) | (value ? (ushort)UsabilityMask.Protector : 0)), () => this.ClassUsability); }
         }
+        public bool ShouldSerializeUseableByProtector() { return !(this.UseableByProtector == (dynamic)base.originalValues["UseableByProtector"]); }
+        public void ResetUseableByProtector() { this.UseableByProtector = (dynamic)base.originalValues["UseableByProtector"]; }
 
         [DisplayName("Dark Hunter"), PrioritizedCategory("Class Usability", 1)]
         [Description("Determines if item can be equipped by Dark Hunter.")]
@@ -323,6 +385,8 @@ namespace Yggdrasil.TableParsers
             get { return (classUsability & (ushort)UsabilityMask.DarkHunter) != 0; }
             set { base.SetProperty(ref classUsability, (ushort)((ClassUsability & ~(ushort)UsabilityMask.DarkHunter) | (value ? (ushort)UsabilityMask.DarkHunter : 0)), () => this.ClassUsability); }
         }
+        public bool ShouldSerializeUseableByDarkHunter() { return !(this.UseableByDarkHunter == (dynamic)base.originalValues["UseableByDarkHunter"]); }
+        public void ResetUseableByDarkHunter() { this.UseableByDarkHunter = (dynamic)base.originalValues["UseableByDarkHunter"]; }
 
         [DisplayName("Medic"), PrioritizedCategory("Class Usability", 1)]
         [Description("Determines if item can be equipped by Medic.")]
@@ -331,6 +395,8 @@ namespace Yggdrasil.TableParsers
             get { return (classUsability & (ushort)UsabilityMask.Medic) != 0; }
             set { base.SetProperty(ref classUsability, (ushort)((ClassUsability & ~(ushort)UsabilityMask.Medic) | (value ? (ushort)UsabilityMask.Medic : 0)), () => this.ClassUsability); }
         }
+        public bool ShouldSerializeUseableByMedic() { return !(this.UseableByMedic == (dynamic)base.originalValues["UseableByMedic"]); }
+        public void ResetUseableByMedic() { this.UseableByMedic = (dynamic)base.originalValues["UseableByMedic"]; }
 
         [DisplayName("Alchemist"), PrioritizedCategory("Class Usability", 1)]
         [Description("Determines if item can be equipped by Alchemist.")]
@@ -339,6 +405,8 @@ namespace Yggdrasil.TableParsers
             get { return (classUsability & (ushort)UsabilityMask.Alchemist) != 0; }
             set { base.SetProperty(ref classUsability, (ushort)((ClassUsability & ~(ushort)UsabilityMask.Alchemist) | (value ? (ushort)UsabilityMask.Alchemist : 0)), () => this.ClassUsability); }
         }
+        public bool ShouldSerializeUseableByAlchemist() { return !(this.UseableByAlchemist == (dynamic)base.originalValues["UseableByAlchemist"]); }
+        public void ResetUseableByAlchemist() { this.UseableByAlchemist = (dynamic)base.originalValues["UseableByAlchemist"]; }
 
         [DisplayName("Bard"), PrioritizedCategory("Class Usability", 1)]
         [Description("Determines if item can be equipped by Bard.")]
@@ -347,6 +415,8 @@ namespace Yggdrasil.TableParsers
             get { return (classUsability & (ushort)UsabilityMask.Bard) != 0; }
             set { base.SetProperty(ref classUsability, (ushort)((ClassUsability & ~(ushort)UsabilityMask.Bard) | (value ? (ushort)UsabilityMask.Bard : 0)), () => this.ClassUsability); }
         }
+        public bool ShouldSerializeUseableByBard() { return !(this.UseableByBard == (dynamic)base.originalValues["UseableByBard"]); }
+        public void ResetUseableByBard() { this.UseableByBard = (dynamic)base.originalValues["UseableByBard"]; }
 
         [DisplayName("Samurai"), PrioritizedCategory("Class Usability", 1)]
         [Description("Determines if item can be equipped by Samurai.")]
@@ -355,6 +425,8 @@ namespace Yggdrasil.TableParsers
             get { return (classUsability & (ushort)UsabilityMask.Samurai) != 0; }
             set { base.SetProperty(ref classUsability, (ushort)((ClassUsability & ~(ushort)UsabilityMask.Samurai) | (value ? (ushort)UsabilityMask.Samurai : 0)), () => this.ClassUsability); }
         }
+        public bool ShouldSerializeUseableBySamurai() { return !(this.UseableBySamurai == (dynamic)base.originalValues["UseableBySamurai"]); }
+        public void ResetUseableBySamurai() { this.UseableBySamurai = (dynamic)base.originalValues["UseableBySamurai"]; }
 
         [DisplayName("Hexcaster"), PrioritizedCategory("Class Usability", 1)]
         [Description("Determines if item can be equipped by Hexcaster.")]
@@ -363,6 +435,8 @@ namespace Yggdrasil.TableParsers
             get { return (classUsability & (ushort)UsabilityMask.Hexcaster) != 0; }
             set { base.SetProperty(ref classUsability, (ushort)((ClassUsability & ~(ushort)UsabilityMask.Hexcaster) | (value ? (ushort)UsabilityMask.Hexcaster : 0)), () => this.ClassUsability); }
         }
+        public bool ShouldSerializeUseableByHexcaster() { return !(this.UseableByHexcaster == (dynamic)base.originalValues["UseableByHexcaster"]); }
+        public void ResetUseableByHexcaster() { this.UseableByHexcaster = (dynamic)base.originalValues["UseableByHexcaster"]; }
 
         ushort unknown3;
         [DisplayName("Unknown 3"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
@@ -371,6 +445,8 @@ namespace Yggdrasil.TableParsers
             get { return unknown3; }
             set { base.SetProperty(ref unknown3, value, () => this.Unknown3); }
         }
+        public bool ShouldSerializeUnknown3() { return !(this.Unknown3 == (dynamic)base.originalValues["Unknown3"]); }
+        public void ResetUnknown3() { this.Unknown3 = (dynamic)base.originalValues["Unknown3"]; }
 
         [DisplayName("Unknown 4"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
         public ushort Unknown4
@@ -378,8 +454,11 @@ namespace Yggdrasil.TableParsers
             get { return (ushort)(classUsability & ~(ushort)UsabilityMask.All); }
             set { ClassUsability = (ushort)((ClassUsability & (ushort)UsabilityMask.All) | value); }
         }
+        public bool ShouldSerializeUnknown4() { return !(this.Unknown4 == (dynamic)base.originalValues["Unknown4"]); }
+        public void ResetUnknown4() { this.Unknown4 = (dynamic)base.originalValues["Unknown4"]; }
 
-        public EquipItemParser(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { Load(); }
+        public EquipItemParser(GameDataManager gameDataManager, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
+            base(gameDataManager, table, entryNumber, propertyChanged) { Load(); }
 
         protected override void Load()
         {
@@ -453,7 +532,7 @@ namespace Yggdrasil.TableParsers
             base.Save();
         }
 
-        public static TreeNode GenerateTreeNode(GameDataManager game, IList<BaseParser> parsedData)
+        public static TreeNode GenerateTreeNode(GameDataManager gameDataManager, IList<BaseParser> parsedData)
         {
             string description = (typeof(EquipItemParser).GetCustomAttributes(false).FirstOrDefault(x => x is DescriptionAttribute) as DescriptionAttribute).Description;
             TreeNode node = new TreeNode(description) { Tag = parsedData };

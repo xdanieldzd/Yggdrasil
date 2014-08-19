@@ -98,6 +98,7 @@
     <Compile Include="Helpers\FontRenderer.cs" />
     <Compile Include="Helpers\GUIHelpers.cs" />
     <Compile Include="Helpers\Logger.cs" />
+    <Compile Include="Helpers\PropertyGridMessageFilter.cs" />
     <Compile Include="Helpers\VersionManagement.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

@@ -11,7 +11,7 @@ namespace Yggdrasil.Helpers
 {
     public class FontRenderer
     {
-        public GameDataManager Game { get; private set; }
+        public GameDataManager GameDataManager { get; private set; }
         public string Filename { get; private set; }
 
         bool fontCompressed;
@@ -23,9 +23,9 @@ namespace Yggdrasil.Helpers
         public Size CharacterSize { get; private set; }
         public List<Character> Characters { get; private set; }
 
-        public FontRenderer(GameDataManager game, string path)
+        public FontRenderer(GameDataManager gameDataManager, string path)
         {
-            this.Game = game;
+            this.GameDataManager = gameDataManager;
             Filename = path;
             fontRaw = Decompressor.Decompress(Filename, out fontCompressed);
 
@@ -49,7 +49,7 @@ namespace Yggdrasil.Helpers
 
             int fontOrgWidth = 0, fontOrgHeight = 0;
 
-            switch (game.Version)
+            switch (gameDataManager.Version)
             {
                 case GameDataManager.Versions.European:
                     CharacterSize = new Size(int.Parse(matches[1].Value), int.Parse(matches[0].Value));

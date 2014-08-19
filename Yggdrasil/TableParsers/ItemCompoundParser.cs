@@ -24,6 +24,8 @@ namespace Yggdrasil.TableParsers
             get { return itemCompound1; }
             set { base.SetProperty(ref itemCompound1, value, () => this.ItemCompound1); }
         }
+        public bool ShouldSerializeItemCompound1() { return !(this.ItemCompound1 == (dynamic)base.originalValues["ItemCompound1"]); }
+        public void ResetItemCompound1() { this.ItemCompound1 = (dynamic)base.originalValues["ItemCompound1"]; }
 
         ushort itemCompound2;
         [DisplayName("2nd Item"), TypeConverter(typeof(CustomConverters.ItemNameConverter)), PrioritizedCategory("Requirements", 0)]
@@ -33,6 +35,8 @@ namespace Yggdrasil.TableParsers
             get { return itemCompound2; }
             set { base.SetProperty(ref itemCompound2, value, () => this.ItemCompound2); }
         }
+        public bool ShouldSerializeItemCompound2() { return !(this.ItemCompound2 == (dynamic)base.originalValues["ItemCompound2"]); }
+        public void ResetItemCompound2() { this.ItemCompound2 = (dynamic)base.originalValues["ItemCompound2"]; }
 
         ushort itemCompound3;
         [DisplayName("3rd Item"), TypeConverter(typeof(CustomConverters.ItemNameConverter)), PrioritizedCategory("Requirements", 0)]
@@ -42,6 +46,8 @@ namespace Yggdrasil.TableParsers
             get { return itemCompound3; }
             set { base.SetProperty(ref itemCompound3, value, () => this.ItemCompound3); }
         }
+        public bool ShouldSerializeItemCompound3() { return !(this.ItemCompound3 == (dynamic)base.originalValues["ItemCompound3"]); }
+        public void ResetItemCompound3() { this.ItemCompound3 = (dynamic)base.originalValues["ItemCompound3"]; }
 
         ushort itemCompound4;
         [DisplayName("4th Item"), TypeConverter(typeof(CustomConverters.ItemNameConverter)), PrioritizedCategory("Requirements", 0)]
@@ -51,6 +57,8 @@ namespace Yggdrasil.TableParsers
             get { return itemCompound4; }
             set { base.SetProperty(ref itemCompound4, value, () => this.ItemCompound4); }
         }
+        public bool ShouldSerializeItemCompound4() { return !(this.ItemCompound4 == (dynamic)base.originalValues["ItemCompound4"]); }
+        public void ResetItemCompound4() { this.ItemCompound4 = (dynamic)base.originalValues["ItemCompound4"]; }
 
         ushort itemCompound5;
         [DisplayName("5th Item"), TypeConverter(typeof(CustomConverters.ItemNameConverter)), PrioritizedCategory("Requirements", 0)]
@@ -60,6 +68,8 @@ namespace Yggdrasil.TableParsers
             get { return itemCompound5; }
             set { base.SetProperty(ref itemCompound5, value, () => this.ItemCompound5); }
         }
+        public bool ShouldSerializeItemCompound5() { return !(this.ItemCompound5 == (dynamic)base.originalValues["ItemCompound5"]); }
+        public void ResetItemCompound5() { this.ItemCompound5 = (dynamic)base.originalValues["ItemCompound5"]; }
 
         byte itemCount1;
         [DisplayName("Amount of 1st Item"), TypeConverter(typeof(CustomConverters.ByteItemCountConverter)), PrioritizedCategory("Requirements", 0)]
@@ -69,6 +79,8 @@ namespace Yggdrasil.TableParsers
             get { return itemCount1; }
             set { base.SetProperty(ref itemCount1, value, () => this.ItemCount1); }
         }
+        public bool ShouldSerializeItemCount1() { return !(this.ItemCount1 == (dynamic)base.originalValues["ItemCount1"]); }
+        public void ResetItemCount1() { this.ItemCount1 = (dynamic)base.originalValues["ItemCount1"]; }
 
         byte itemCount2;
         [DisplayName("Amount of 2nd Item"), TypeConverter(typeof(CustomConverters.ByteItemCountConverter)), PrioritizedCategory("Requirements", 0)]
@@ -78,6 +90,8 @@ namespace Yggdrasil.TableParsers
             get { return itemCount2; }
             set { base.SetProperty(ref itemCount2, value, () => this.ItemCount2); }
         }
+        public bool ShouldSerializeItemCount2() { return !(this.ItemCount2 == (dynamic)base.originalValues["ItemCount2"]); }
+        public void ResetItemCount2() { this.ItemCount2 = (dynamic)base.originalValues["ItemCount2"]; }
 
         byte itemCount3;
         [DisplayName("Amount of 3rd Item"), TypeConverter(typeof(CustomConverters.ByteItemCountConverter)), PrioritizedCategory("Requirements", 0)]
@@ -87,6 +101,8 @@ namespace Yggdrasil.TableParsers
             get { return itemCount3; }
             set { base.SetProperty(ref itemCount3, value, () => this.ItemCount3); }
         }
+        public bool ShouldSerializeItemCount3() { return !(this.ItemCount3 == (dynamic)base.originalValues["ItemCount3"]); }
+        public void ResetItemCount3() { this.ItemCount3 = (dynamic)base.originalValues["ItemCount3"]; }
 
         byte itemCount4;
         [DisplayName("Amount of 4th Item"), TypeConverter(typeof(CustomConverters.ByteItemCountConverter)), PrioritizedCategory("Requirements", 0)]
@@ -96,6 +112,8 @@ namespace Yggdrasil.TableParsers
             get { return itemCount4; }
             set { base.SetProperty(ref itemCount4, value, () => this.ItemCount4); }
         }
+        public bool ShouldSerializeItemCount4() { return !(this.ItemCount4 == (dynamic)base.originalValues["ItemCount4"]); }
+        public void ResetItemCount4() { this.ItemCount4 = (dynamic)base.originalValues["ItemCount4"]; }
 
         byte itemCount5;
         [DisplayName("Amount of 5th Item"), TypeConverter(typeof(CustomConverters.ByteItemCountConverter)), PrioritizedCategory("Requirements", 0)]
@@ -105,6 +123,8 @@ namespace Yggdrasil.TableParsers
             get { return itemCount5; }
             set { base.SetProperty(ref itemCount5, value, () => this.ItemCount5); }
         }
+        public bool ShouldSerializeItemCount5() { return !(this.ItemCount5 == (dynamic)base.originalValues["ItemCount5"]); }
+        public void ResetItemCount5() { this.ItemCount5 = (dynamic)base.originalValues["ItemCount5"]; }
 
         byte unknownPadding;
         [DisplayName("Padding?"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
@@ -114,8 +134,11 @@ namespace Yggdrasil.TableParsers
             get { return unknownPadding; }
             set { base.SetProperty(ref unknownPadding, value, () => this.UnknownPadding); }
         }
+        public bool ShouldSerializeUnknownPadding() { return !(this.UnknownPadding == (dynamic)base.originalValues["UnknownPadding"]); }
+        public void ResetUnknownPadding() { this.UnknownPadding = (dynamic)base.originalValues["UnknownPadding"]; }
 
-        public ItemCompoundParser(GameDataManager game, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) : base(game, table, entryNumber, propertyChanged) { Load(); }
+        public ItemCompoundParser(GameDataManager gameDataManager, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
+            base(gameDataManager, table, entryNumber, propertyChanged) { Load(); }
 
         protected override void Load()
         {
@@ -151,7 +174,7 @@ namespace Yggdrasil.TableParsers
             base.Save();
         }
 
-        public static TreeNode GenerateTreeNode(GameDataManager game, IList<BaseParser> parsedData)
+        public static TreeNode GenerateTreeNode(GameDataManager gameDataManager, IList<BaseParser> parsedData)
         {
             string description = (typeof(ItemCompoundParser).GetCustomAttributes(false).FirstOrDefault(x => x is DescriptionAttribute) as DescriptionAttribute).Description;
             TreeNode node = new TreeNode(description) { Tag = parsedData };

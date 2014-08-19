@@ -34,17 +34,17 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showMessageLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.tsslStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tpTableData = new System.Windows.Forms.TabPage();
-            this.tableEntryEditor = new Yggdrasil.Controls.TableEntryEditor();
             this.tpMessages = new System.Windows.Forms.TabPage();
+            this.tableEntryEditor = new Yggdrasil.Controls.TableEntryEditor();
             this.messageEditor = new Yggdrasil.Controls.MessageEditor();
-            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showMessageLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -103,6 +103,21 @@
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showMessageLogToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.toolsToolStripMenuItem.Text = "&Tools";
+            // 
+            // showMessageLogToolStripMenuItem
+            // 
+            this.showMessageLogToolStripMenuItem.Name = "showMessageLogToolStripMenuItem";
+            this.showMessageLogToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.showMessageLogToolStripMenuItem.Text = "Show Message &Log...";
+            this.showMessageLogToolStripMenuItem.Click += new System.EventHandler(this.showMessageLogToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -132,6 +147,7 @@
             this.tsslStatus.Name = "tsslStatus";
             this.tsslStatus.Size = new System.Drawing.Size(22, 17);
             this.tsslStatus.Text = "---";
+            this.tsslStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // tabControl
             // 
@@ -156,16 +172,6 @@
             this.tpTableData.Text = "Data Tables";
             this.tpTableData.UseVisualStyleBackColor = true;
             // 
-            // tableEntryEditor
-            // 
-            this.tableEntryEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableEntryEditor.Enabled = false;
-            this.tableEntryEditor.Location = new System.Drawing.Point(3, 3);
-            this.tableEntryEditor.Name = "tableEntryEditor";
-            this.tableEntryEditor.Size = new System.Drawing.Size(670, 484);
-            this.tableEntryEditor.SplitterPosition = 222;
-            this.tableEntryEditor.TabIndex = 0;
-            // 
             // tpMessages
             // 
             this.tpMessages.Controls.Add(this.messageEditor);
@@ -177,6 +183,16 @@
             this.tpMessages.Text = "Messages";
             this.tpMessages.UseVisualStyleBackColor = true;
             // 
+            // tableEntryEditor
+            // 
+            this.tableEntryEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableEntryEditor.Enabled = false;
+            this.tableEntryEditor.Location = new System.Drawing.Point(3, 3);
+            this.tableEntryEditor.Name = "tableEntryEditor";
+            this.tableEntryEditor.Size = new System.Drawing.Size(670, 484);
+            this.tableEntryEditor.SplitterPosition = 222;
+            this.tableEntryEditor.TabIndex = 0;
+            // 
             // messageEditor
             // 
             this.messageEditor.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -186,21 +202,6 @@
             this.messageEditor.Size = new System.Drawing.Size(670, 484);
             this.messageEditor.SplitterPosition = 222;
             this.messageEditor.TabIndex = 0;
-            // 
-            // toolsToolStripMenuItem
-            // 
-            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showMessageLogToolStripMenuItem});
-            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
-            this.toolsToolStripMenuItem.Text = "&Tools";
-            // 
-            // showMessageLogToolStripMenuItem
-            // 
-            this.showMessageLogToolStripMenuItem.Name = "showMessageLogToolStripMenuItem";
-            this.showMessageLogToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
-            this.showMessageLogToolStripMenuItem.Text = "Show Message &Log...";
-            this.showMessageLogToolStripMenuItem.Click += new System.EventHandler(this.showMessageLogToolStripMenuItem_Click);
             // 
             // MainForm
             // 
