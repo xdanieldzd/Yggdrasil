@@ -489,7 +489,7 @@ namespace Yggdrasil
             List<Tuple<Type, IList<BaseParser>>> output = new List<Tuple<Type, IList<BaseParser>>>();
 
             List<Type> typesWithAttrib = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.GetCustomAttributes(typeof(ParserUsage), false).Length > 0).ToList();
-            foreach (Type type in typesWithAttrib)
+            foreach (Type type in typesWithAttrib.OrderBy(x => ((PrioritizedDescription)x.GetAttribute<PrioritizedDescription>()).Priority))
             {
                 if (mustSupportSave)
                 {

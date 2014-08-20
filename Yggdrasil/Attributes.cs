@@ -32,4 +32,18 @@ namespace Yggdrasil
             this.Priority = priority;
         }
     }
+
+    public class PrioritizedDescription : DescriptionAttribute
+    {
+        public byte Priority;
+
+        public PrioritizedDescription() : base() { }
+        public PrioritizedDescription(string description) : base(description) { }
+
+        public PrioritizedDescription(string description, byte priority)
+            : base(description)
+        {
+            this.Priority = priority;
+        }
+    }
 }

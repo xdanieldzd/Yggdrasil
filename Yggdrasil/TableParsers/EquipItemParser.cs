@@ -10,7 +10,7 @@ using Yggdrasil.FileTypes;
 namespace Yggdrasil.TableParsers
 {
     [ParserUsage("Item.tbb", 0)]
-    [Description("Equipment")]
+    [PrioritizedDescription("Equipment", 0)]
     public class EquipItemParser : BaseItemParser
     {
         public enum Groups : byte
