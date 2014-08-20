@@ -27,13 +27,25 @@ namespace Yggdrasil
         };
 
         public enum Versions { Invalid, European, American, Japanese };
-        public enum Languages { German, English, Spanish, French, Italian };
+        public enum Languages { English, German, Spanish, French, Italian };
 
         public string DataPath { get; private set; }
 
         public Header Header { get; private set; }
         public Versions Version { get; private set; }
-        public Languages Language { get; set; }
+
+        Languages language;
+        public Languages Language
+        {
+            get { return language; }
+            set
+            {
+                language = value;
+                var handler = SelectedLanguageChangedEvent;
+                if (handler != null) handler(this, new EventArgs());
+            }
+        }
+        public event EventHandler SelectedLanguageChangedEvent;
 
         string mainFontFilename;
         Dictionary<Languages, string> langSuffixes = new Dictionary<Languages, string>()
@@ -183,7 +195,6 @@ namespace Yggdrasil
             {
                 case "AKYP":
                     Version = Versions.European;
-                    Language = Languages.English;
                     mainFontFilename = "data\\Data\\Tex\\Font\\Font14x11_00.cmp";
                     break;
 

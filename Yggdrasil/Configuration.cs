@@ -45,6 +45,12 @@ namespace Yggdrasil
             set { source.Configs[ConfigName].Set("MessageEditorSplitter", value); }
         }
 
+        public static GameDataManager.Languages Language
+        {
+            get { return ((GameDataManager.Languages)Enum.Parse(typeof(GameDataManager.Languages), (source.Configs[ConfigName].GetString("Language", "English")))); }
+            set { source.Configs[ConfigName].Set("Language", value); }
+        }
+
         static Configuration()
         {
             PrepareConfig();

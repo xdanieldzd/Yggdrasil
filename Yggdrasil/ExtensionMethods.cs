@@ -67,5 +67,30 @@ namespace Yggdrasil
             if (!dict.ContainsValue(val)) throw new Exception("Value not found");
             return dict.FirstOrDefault(x => x.Value.Equals(val)).Key;
         }
+
+        public static TreeNode FindNodeByTag(this TreeView tree, object tag)
+        {
+            if (tag == null) return null;
+
+            TreeNode itemNode = null;
+            foreach (TreeNode node in tree.Nodes)
+            {
+                if (node.Tag == tag) return node;
+                itemNode = FindNodeByTag(tree, node, tag);
+                if (itemNode != null) break;
+            }
+            return itemNode;
+        }
+
+        private static TreeNode FindNodeByTag(this TreeView tree, TreeNode rootNode, object tag)
+        {
+            foreach (TreeNode node in rootNode.Nodes)
+            {
+                if (node.Tag == tag) return node;
+                TreeNode next = FindNodeByTag(tree, node, tag);
+                if (next != null) return next;
+            }
+            return null;
+        }
     }
 }

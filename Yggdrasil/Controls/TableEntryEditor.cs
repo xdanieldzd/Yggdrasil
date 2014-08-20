@@ -27,6 +27,7 @@ namespace Yggdrasil.Controls
 
         GameDataManager gameDataManager;
         BackgroundWorker treeViewWorker;
+        PropertyGridMessageFilter messageFilter;
 
         public TableEntryEditor()
         {
@@ -48,7 +49,7 @@ namespace Yggdrasil.Controls
 
         public void Initialize(GameDataManager gameDataManager)
         {
-            Application.AddMessageFilter(new PropertyGridMessageFilter(pgData.GetChildAtPoint(new Point(10, 10)), new MouseEventHandler((s, e) =>
+            messageFilter = new PropertyGridMessageFilter(pgData.GetChildAtPoint(new Point(10, 10)), new MouseEventHandler((s, e) =>
             {
                 if (e.Button == MouseButtons.Right && pgData.SelectedGridItem != null &&
                     pgData.SelectedGridItem.PropertyDescriptor != null && !pgData.SelectedGridItem.PropertyDescriptor.IsReadOnly)
@@ -66,10 +67,20 @@ namespace Yggdrasil.Controls
                         cmsDataGrid.Show(this, PointToClient(MousePosition));
                     }
                 }
-            })));
+            }));
+
+            Application.AddMessageFilter(messageFilter);
 
             this.gameDataManager = gameDataManager;
             this.Font = GUIHelpers.GetSuggestedGUIFont(gameDataManager.Version);
+
+            Rebuild();
+        }
+
+        public void Rebuild()
+        {
+            BaseParser lastObject = (BaseParser)pgData.SelectedObject;
+            pgData.SelectedObject = null;
 
             treeViewWorker = new BackgroundWorker();
             treeViewWorker.DoWork += ((s, e) =>
@@ -84,7 +95,11 @@ namespace Yggdrasil.Controls
                         tvParsers.Invoke(new Action(() => { tvParsers.Nodes.Add(dataNode); }));
                     }
                 }
-                tvParsers.Invoke(new Action(() => { tvParsers.Invalidate(); }));
+                tvParsers.Invoke(new Action(() =>
+                {
+                    tvParsers.SelectedNode = tvParsers.FindNodeByTag(lastObject);
+                    tvParsers.Invalidate();
+                }));
             });
 
             treeViewWorker.RunWorkerAsync();
@@ -92,6 +107,8 @@ namespace Yggdrasil.Controls
 
         public void Terminate()
         {
+            Application.RemoveMessageFilter(messageFilter);
+
             this.gameDataManager = null;
             treeViewWorker = null;
 
@@ -115,6 +132,11 @@ namespace Yggdrasil.Controls
                 descriptor.ResetValue(pgData.SelectedObject);
                 pgData.Refresh();
             }
+        }
+
+        private void pgData_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            if ((s as PropertyGrid).SelectedObject is EquipItemParser && e.ChangedItem.Value is TableParsers.EquipItemParser.Groups) Rebuild();
         }
     }
 }

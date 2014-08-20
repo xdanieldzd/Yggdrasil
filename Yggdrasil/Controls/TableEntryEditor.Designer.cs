@@ -50,6 +50,7 @@
             this.pgData.Size = new System.Drawing.Size(330, 400);
             this.pgData.TabIndex = 0;
             this.pgData.ToolbarVisible = false;
+            this.pgData.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgData_PropertyValueChanged);
             // 
             // splitContainer1
             // 
@@ -84,12 +85,12 @@
             this.cmsDataGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.resetPropertyToolStripMenuItem});
             this.cmsDataGrid.Name = "cmsDataGrid";
-            this.cmsDataGrid.Size = new System.Drawing.Size(153, 48);
+            this.cmsDataGrid.Size = new System.Drawing.Size(100, 26);
             // 
             // resetPropertyToolStripMenuItem
             // 
             this.resetPropertyToolStripMenuItem.Name = "resetPropertyToolStripMenuItem";
-            this.resetPropertyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.resetPropertyToolStripMenuItem.Size = new System.Drawing.Size(99, 22);
             this.resetPropertyToolStripMenuItem.Tag = "&Reset Property";
             this.resetPropertyToolStripMenuItem.Text = "-----";
             this.resetPropertyToolStripMenuItem.Click += new System.EventHandler(this.resetPropertyToolStripMenuItem_Click);

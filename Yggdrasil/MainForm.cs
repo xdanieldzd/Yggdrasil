@@ -29,7 +29,22 @@ namespace Yggdrasil
             if (Configuration.MessageEditorSplitter != -1) messageEditor.SplitterPosition = Configuration.MessageEditorSplitter;
 
             gameDataManager = new GameDataManager();
+            gameDataManager.Language = Configuration.Language;
+
             gameDataManager.ItemDataPropertyChangedEvent += new PropertyChangedEventHandler(gameDataManager_ItemDataPropertyChangedEvent);
+            gameDataManager.SelectedLanguageChangedEvent += new EventHandler(gameDataManager_SelectedLanguageChangedEvent);
+
+            foreach (GameDataManager.Languages language in Enum.GetValues(typeof(GameDataManager.Languages)))
+            {
+                gameLanguageToolStripMenuItem.DropDownItems.Add(new ToolStripMenuItem(language.ToString(), null, new EventHandler((s, e) =>
+                {
+                    ToolStripMenuItem menuItem = (s as ToolStripMenuItem);
+                    Configuration.Language = gameDataManager.Language = (GameDataManager.Languages)menuItem.Tag;
+
+                    foreach (ToolStripMenuItem checkMenuItem in gameLanguageToolStripMenuItem.DropDownItems)
+                        checkMenuItem.Checked = (checkMenuItem.Tag is GameDataManager.Languages && (GameDataManager.Languages)checkMenuItem.Tag == Configuration.Language);
+                })) { Tag = language, Checked = (language == Configuration.Language) });
+            }
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -44,6 +59,69 @@ namespace Yggdrasil
         }
 
         private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CommandOpenFolder();
+        }
+
+        private void openFolderToolStripButton_Click(object sender, EventArgs e)
+        {
+            CommandOpenFolder();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CommandSave();
+        }
+
+        private void saveToolStripButton_Click(object sender, EventArgs e)
+        {
+            CommandSave();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void showMessageLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.Logger.ShowDialog();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CommandAbout();
+        }
+
+        private void aboutToolStripButton_Click(object sender, EventArgs e)
+        {
+            CommandAbout();
+        }
+
+        private void gameDataManager_ItemDataPropertyChangedEvent(object sender, PropertyChangedEventArgs e)
+        {
+            if (gameDataManager.DataHasChanged)
+            {
+                tsslStatus.Text = string.Format("Ready; {0} {1} changed", gameDataManager.ChangedDataCount, (gameDataManager.ChangedDataCount != 1 ? "entries" : "entry"));
+                saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                tsslStatus.Text = "Ready";
+                saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = false;
+            }
+        }
+
+        private void gameDataManager_SelectedLanguageChangedEvent(object sender, EventArgs e)
+        {
+            foreach (TabPage tabPage in tabControl.TabPages)
+            {
+                IEditorControl editorControl = (IEditorControl)tabPage.Controls.OfType<Control>().FirstOrDefault(x => x is IEditorControl);
+                if (editorControl != null && editorControl.IsInitialized()) editorControl.Rebuild();
+            }
+        }
+
+        private void CommandOpenFolder()
         {
             if (CommonOpenFileDialog.IsPlatformSupported)
             {
@@ -62,7 +140,7 @@ namespace Yggdrasil
             }
         }
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        private void CommandSave()
         {
             if (gameDataManager.DataHasChanged)
             {
@@ -74,38 +152,14 @@ namespace Yggdrasil
                     tsslStatus.Text = string.Format("Data saved; {0} {1} changed", changedFiles, (changedFiles == 1 ? "file" : "files"));
 
                 tableEntryEditor.Refresh();
-                saveToolStripMenuItem.Enabled = false;
+                saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = false;
             }
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        private void showMessageLogToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.Logger.ShowDialog();
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void CommandAbout()
         {
             MessageBox.Show(string.Format("{0} {1}\n\nWritten 2014 by xdaniel - https://github.com/xdanieldzd/", Application.ProductName, VersionManagement.CreateVersionString(Application.ProductVersion)),
                 "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void gameDataManager_ItemDataPropertyChangedEvent(object sender, PropertyChangedEventArgs e)
-        {
-            if (gameDataManager.DataHasChanged)
-            {
-                tsslStatus.Text = string.Format("Ready; {0} {1} changed", gameDataManager.ChangedDataCount, (gameDataManager.ChangedDataCount != 1 ? "entries" : "entry"));
-                saveToolStripMenuItem.Enabled = true;
-            }
-            else
-            {
-                tsslStatus.Text = "Ready";
-                saveToolStripMenuItem.Enabled = false;
-            }
         }
 
         private void SetFormTitle()
@@ -121,7 +175,7 @@ namespace Yggdrasil
             foreach (TabPage tabPage in tabControl.TabPages)
             {
                 IEditorControl editorControl = (IEditorControl)tabPage.Controls.OfType<Control>().FirstOrDefault(x => x is IEditorControl);
-                if (editorControl.IsInitialized()) editorControl.Terminate();
+                if (editorControl != null && editorControl.IsInitialized()) editorControl.Terminate();
                 tabPage.Tag = null;
             }
 

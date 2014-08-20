@@ -43,6 +43,11 @@ namespace Yggdrasil.Controls
             this.gameDataManager = gameDataManager;
             this.Font = GUIHelpers.GetSuggestedGUIFont(gameDataManager.Version);
 
+            Rebuild();
+        }
+
+        public void Rebuild()
+        {
             if (this.gameDataManager.MessageFiles != null)
             {
                 treeViewWorker = new BackgroundWorker();

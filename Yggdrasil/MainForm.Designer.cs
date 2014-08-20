@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -43,6 +44,13 @@
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tpTableData = new System.Windows.Forms.TabPage();
             this.tpMessages = new System.Windows.Forms.TabPage();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gameLanguageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.openFolderToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.aboutToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.tableEntryEditor = new Yggdrasil.Controls.TableEntryEditor();
             this.messageEditor = new Yggdrasil.Controls.MessageEditor();
             this.menuStrip.SuspendLayout();
@@ -50,6 +58,7 @@
             this.tabControl.SuspendLayout();
             this.tpTableData.SuspendLayout();
             this.tpMessages.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -57,6 +66,7 @@
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.toolsToolStripMenuItem,
+            this.optionsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -183,6 +193,69 @@
             this.tpMessages.Text = "Messages";
             this.tpMessages.UseVisualStyleBackColor = true;
             // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.gameLanguageToolStripMenuItem});
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.optionsToolStripMenuItem.Text = "&Options";
+            // 
+            // gameLanguageToolStripMenuItem
+            // 
+            this.gameLanguageToolStripMenuItem.Name = "gameLanguageToolStripMenuItem";
+            this.gameLanguageToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.gameLanguageToolStripMenuItem.Text = "Game &Language...";
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openFolderToolStripButton,
+            this.saveToolStripButton,
+            this.toolStripSeparator,
+            this.aboutToolStripButton});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(684, 25);
+            this.toolStrip1.TabIndex = 3;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // openFolderToolStripButton
+            // 
+            this.openFolderToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.openFolderToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("openFolderToolStripButton.Image")));
+            this.openFolderToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.openFolderToolStripButton.Name = "openFolderToolStripButton";
+            this.openFolderToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.openFolderToolStripButton.Text = "&Open";
+            this.openFolderToolStripButton.Click += new System.EventHandler(this.openFolderToolStripButton_Click);
+            // 
+            // saveToolStripButton
+            // 
+            this.saveToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.saveToolStripButton.Enabled = false;
+            this.saveToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripButton.Image")));
+            this.saveToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.saveToolStripButton.Name = "saveToolStripButton";
+            this.saveToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.saveToolStripButton.Text = "&Save";
+            this.saveToolStripButton.Click += new System.EventHandler(this.saveToolStripButton_Click);
+            // 
+            // toolStripSeparator
+            // 
+            this.toolStripSeparator.Name = "toolStripSeparator";
+            this.toolStripSeparator.Size = new System.Drawing.Size(6, 25);
+            // 
+            // aboutToolStripButton
+            // 
+            this.aboutToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.aboutToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("aboutToolStripButton.Image")));
+            this.aboutToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.aboutToolStripButton.Name = "aboutToolStripButton";
+            this.aboutToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.aboutToolStripButton.Text = "&About";
+            this.aboutToolStripButton.Click += new System.EventHandler(this.aboutToolStripButton_Click);
+            // 
             // tableEntryEditor
             // 
             this.tableEntryEditor.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -208,6 +281,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(684, 562);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.menuStrip);
@@ -221,6 +295,8 @@
             this.tabControl.ResumeLayout(false);
             this.tpTableData.ResumeLayout(false);
             this.tpMessages.ResumeLayout(false);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -245,5 +321,12 @@
         private Controls.TableEntryEditor tableEntryEditor;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showMessageLogToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem gameLanguageToolStripMenuItem;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton openFolderToolStripButton;
+        private System.Windows.Forms.ToolStripButton saveToolStripButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator;
+        private System.Windows.Forms.ToolStripButton aboutToolStripButton;
     }
 }

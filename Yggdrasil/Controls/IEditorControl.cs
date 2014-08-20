@@ -9,6 +9,7 @@ namespace Yggdrasil.Controls
     {
         bool IsInitialized();
         void Initialize(GameDataManager gameDataManager);
+        void Rebuild();
         void Terminate();
     }
 }
