@@ -85,6 +85,8 @@ namespace Yggdrasil.Controls
             treeViewWorker = new BackgroundWorker();
             treeViewWorker.DoWork += ((s, e) =>
             {
+                System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
+
                 tvParsers.Invoke(new Action(() => { tvParsers.Nodes.Clear(); }));
                 foreach (Tuple<Type, IList<BaseParser>> parsedTuple in this.gameDataManager.GetAllParsedData(true))
                 {

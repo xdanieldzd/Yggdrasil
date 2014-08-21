@@ -96,6 +96,8 @@ namespace Yggdrasil
             {
                 try
                 {
+                    System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
+
                     loadWaitWorker.ReportProgress(-1, "Reading game directory...");
                     ReadHeaderIdentify();
 
@@ -126,12 +128,14 @@ namespace Yggdrasil
                         string.Format("{0}{1}{1}{2}", gameException.Message, Environment.NewLine, "Please ensure you've selected a valid game data directory."), "Error",
                         MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
+#if !DEBUG
                 catch (Exception exception)
                 {
                     MessageBox.Show(
                         string.Format("{0} occured: {1}{2}{2}{3}", exception.GetType().FullName, exception.Message, Environment.NewLine, "Please contact a developer about this message."), "Exception",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+#endif
             });
             loadWaitWorker.ProgressChanged += ((s, e) =>
             {

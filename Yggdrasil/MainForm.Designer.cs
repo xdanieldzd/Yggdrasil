@@ -37,22 +37,22 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showMessageLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gameLanguageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.tsslStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tpTableData = new System.Windows.Forms.TabPage();
+            this.tableEntryEditor = new Yggdrasil.Controls.TableEntryEditor();
             this.tpMessages = new System.Windows.Forms.TabPage();
-            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.gameLanguageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.messageEditor = new Yggdrasil.Controls.MessageEditor();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.openFolderToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.tableEntryEditor = new Yggdrasil.Controls.TableEntryEditor();
-            this.messageEditor = new Yggdrasil.Controls.MessageEditor();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -128,6 +128,20 @@
             this.showMessageLogToolStripMenuItem.Text = "Show Message &Log...";
             this.showMessageLogToolStripMenuItem.Click += new System.EventHandler(this.showMessageLogToolStripMenuItem_Click);
             // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.gameLanguageToolStripMenuItem});
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.optionsToolStripMenuItem.Text = "&Options";
+            // 
+            // gameLanguageToolStripMenuItem
+            // 
+            this.gameLanguageToolStripMenuItem.Name = "gameLanguageToolStripMenuItem";
+            this.gameLanguageToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.gameLanguageToolStripMenuItem.Text = "Game &Language...";
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -164,10 +178,10 @@
             this.tabControl.Controls.Add(this.tpTableData);
             this.tabControl.Controls.Add(this.tpMessages);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl.Location = new System.Drawing.Point(0, 24);
+            this.tabControl.Location = new System.Drawing.Point(0, 49);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(684, 516);
+            this.tabControl.Size = new System.Drawing.Size(684, 491);
             this.tabControl.TabIndex = 1;
             this.tabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl_Selected);
             // 
@@ -177,10 +191,20 @@
             this.tpTableData.Location = new System.Drawing.Point(4, 22);
             this.tpTableData.Name = "tpTableData";
             this.tpTableData.Padding = new System.Windows.Forms.Padding(3);
-            this.tpTableData.Size = new System.Drawing.Size(676, 490);
+            this.tpTableData.Size = new System.Drawing.Size(676, 465);
             this.tpTableData.TabIndex = 0;
             this.tpTableData.Text = "Data Tables";
             this.tpTableData.UseVisualStyleBackColor = true;
+            // 
+            // tableEntryEditor
+            // 
+            this.tableEntryEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableEntryEditor.Enabled = false;
+            this.tableEntryEditor.Location = new System.Drawing.Point(3, 3);
+            this.tableEntryEditor.Name = "tableEntryEditor";
+            this.tableEntryEditor.Size = new System.Drawing.Size(670, 459);
+            this.tableEntryEditor.SplitterPosition = 222;
+            this.tableEntryEditor.TabIndex = 0;
             // 
             // tpMessages
             // 
@@ -193,19 +217,15 @@
             this.tpMessages.Text = "Messages";
             this.tpMessages.UseVisualStyleBackColor = true;
             // 
-            // optionsToolStripMenuItem
+            // messageEditor
             // 
-            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.gameLanguageToolStripMenuItem});
-            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.optionsToolStripMenuItem.Text = "&Options";
-            // 
-            // gameLanguageToolStripMenuItem
-            // 
-            this.gameLanguageToolStripMenuItem.Name = "gameLanguageToolStripMenuItem";
-            this.gameLanguageToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
-            this.gameLanguageToolStripMenuItem.Text = "Game &Language...";
+            this.messageEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.messageEditor.Enabled = false;
+            this.messageEditor.Location = new System.Drawing.Point(3, 3);
+            this.messageEditor.Name = "messageEditor";
+            this.messageEditor.Size = new System.Drawing.Size(670, 484);
+            this.messageEditor.SplitterPosition = 222;
+            this.messageEditor.TabIndex = 0;
             // 
             // toolStrip1
             // 
@@ -256,33 +276,13 @@
             this.aboutToolStripButton.Text = "&About";
             this.aboutToolStripButton.Click += new System.EventHandler(this.aboutToolStripButton_Click);
             // 
-            // tableEntryEditor
-            // 
-            this.tableEntryEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableEntryEditor.Enabled = false;
-            this.tableEntryEditor.Location = new System.Drawing.Point(3, 3);
-            this.tableEntryEditor.Name = "tableEntryEditor";
-            this.tableEntryEditor.Size = new System.Drawing.Size(670, 484);
-            this.tableEntryEditor.SplitterPosition = 222;
-            this.tableEntryEditor.TabIndex = 0;
-            // 
-            // messageEditor
-            // 
-            this.messageEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.messageEditor.Enabled = false;
-            this.messageEditor.Location = new System.Drawing.Point(3, 3);
-            this.messageEditor.Name = "messageEditor";
-            this.messageEditor.Size = new System.Drawing.Size(670, 484);
-            this.messageEditor.SplitterPosition = 222;
-            this.messageEditor.TabIndex = 0;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(684, 562);
-            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.tabControl);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.menuStrip);
             this.MainMenuStrip = this.menuStrip;

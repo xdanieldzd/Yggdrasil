@@ -168,8 +168,9 @@ namespace Yggdrasil.Helpers
         public Bitmap RenderString(EtrianString str, int width = 256, int spacingModifier = 0)
         {
             int newLines = str.RawData.Count(xx => (xx == 0x8001 || xx == 0x8002)) + 1;
+            int yIncrease = (CharacterSize.Height + (GameDataManager.Version == Yggdrasil.GameDataManager.Versions.Japanese ? 2 : 0) - 1);
 
-            Bitmap rendered = new Bitmap(width, Math.Max(newLines, 1) * CharacterSize.Height);
+            Bitmap rendered = new Bitmap(width, Math.Max(newLines, 1) * yIncrease);
 
             ColorMap[] colorMap = new ColorMap[1] { new ColorMap() { OldColor = palette[1], NewColor = palette[1] } };
             ImageAttributes imageAttrib = new ImageAttributes();
@@ -204,7 +205,7 @@ namespace Yggdrasil.Helpers
 
                     if (i + 1 < str.RawData.Length && (str.RawData[i] == 0x8001 && str.RawData[i + 1] == 0x8002))
                     {
-                        y += (CharacterSize.Height - 1);
+                        y += yIncrease;
                         using (Pen pen = new Pen(Color.FromArgb(128, Color.White)))
                         {
                             g.DrawLine(pen, new Point(0, y + 1), new Point(rendered.Width, y + 1));
@@ -214,7 +215,7 @@ namespace Yggdrasil.Helpers
                     }
                     else if (str.RawData[i] == 0x8001)
                     {
-                        y += (CharacterSize.Height - 1);
+                        y += yIncrease;
                         x = 0;
                     }
                     else

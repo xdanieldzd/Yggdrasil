@@ -20,6 +20,8 @@ namespace Yggdrasil
 
         public MainForm()
         {
+            System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
+
             InitializeComponent();
 
             SetFormTitle();
@@ -182,6 +184,7 @@ namespace Yggdrasil
             gameDataManager.ReadGameDirectory(Configuration.LastDataPath = path);
 
             tableEntryEditor.Enabled = messageEditor.Enabled = (gameDataManager != null && gameDataManager.IsInitialized);
+            gameLanguageToolStripMenuItem.Enabled = (gameDataManager != null && gameDataManager.Version == GameDataManager.Versions.European);
 
             if (gameDataManager.IsInitialized)
             {

@@ -53,6 +53,8 @@ namespace Yggdrasil.Controls
                 treeViewWorker = new BackgroundWorker();
                 treeViewWorker.DoWork += ((s, e) =>
                 {
+                    System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
+
                     tvMessageFiles.Invoke(new Action(() => { tvMessageFiles.Nodes.Clear(); }));
                     foreach (TBB messageFile in this.gameDataManager.MessageFiles)
                     {
