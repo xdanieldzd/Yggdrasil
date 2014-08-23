@@ -81,10 +81,10 @@ namespace Yggdrasil.Dumpers
 
                 builder.AppendLine("<tr>");
                 builder.AppendFormat("<td>{0} (0x{0:X})</td> <td>{1}</td> <td>{2}</td> <td>0x{3:X4}</td> <td>0x{4:X4}</td> <td>{5}</td> <td>{6}</td> <td>0x{7:X4}</td> <td>0x{8:X4}</td>",
-                    item.ItemNumber, name, description, item.Unknown1, item.Unknown2, item.RecoveredHP, item.RecoveredTP, item.RecoveredBoost, item.Unknown3);
+                    item.ItemNumber, name, description, item.Unknown1, item.Unknown2, item.RecoveredHP, item.RecoveredTP, item.RecoveredBoost, item.Unknown3Flags);
 
                 builder.AppendFormat("<td>0x{0:X2}</td> <td>0x{1:X2}</td> <td>{2} en</td> <td>{3} en</td>",
-                    item.Unknown4, item.Unknown5, item.BuyPrice, item.SellPrice);
+                    item.Unknown4, item.Unknown5Flags, item.BuyPrice, item.SellPrice);
                 builder.AppendLine("</tr>\n");
             }
             builder.AppendLine("</table><br>");

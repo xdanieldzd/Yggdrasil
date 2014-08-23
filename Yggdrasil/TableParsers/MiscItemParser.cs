@@ -73,15 +73,15 @@ namespace Yggdrasil.TableParsers
         public void ResetRecoveredBoost() { this.RecoveredBoost = (dynamic)base.originalValues["RecoveredBoost"]; }
 
         // 0004 -> can USE
-        ushort unknown3;
-        [DisplayName("Unknown 3"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
-        public ushort Unknown3
+        ushort unknown3Flags;
+        [DisplayName("Unknown 3 (Flags)"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
+        public ushort Unknown3Flags
         {
-            get { return unknown3; }
-            set { base.SetProperty(ref unknown3, value, () => this.Unknown3); }
+            get { return unknown3Flags; }
+            set { base.SetProperty(ref unknown3Flags, value, () => this.Unknown3Flags); }
         }
-        public bool ShouldSerializeUnknown3() { return !(this.Unknown3 == (dynamic)base.originalValues["Unknown3"]); }
-        public void ResetUnknown3() { this.Unknown3 = (dynamic)base.originalValues["Unknown3"]; }
+        public bool ShouldSerializeUnknown3Flags() { return !(this.Unknown3Flags == (dynamic)base.originalValues["Unknown3Flags"]); }
+        public void ResetUnknown3Flags() { this.Unknown3Flags = (dynamic)base.originalValues["Unknown3Flags"]; }
 
         byte unknown4;
         [DisplayName("Unknown 4"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
@@ -96,15 +96,15 @@ namespace Yggdrasil.TableParsers
         // 01 -> BUY: if unlocked, sold out?!
         // 08 -> can't DISCARD nor SELL
         // 20 -> USE: target whole group
-        byte unknown5;
-        [DisplayName("Unknown 5"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
-        public byte Unknown5
+        byte unknown5Flags;
+        [DisplayName("Unknown 5 (Flags)"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
+        public byte Unknown5Flags
         {
-            get { return unknown5; }
-            set { base.SetProperty(ref unknown5, value, () => this.Unknown5); }
+            get { return unknown5Flags; }
+            set { base.SetProperty(ref unknown5Flags, value, () => this.Unknown5Flags); }
         }
-        public bool ShouldSerializeUnknown5() { return !(this.Unknown5 == (dynamic)base.originalValues["Unknown5"]); }
-        public void ResetUnknown5() { this.Unknown5 = (dynamic)base.originalValues["Unknown5"]; }
+        public bool ShouldSerializeUnknown5Flags() { return !(this.Unknown5Flags == (dynamic)base.originalValues["Unknown5Flags"]); }
+        public void ResetUnknown5Flags() { this.Unknown5Flags = (dynamic)base.originalValues["Unknown5Flags"]; }
 
         uint buyPrice;
         [DisplayName("Buy Price"), TypeConverter(typeof(CustomConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 1)]
@@ -138,9 +138,9 @@ namespace Yggdrasil.TableParsers
             recoveredHP = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 6);
             recoveredTP = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 8);
             recoveredBoost = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 10);
-            unknown3 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 12);
+            unknown3Flags = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 12);
             unknown4 = ParentTable.Data[EntryNumber][14];
-            unknown5 = ParentTable.Data[EntryNumber][15];
+            unknown5Flags = ParentTable.Data[EntryNumber][15];
             buyPrice = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 16);
             sellPrice = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 20);
 
@@ -154,9 +154,9 @@ namespace Yggdrasil.TableParsers
             recoveredHP.CopyTo(ParentTable.Data[EntryNumber], 6);
             recoveredTP.CopyTo(ParentTable.Data[EntryNumber], 8);
             recoveredBoost.CopyTo(ParentTable.Data[EntryNumber], 10);
-            unknown3.CopyTo(ParentTable.Data[EntryNumber], 12);
+            unknown3Flags.CopyTo(ParentTable.Data[EntryNumber], 12);
             unknown4.CopyTo(ParentTable.Data[EntryNumber], 14);
-            unknown5.CopyTo(ParentTable.Data[EntryNumber], 15);
+            unknown5Flags.CopyTo(ParentTable.Data[EntryNumber], 15);
             buyPrice.CopyTo(ParentTable.Data[EntryNumber], 16);
             sellPrice.CopyTo(ParentTable.Data[EntryNumber], 20);
 
