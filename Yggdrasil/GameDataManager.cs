@@ -76,6 +76,7 @@ namespace Yggdrasil
         public static Dictionary<ushort, string> ItemNames { get; private set; }
         public static Dictionary<ushort, string> EnemyNames { get; private set; }
         public static Dictionary<ushort, string> EncounterDescriptions { get; private set; }
+        public static Dictionary<ushort, string> PlayerSkillNames { get; private set; }
 
         public GameDataManager()
         {
@@ -119,12 +120,11 @@ namespace Yggdrasil
                     parsedData = ParseDataTables();
                     changedParsedData = new List<BaseParser>();
 
-                    loadWaitWorker.ReportProgress(-1, "Fetching item names...");
+                    loadWaitWorker.ReportProgress(-1, "Generating various dictionaries...");
                     FetchItemNames();
-                    loadWaitWorker.ReportProgress(-1, "Fetching enemy names...");
                     FetchEnemyNames();
-                    loadWaitWorker.ReportProgress(-1, "Fetching encounter descriptions...");
                     FetchEncounterDescriptions();
+                    FetchPlayerSkillNames();
 
                     IsInitialized = true;
                 }
@@ -487,6 +487,17 @@ namespace Yggdrasil
             }
         }
 
+        private void FetchPlayerSkillNames()
+        {
+            PlayerSkillNames = new Dictionary<ushort, string>();
+            PlayerSkillNames.Add(0, "(None)");
+            foreach (BaseParser parser in parsedData.Where(x => (x is PlayerSkillReqParser)))
+            {
+                ushort skillNumber = (parser as PlayerSkillReqParser).SkillNumber;
+                PlayerSkillNames.Add(skillNumber, GetPlayerSkillName(skillNumber));
+            }
+        }
+
         public string GetItemName(ushort itemNumber)
         {
             string value = GetMessageString("ItemName", 0, itemNumber - 1);
@@ -510,6 +521,18 @@ namespace Yggdrasil
         {
             if ((enemyNumber - 1) < 0) return "(Unnamed)";
             string value = GetMessageString("EnemyInfo", 0, enemyNumber - 1);
+            return (value != string.Empty ? value : "(Unnamed)");
+        }
+
+        public string GetPlayerSkillName(ushort skillNumber)
+        {
+            string value = GetMessageString("PlayerSkillName", 0, skillNumber - 1);
+            return (value != string.Empty ? value : "(Unnamed)");
+        }
+
+        public string GetPlayerSkillDescription(ushort skillNumber)
+        {
+            string value = GetMessageString("CampSkillInfo", 0, skillNumber - 1);
             return (value != string.Empty ? value : "(Unnamed)");
         }
 

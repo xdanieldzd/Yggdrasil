@@ -49,7 +49,7 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.openFolderToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.tableEntryEditor = new Yggdrasil.Controls.TableEntryEditor();
             this.messageEditor = new Yggdrasil.Controls.MessageEditor();
@@ -202,7 +202,7 @@
             this.tpMessages.Location = new System.Drawing.Point(4, 22);
             this.tpMessages.Name = "tpMessages";
             this.tpMessages.Padding = new System.Windows.Forms.Padding(3);
-            this.tpMessages.Size = new System.Drawing.Size(726, 465);
+            this.tpMessages.Size = new System.Drawing.Size(676, 465);
             this.tpMessages.TabIndex = 1;
             this.tpMessages.Text = "Messages";
             this.tpMessages.UseVisualStyleBackColor = true;
@@ -212,7 +212,7 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openFolderToolStripButton,
             this.saveToolStripButton,
-            this.toolStripSeparator,
+            this.toolStripSeparator1,
             this.aboutToolStripButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
@@ -241,10 +241,10 @@
             this.saveToolStripButton.Text = "&Save";
             this.saveToolStripButton.Click += new System.EventHandler(this.saveToolStripButton_Click);
             // 
-            // toolStripSeparator
+            // toolStripSeparator1
             // 
-            this.toolStripSeparator.Name = "toolStripSeparator";
-            this.toolStripSeparator.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // aboutToolStripButton
             // 
@@ -272,8 +272,8 @@
             this.messageEditor.Enabled = false;
             this.messageEditor.Location = new System.Drawing.Point(3, 3);
             this.messageEditor.Name = "messageEditor";
-            this.messageEditor.Size = new System.Drawing.Size(720, 459);
-            this.messageEditor.SplitterPosition = 239;
+            this.messageEditor.Size = new System.Drawing.Size(670, 459);
+            this.messageEditor.SplitterPosition = 222;
             this.messageEditor.TabIndex = 0;
             // 
             // MainForm
@@ -326,7 +326,7 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton openFolderToolStripButton;
         private System.Windows.Forms.ToolStripButton saveToolStripButton;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton aboutToolStripButton;
     }
 }

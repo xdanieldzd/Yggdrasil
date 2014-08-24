@@ -248,5 +248,10 @@ namespace Yggdrasil
         {
             public override Dictionary<ushort, string> Dictionary { get { return GameDataManager.EncounterDescriptions; } }
         }
+
+        public class PlayerSkillNameConverter : DictionaryStringConverter
+        {
+            public override Dictionary<ushort, string> Dictionary { get { return GameDataManager.PlayerSkillNames; } }
+        }
     }
 }

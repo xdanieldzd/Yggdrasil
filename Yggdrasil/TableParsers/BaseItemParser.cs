@@ -8,7 +8,7 @@ using Yggdrasil.FileTypes;
 
 namespace Yggdrasil.TableParsers
 {
-    public class BaseItemParser : BaseParser
+    public abstract class BaseItemParser : BaseParser
     {
         [DisplayName("(Name)"), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("In-game item name.")]

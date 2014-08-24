@@ -10,7 +10,7 @@ using Yggdrasil.FileTypes;
 
 namespace Yggdrasil.TableParsers
 {
-    public class BaseParser : INotifyPropertyChanged
+    public abstract class BaseParser : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

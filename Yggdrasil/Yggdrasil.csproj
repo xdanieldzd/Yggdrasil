@@ -131,6 +131,7 @@
     <Compile Include="Controls\TreeViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="TableParsers\PlayerSkillReqParser.cs" />
     <EmbeddedResource Include="Controls\TableEntryEditor.resx">
       <DependentUpon>TableEntryEditor.cs</DependentUpon>
     </EmbeddedResource>
