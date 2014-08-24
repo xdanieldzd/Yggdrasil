@@ -249,7 +249,7 @@ namespace Yggdrasil.TableParsers
         public void ResetItemDrop3() { this.ItemDrop3 = (dynamic)base.originalValues["ItemDrop3"]; }
 
         byte itemDropRate1;
-        [DisplayName("1st Drop Rate"), PrioritizedCategory("Drops", 2)]
+        [DisplayName("1st Drop Rate"), TypeConverter(typeof(CustomConverters.BytePercentageConverter)), PrioritizedCategory("Drops", 2)]
         public byte ItemDropRate1
         {
             get { return itemDropRate1; }
@@ -259,7 +259,7 @@ namespace Yggdrasil.TableParsers
         public void ResetItemDropRate1() { this.ItemDropRate1 = (dynamic)base.originalValues["ItemDropRate1"]; }
 
         byte itemDropRate2;
-        [DisplayName("2nd Drop Rate"), PrioritizedCategory("Drops", 2)]
+        [DisplayName("2nd Drop Rate"), TypeConverter(typeof(CustomConverters.BytePercentageConverter)), PrioritizedCategory("Drops", 2)]
         public byte ItemDropRate2
         {
             get { return itemDropRate2; }
@@ -269,7 +269,7 @@ namespace Yggdrasil.TableParsers
         public void ResetItemDropRate2() { this.ItemDropRate2 = (dynamic)base.originalValues["ItemDropRate2"]; }
 
         byte itemDropRate3;
-        [DisplayName("3rd Drop Rate"), PrioritizedCategory("Drops", 2)]
+        [DisplayName("3rd Drop Rate"), TypeConverter(typeof(CustomConverters.BytePercentageConverter)), PrioritizedCategory("Drops", 2)]
         public byte ItemDropRate3
         {
             get { return itemDropRate3; }

@@ -130,6 +130,13 @@ namespace Yggdrasil
             }
         }
 
+        public class BytePercentageConverter : SuffixByteConverter
+        {
+            public override Type DataType { get { return typeof(byte); } }
+            public override string FormatString { get { return "{0}{1}"; } }
+            public override string Suffix { get { return "%"; } }
+        }
+
         public class SbytePercentageConverter : SuffixByteConverter
         {
             public override Type DataType { get { return typeof(sbyte); } }
