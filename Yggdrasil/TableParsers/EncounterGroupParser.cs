@@ -11,7 +11,7 @@ namespace Yggdrasil.TableParsers
 {
     [TreeNodeCategory("Enemies")]
     [ParserUsage("EncountData.tbb", 1)]
-    [PrioritizedDescription("Encounters Groups", 1)]
+    [PrioritizedDescription("Encounters Groups", 2)]
     public class EncounterGroupParser : BaseParser
     {
         [DisplayName("(ID)"), PrioritizedCategory("Information", byte.MaxValue)]
