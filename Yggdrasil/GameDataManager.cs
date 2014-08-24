@@ -285,8 +285,9 @@ namespace Yggdrasil
                 foreach (Tuple<string, string, string, bool, bool> dirExt in (Version == Versions.European ? dirExtTuplesLocalized : dirExtTuples))
                 {
                     string localDataPath = Path.Combine(DataPath, dirExt.Item1);
-                    List<string> filePathsAll = Directory.EnumerateFiles(localDataPath, "*.*", SearchOption.AllDirectories).ToList();
+                    if (!Directory.Exists(localDataPath)) continue;
 
+                    List<string> filePathsAll = Directory.EnumerateFiles(localDataPath, "*.*", SearchOption.AllDirectories).ToList();
                     List<string> filePaths = filePathsAll
                         .Where(x => x.ToLowerInvariant().EndsWith(dirExt.Item2.ToLowerInvariant()) || Path.GetFileName(x.ToLowerInvariant()) == dirExt.Item2.ToLowerInvariant())
                         .ToList();
@@ -380,7 +381,10 @@ namespace Yggdrasil
 
             foreach (string directory in directories)
             {
-                List<string> filePaths = Directory.EnumerateFiles(Path.Combine(DataPath, directory), "*.*", SearchOption.AllDirectories)
+                string localDataPath = Path.Combine(DataPath, directory);
+                if (!Directory.Exists(localDataPath)) continue;
+
+                List<string> filePaths = Directory.EnumerateFiles(localDataPath, "*.*", SearchOption.AllDirectories)
                     .Where(x => x.ToLowerInvariant().EndsWith(extension) || x.ToLowerInvariant().EndsWith(".cmp"))
                     .ToList();
 
@@ -424,7 +428,8 @@ namespace Yggdrasil
                 {
                     loadWaitWorker.ReportProgress(-1, string.Format("Parsing {0}...", attrib.FileName));
 
-                    TBB tableFile = dataTableFiles.FirstOrDefault(x => Path.GetFileName(x.Filename) == attrib.FileName);
+                    TBB tableFile =
+                        dataTableFiles.FirstOrDefault(x => Path.GetFileName(x.Filename) == attrib.FileName || Path.GetFileNameWithoutExtension(x.Filename) == Path.GetFileNameWithoutExtension(attrib.FileName));
 
                     if (tableFile == null)
                         throw new FileNotFoundException(string.Format("Table file {0} not found in loaded files", attrib.FileName));
@@ -464,6 +469,20 @@ namespace Yggdrasil
         public string GetItemDescription(ushort itemNumber)
         {
             string value = GetMessageString("ItemInfo", 0, itemNumber - 1);
+            return (value != string.Empty ? value : "(Unnamed)");
+        }
+
+        public string GetEnemyName(ushort enemyNumber)
+        {
+            if ((enemyNumber - 1) < 0) return "(Unnamed)";
+            string value = GetMessageString("EnemyName", 0, enemyNumber - 1);
+            return (value != string.Empty ? value : "(Unnamed)");
+        }
+
+        public string GetEnemyDescription(ushort enemyNumber)
+        {
+            if ((enemyNumber - 1) < 0) return "(Unnamed)";
+            string value = GetMessageString("EnemyInfo", 0, enemyNumber - 1);
             return (value != string.Empty ? value : "(Unnamed)");
         }
 

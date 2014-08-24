@@ -137,6 +137,13 @@ namespace Yggdrasil
             public override string Suffix { get { return "%"; } }
         }
 
+        public class UshortPercentageConverter : SuffixByteConverter
+        {
+            public override Type DataType { get { return typeof(ushort); } }
+            public override string FormatString { get { return "{0}{1}"; } }
+            public override string Suffix { get { return "%"; } }
+        }
+
         public class EtrianEnConverter : SuffixByteConverter
         {
             public override Type DataType { get { return typeof(uint); } }
@@ -147,6 +154,12 @@ namespace Yggdrasil
         {
             public override Type DataType { get { return typeof(byte); } }
             public override string Suffix { get { return "x"; } }
+        }
+
+        public class ExpConverter : SuffixByteConverter
+        {
+            public override Type DataType { get { return typeof(uint); } }
+            public override string Suffix { get { return "EXP"; } }
         }
 
         public class ItemNameConverter : TypeConverter

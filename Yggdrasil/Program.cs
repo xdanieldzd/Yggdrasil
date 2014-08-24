@@ -43,6 +43,31 @@ namespace Yggdrasil
                 System.IO.File.WriteAllText(@"C:\temp\EOJPN-TABLE.txt", sb.ToString());
             }
             */
+
+            // temporary stupid "sort-of auto-generate tableparser property code" code
+            /*using (System.IO.StreamWriter w = System.IO.File.CreateText(@"C:\temp\__eo-codetemp.txt"))
+            {
+                System.Reflection.FieldInfo[] fis = typeof(Yggdrasil.TableParsers.EnemyDataParser).GetFields(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                foreach (System.Reflection.FieldInfo fi in fis.Where(x => x.FieldType != typeof(Dictionary<string, object>)))
+                {
+                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+                    string format =
+                        "{0} {1};" + Environment.NewLine +
+                        "public {0} {2}" + Environment.NewLine +
+                        "{{" + Environment.NewLine +
+                        "   get {{ return {1}; }}" + Environment.NewLine +
+                        "   set {{ base.SetProperty(ref {1}, value, () => this.{2}); }}" + Environment.NewLine +
+                        "}}" + Environment.NewLine +
+                        "public bool ShouldSerialize{2}() {{ return !(this.{2} == (dynamic)base.originalValues[\"{2}\"]); }}" + Environment.NewLine +
+                        "public void Reset{2}() {{ this.{2} = (dynamic)base.originalValues[\"{2}\"]; }}" + Environment.NewLine;
+
+                    sb.AppendFormat(format, fi.FieldType.Name, fi.Name, fi.Name.First().ToString().ToUpper() + String.Join("", fi.Name.Skip(1)));
+
+                    w.WriteLine(sb.ToString());
+                }
+            }*/
+
             Application.Run(MainForm = new MainForm());
         }
     }

@@ -121,6 +121,7 @@
       <DependentUpon>StringPreviewControl.cs</DependentUpon>
     </Compile>
     <Compile Include="TableParsers\BaseParser.cs" />
+    <Compile Include="TableParsers\EnemyDataParser.cs" />
     <Compile Include="TableParsers\EquipItemParser.cs" />
     <Compile Include="TableParsers\ItemCompoundParser.cs" />
     <Compile Include="TableParsers\BaseItemParser.cs" />
