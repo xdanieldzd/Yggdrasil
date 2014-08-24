@@ -74,6 +74,8 @@ namespace Yggdrasil
         public event PropertyChangedEventHandler ItemDataPropertyChangedEvent;
 
         public static Dictionary<ushort, string> ItemNames { get; private set; }
+        public static Dictionary<ushort, string> EnemyNames { get; private set; }
+        public static Dictionary<ushort, string> EncounterDescriptions { get; private set; }
 
         public GameDataManager()
         {
@@ -119,6 +121,10 @@ namespace Yggdrasil
 
                     loadWaitWorker.ReportProgress(-1, "Fetching item names...");
                     FetchItemNames();
+                    loadWaitWorker.ReportProgress(-1, "Fetching enemy names...");
+                    FetchEnemyNames();
+                    loadWaitWorker.ReportProgress(-1, "Fetching encounter descriptions...");
+                    FetchEncounterDescriptions();
 
                     IsInitialized = true;
                 }
@@ -215,7 +221,7 @@ namespace Yggdrasil
                 default: throw new GameDataManagerException("Unsupported game data.");
             }
 
-            loadWaitWorker.ReportProgress(-1, string.Format("Identified '{0} {1}' as {2} version...", Header.GameTitle, Header.GameCode, Version));
+            Program.Logger.LogMessage("Identified game '{0} {1}' as {2} version.", Header.GameTitle, Header.GameCode, Version);
         }
 
         private void PrepareDirectoryUnpack()
@@ -457,6 +463,27 @@ namespace Yggdrasil
             {
                 ushort itemNumber = (parser as BaseItemParser).ItemNumber;
                 ItemNames.Add(itemNumber, GetItemName(itemNumber));
+            }
+        }
+
+        private void FetchEnemyNames()
+        {
+            EnemyNames = new Dictionary<ushort, string>();
+            EnemyNames.Add(0, "(None)");
+            foreach (BaseParser parser in parsedData.Where(x => (x is EnemyDataParser)))
+            {
+                ushort enemyNumber = (parser as EnemyDataParser).EnemyNumber;
+                if (enemyNumber != 0) EnemyNames.Add(enemyNumber, GetEnemyName(enemyNumber));
+            }
+        }
+
+        private void FetchEncounterDescriptions()
+        {
+            EncounterDescriptions = new Dictionary<ushort, string>();
+            foreach (BaseParser parser in parsedData.Where(x => (x is EncounterParser)))
+            {
+                ushort encounterNumber = (parser as EncounterParser).EncounterNumber;
+                EncounterDescriptions.Add(encounterNumber, parser.EntryDescription);
             }
         }
 

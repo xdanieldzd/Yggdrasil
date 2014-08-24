@@ -49,6 +49,8 @@ namespace Yggdrasil.Controls
 
         public void Initialize(GameDataManager gameDataManager)
         {
+            Program.Logger.LogMessage("Initializing {0}...", this.GetType().Name);
+
             messageFilter = new PropertyGridMessageFilter(pgData.GetChildAtPoint(new Point(10, 10)), new MouseEventHandler((s, e) =>
             {
                 if (e.Button == MouseButtons.Right && pgData.SelectedGridItem != null &&
@@ -82,21 +84,39 @@ namespace Yggdrasil.Controls
             BaseParser lastObject = (BaseParser)pgData.SelectedObject;
             pgData.SelectedObject = null;
 
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+
+            Program.Logger.LogMessage("Rebuilding {0} nodes...", this.GetType().Name);
+
             treeViewWorker = new BackgroundWorker();
             treeViewWorker.DoWork += ((s, e) =>
             {
                 System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
 
                 tvParsers.Invoke(new Action(() => { tvParsers.Nodes.Clear(); }));
+
+                List<TreeNode> categories = new List<TreeNode>();
                 foreach (Tuple<Type, IList<BaseParser>> parsedTuple in this.gameDataManager.GetAllParsedData(true))
                 {
+                    TreeNodeCategory categoryAttrib = parsedTuple.Item1.GetAttribute<TreeNodeCategory>();
                     MethodInfo mi = parsedTuple.Item1.GetMethod("GenerateTreeNode", BindingFlags.Static | BindingFlags.Public);
                     if (mi != null)
                     {
+                        Program.Logger.LogMessage("Generating tree node '{0}' ({1})...", parsedTuple.Item1.GetAttribute<DescriptionAttribute>().Description, parsedTuple.Item1.Name);
+
                         TreeNode dataNode = (TreeNode)mi.Invoke(null, new object[] { gameDataManager, parsedTuple.Item2 });
-                        tvParsers.Invoke(new Action(() => { tvParsers.Nodes.Add(dataNode); }));
+                        tvParsers.Invoke(new Action(() =>
+                        {
+                            if (tvParsers.Nodes[categoryAttrib.CategoryName] == null)
+                                tvParsers.Nodes.Add(new TreeNode(categoryAttrib.CategoryName) { Name = categoryAttrib.CategoryName });
+
+                            tvParsers.Nodes[categoryAttrib.CategoryName].Nodes.Add(dataNode);
+                            tvParsers.Nodes[categoryAttrib.CategoryName].Expand();
+                        }));
                     }
                 }
+
                 tvParsers.Invoke(new Action(() =>
                 {
                     tvParsers.SelectedNode = tvParsers.FindNodeByTag(lastObject);
@@ -104,7 +124,24 @@ namespace Yggdrasil.Controls
                 }));
             });
 
+            treeViewWorker.RunWorkerCompleted += ((s, e) =>
+            {
+                stopwatch.Stop();
+                Program.Logger.LogMessage("Nodes rebuilt in {0:0.000} sec...", stopwatch.Elapsed.TotalSeconds);
+            });
+
             treeViewWorker.RunWorkerAsync();
+        }
+
+        public void UpdateNodeText(object tag)
+        {
+            TreeNode node = tvParsers.FindNodeByTag(tag);
+            if (node == null) throw new ArgumentException(string.Format("No node with specified tag (type {0}, hash 0x{1:X8}) found", tag.GetType().FullName, tag.GetHashCode()));
+
+            if (tag is BaseParser)
+            {
+                node.Text = (tag as BaseParser).EntryDescription;
+            }
         }
 
         public void Terminate()

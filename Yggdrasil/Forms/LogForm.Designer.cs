@@ -36,7 +36,7 @@
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOK.Location = new System.Drawing.Point(347, 277);
+            this.btnOK.Location = new System.Drawing.Point(497, 327);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 1;
@@ -55,7 +55,7 @@
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(410, 259);
+            this.txtLog.Size = new System.Drawing.Size(560, 309);
             this.txtLog.TabIndex = 0;
             // 
             // LogForm
@@ -63,7 +63,7 @@
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(434, 312);
+            this.ClientSize = new System.Drawing.Size(584, 362);
             this.Controls.Add(this.txtLog);
             this.Controls.Add(this.btnOK);
             this.MaximizeBox = false;

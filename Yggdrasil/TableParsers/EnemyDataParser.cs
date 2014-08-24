@@ -9,8 +9,9 @@ using Yggdrasil.FileTypes;
 
 namespace Yggdrasil.TableParsers
 {
+    [TreeNodeCategory("Enemies")]
     [ParserUsage("EnemyData.tbb", 0)]
-    [PrioritizedDescription("Enemies", 0)]
+    [PrioritizedDescription("Enemy Data", 0)]
     public class EnemyDataParser : BaseParser
     {
         public enum EnemyTypes : uint
@@ -26,20 +27,16 @@ namespace Yggdrasil.TableParsers
         [Description("In-game enemy description.")]
         public string Description { get { return GameDataManager.GetEnemyDescription(EnemyNumber); } }
 
-        ushort enemyNumber;
-        [DisplayName("(ID)"), ReadOnly(true), PrioritizedCategory("Information", byte.MaxValue)]
+        [DisplayName("(ID)"), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("Internal ID number of enemy.")]
-        public ushort EnemyNumber
-        {
-            get { return enemyNumber; }
-            set { base.SetProperty(ref enemyNumber, value, () => this.EnemyNumber); }
-        }
+        public ushort EnemyNumber { get { return (ushort)EntryNumber; } }
 
         [Browsable(false)]
         public override string EntryDescription { get { return Name; } }
 
         uint hitPoints;
         [DisplayName("Hit Points"), PrioritizedCategory("Base Stats", 4)]
+        [Description("Total hit points of enemy.")]
         public uint HitPoints
         {
             get { return hitPoints; }
@@ -50,6 +47,7 @@ namespace Yggdrasil.TableParsers
 
         EnemyTypes enemyType;
         [DisplayName("Enemy Type"), TypeConverter(typeof(EnumConverter)), PrioritizedCategory("Base Stats", 4)]
+        [Description("Type of enemy; not sure what exactly this property influences.")]
         public EnemyTypes EnemyType
         {
             get { return enemyType; }
@@ -60,6 +58,7 @@ namespace Yggdrasil.TableParsers
 
         ushort strPoints;
         [DisplayName("STR Points"), PrioritizedCategory("Base Stats", 4)]
+        [Description("Strength of enemy.")]
         public ushort StrPoints
         {
             get { return strPoints; }
@@ -70,6 +69,7 @@ namespace Yggdrasil.TableParsers
 
         ushort vitPoints;
         [DisplayName("VIT Points"), PrioritizedCategory("Base Stats", 4)]
+        [Description("Vitality of enemy.")]
         public ushort VitPoints
         {
             get { return vitPoints; }
@@ -80,6 +80,7 @@ namespace Yggdrasil.TableParsers
 
         ushort agiPoints;
         [DisplayName("AGI Points"), PrioritizedCategory("Base Stats", 4)]
+        [Description("Agility of enemy.")]
         public ushort AgiPoints
         {
             get { return agiPoints; }
@@ -90,6 +91,7 @@ namespace Yggdrasil.TableParsers
 
         ushort lucPoints;
         [DisplayName("LUC Points"), PrioritizedCategory("Base Stats", 4)]
+        [Description("Luck of enemy.")]
         public ushort LucPoints
         {
             get { return lucPoints; }
@@ -100,6 +102,7 @@ namespace Yggdrasil.TableParsers
 
         ushort tecPoints;
         [DisplayName("TEC Points"), PrioritizedCategory("Base Stats", 4)]
+        [Description("Technical points of enemy.")]
         public ushort TecPoints
         {
             get { return tecPoints; }
@@ -110,6 +113,7 @@ namespace Yggdrasil.TableParsers
 
         ushort resistSlash;
         [DisplayName("Slash Damage"), TypeConverter(typeof(CustomConverters.UshortPercentageConverter)), PrioritizedCategory("Damage Modifiers", 3)]
+        [Description("Effectiveness of slashing attacks on enemy.")]
         public ushort ResistSlash
         {
             get { return resistSlash; }
@@ -120,6 +124,7 @@ namespace Yggdrasil.TableParsers
 
         ushort resistBlunt;
         [DisplayName("Blunt Damage"), TypeConverter(typeof(CustomConverters.UshortPercentageConverter)), PrioritizedCategory("Damage Modifiers", 3)]
+        [Description("Effectiveness of blunt attacks on enemy.")]
         public ushort ResistBlunt
         {
             get { return resistBlunt; }
@@ -130,6 +135,7 @@ namespace Yggdrasil.TableParsers
 
         ushort resistPierce;
         [DisplayName("Pierce Damage"), TypeConverter(typeof(CustomConverters.UshortPercentageConverter)), PrioritizedCategory("Damage Modifiers", 3)]
+        [Description("Effectiveness of piercing attacks on enemy.")]
         public ushort ResistPierce
         {
             get { return resistPierce; }
@@ -140,6 +146,7 @@ namespace Yggdrasil.TableParsers
 
         ushort resistFire;
         [DisplayName("Fire Damage"), TypeConverter(typeof(CustomConverters.UshortPercentageConverter)), PrioritizedCategory("Damage Modifiers", 3)]
+        [Description("Effectiveness of fire elemental attacks on enemy.")]
         public ushort ResistFire
         {
             get { return resistFire; }
@@ -150,6 +157,7 @@ namespace Yggdrasil.TableParsers
 
         ushort resistIce;
         [DisplayName("Ice Damage"), TypeConverter(typeof(CustomConverters.UshortPercentageConverter)), PrioritizedCategory("Damage Modifiers", 3)]
+        [Description("Effectiveness of ice elemental attacks on enemy.")]
         public ushort ResistIce
         {
             get { return resistIce; }
@@ -160,6 +168,7 @@ namespace Yggdrasil.TableParsers
 
         ushort resistVolt;
         [DisplayName("Volt Damage"), TypeConverter(typeof(CustomConverters.UshortPercentageConverter)), PrioritizedCategory("Damage Modifiers", 3)]
+        [Description("Effectiveness of electrical elemental attacks on enemy.")]
         public ushort ResistVolt
         {
             get { return resistVolt; }
@@ -170,6 +179,7 @@ namespace Yggdrasil.TableParsers
 
         ushort resistDeath;
         [DisplayName("OHKOs"), TypeConverter(typeof(CustomConverters.UshortPercentageConverter)), PrioritizedCategory("Damage Modifiers", 3)]
+        [Description("Effectiveness of instant death attacks on enemy.")]
         public ushort ResistDeath
         {
             get { return resistDeath; }
@@ -180,6 +190,7 @@ namespace Yggdrasil.TableParsers
 
         ushort resistAilment;
         [DisplayName("Ailments"), TypeConverter(typeof(CustomConverters.UshortPercentageConverter)), PrioritizedCategory("Damage Modifiers", 3)]
+        [Description("Effectiveness of ailment-inducing attacks on enemy.")]
         public ushort ResistAilment
         {
             get { return resistAilment; }
@@ -190,6 +201,7 @@ namespace Yggdrasil.TableParsers
 
         ushort resistHeadBind;
         [DisplayName("Head Binds"), TypeConverter(typeof(CustomConverters.UshortPercentageConverter)), PrioritizedCategory("Damage Modifiers", 3)]
+        [Description("Effectiveness of head bind-inducing on enemy.")]
         public ushort ResistHeadBind
         {
             get { return resistHeadBind; }
@@ -200,6 +212,7 @@ namespace Yggdrasil.TableParsers
 
         ushort resistArmBind;
         [DisplayName("Arm Binds"), TypeConverter(typeof(CustomConverters.UshortPercentageConverter)), PrioritizedCategory("Damage Modifiers", 3)]
+        [Description("Effectiveness of arm bind-inducing on enemy.")]
         public ushort ResistArmBind
         {
             get { return resistArmBind; }
@@ -210,6 +223,7 @@ namespace Yggdrasil.TableParsers
 
         ushort resistLegBind;
         [DisplayName("Leg Binds"), TypeConverter(typeof(CustomConverters.UshortPercentageConverter)), PrioritizedCategory("Damage Modifiers", 3)]
+        [Description("Effectiveness of leg bind-inducing on enemy.")]
         public ushort ResistLegBind
         {
             get { return resistLegBind; }
@@ -220,6 +234,7 @@ namespace Yggdrasil.TableParsers
 
         ushort itemDrop1;
         [DisplayName("1st Item Drop"), TypeConverter(typeof(CustomConverters.ItemNameConverter)), PrioritizedCategory("Drops", 2)]
+        [Description("First possible item drop from enemy.")]
         public ushort ItemDrop1
         {
             get { return itemDrop1; }
@@ -230,6 +245,7 @@ namespace Yggdrasil.TableParsers
 
         ushort itemDrop2;
         [DisplayName("2nd Item Drop"), TypeConverter(typeof(CustomConverters.ItemNameConverter)), PrioritizedCategory("Drops", 2)]
+        [Description("Second possible item drop from enemy.")]
         public ushort ItemDrop2
         {
             get { return itemDrop2; }
@@ -240,6 +256,7 @@ namespace Yggdrasil.TableParsers
 
         ushort itemDrop3;
         [DisplayName("3rd Item Drop"), TypeConverter(typeof(CustomConverters.ItemNameConverter)), PrioritizedCategory("Drops", 2)]
+        [Description("Third possible item drop from enemy.")]
         public ushort ItemDrop3
         {
             get { return itemDrop3; }
@@ -250,6 +267,7 @@ namespace Yggdrasil.TableParsers
 
         byte itemDropRate1;
         [DisplayName("1st Drop Rate"), TypeConverter(typeof(CustomConverters.BytePercentageConverter)), PrioritizedCategory("Drops", 2)]
+        [Description("Drop rate of first possible item drop from enemy.")]
         public byte ItemDropRate1
         {
             get { return itemDropRate1; }
@@ -260,6 +278,7 @@ namespace Yggdrasil.TableParsers
 
         byte itemDropRate2;
         [DisplayName("2nd Drop Rate"), TypeConverter(typeof(CustomConverters.BytePercentageConverter)), PrioritizedCategory("Drops", 2)]
+        [Description("Drop rate of second possible item drop from enemy.")]
         public byte ItemDropRate2
         {
             get { return itemDropRate2; }
@@ -270,6 +289,7 @@ namespace Yggdrasil.TableParsers
 
         byte itemDropRate3;
         [DisplayName("3rd Drop Rate"), TypeConverter(typeof(CustomConverters.BytePercentageConverter)), PrioritizedCategory("Drops", 2)]
+        [Description("Drop rate of third possible item drop from enemy.")]
         public byte ItemDropRate3
         {
             get { return itemDropRate3; }
@@ -277,6 +297,16 @@ namespace Yggdrasil.TableParsers
         }
         public bool ShouldSerializeItemDropRate3() { return !(this.ItemDropRate3 == (dynamic)base.originalValues["ItemDropRate3"]); }
         public void ResetItemDropRate3() { this.ItemDropRate3 = (dynamic)base.originalValues["ItemDropRate3"]; }
+
+        byte unknown1;
+        [DisplayName("Unknown 1"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
+        public byte Unknown1
+        {
+            get { return unknown1; }
+            set { base.SetProperty(ref unknown1, value, () => this.Unknown1); }
+        }
+        public bool ShouldSerializeUnknown1() { return !(this.Unknown1 == (dynamic)base.originalValues["Unknown1"]); }
+        public void ResetUnknown1() { this.Unknown1 = (dynamic)base.originalValues["Unknown1"]; }
 
         byte unknown2;
         [DisplayName("Unknown 2"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
@@ -298,18 +328,9 @@ namespace Yggdrasil.TableParsers
         public bool ShouldSerializeUnknown3() { return !(this.Unknown3 == (dynamic)base.originalValues["Unknown3"]); }
         public void ResetUnknown3() { this.Unknown3 = (dynamic)base.originalValues["Unknown3"]; }
 
-        byte unknown4;
-        [DisplayName("Unknown 4"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
-        public byte Unknown4
-        {
-            get { return unknown4; }
-            set { base.SetProperty(ref unknown4, value, () => this.Unknown4); }
-        }
-        public bool ShouldSerializeUnknown4() { return !(this.Unknown4 == (dynamic)base.originalValues["Unknown4"]); }
-        public void ResetUnknown4() { this.Unknown4 = (dynamic)base.originalValues["Unknown4"]; }
-
         uint experience;
         [DisplayName("Experience"), TypeConverter(typeof(CustomConverters.ExpConverter)), PrioritizedCategory("Drops", 2)]
+        [Description("Base experience gained when defeating enemy.")]
         public uint Experience
         {
             get { return experience; }
@@ -318,18 +339,19 @@ namespace Yggdrasil.TableParsers
         public bool ShouldSerializeExperience() { return !(this.Experience == (dynamic)base.originalValues["Experience"]); }
         public void ResetExperience() { this.Experience = (dynamic)base.originalValues["Experience"]; }
 
-        ushort level;
-        [DisplayName("Level"), PrioritizedCategory("Base Stats", 4)]
-        public ushort Level
+        ushort unknown4;
+        [DisplayName("Unknown 4"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
+        public ushort Unknown4
         {
-            get { return level; }
-            set { base.SetProperty(ref level, value, () => this.Level); }
+            get { return unknown4; }
+            set { base.SetProperty(ref unknown4, value, () => this.Unknown4); }
         }
-        public bool ShouldSerializeLevel() { return !(this.Level == (dynamic)base.originalValues["Level"]); }
-        public void ResetLevel() { this.Level = (dynamic)base.originalValues["Level"]; }
+        public bool ShouldSerializeUnknown4() { return !(this.Unknown4 == (dynamic)base.originalValues["Unknown4"]); }
+        public void ResetUnknown4() { this.Unknown4 = (dynamic)base.originalValues["Unknown4"]; }
 
         string aiName;
         [DisplayName("AI Name"), PrioritizedCategory("External Data", 1)]
+        [Description("Name of AI script used by enemy.")]
         public string AiName
         {
             get { return aiName; }
@@ -340,6 +362,7 @@ namespace Yggdrasil.TableParsers
 
         string spriteName;
         [DisplayName("Sprite Name"), PrioritizedCategory("External Data", 1)]
+        [Description("Name of sprite image used by enemy.")]
         public string SpriteName
         {
             get { return spriteName; }
@@ -393,7 +416,6 @@ namespace Yggdrasil.TableParsers
 
         protected override void Load()
         {
-            enemyNumber = (ushort)EntryNumber;
             hitPoints = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 0);
             enemyType = (EnemyTypes)BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 4);
             strPoints = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 8);
@@ -418,11 +440,11 @@ namespace Yggdrasil.TableParsers
             itemDropRate1 = ParentTable.Data[EntryNumber][46];
             itemDropRate2 = ParentTable.Data[EntryNumber][47];
             itemDropRate3 = ParentTable.Data[EntryNumber][48];
-            unknown2 = ParentTable.Data[EntryNumber][49];
-            unknown3 = ParentTable.Data[EntryNumber][50];
-            unknown4 = ParentTable.Data[EntryNumber][51];
+            unknown1 = ParentTable.Data[EntryNumber][49];
+            unknown2 = ParentTable.Data[EntryNumber][50];
+            unknown3 = ParentTable.Data[EntryNumber][51];
             experience = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 52);
-            level = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 56);
+            unknown4 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 56);
             aiName = Encoding.ASCII.GetString(ParentTable.Data[EntryNumber], 58, 16).TrimEnd('\0');
             spriteName = Encoding.ASCII.GetString(ParentTable.Data[EntryNumber], 74, 14).TrimEnd('\0');
             unknown5 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 88);
@@ -459,11 +481,11 @@ namespace Yggdrasil.TableParsers
             itemDropRate1.CopyTo(ParentTable.Data[EntryNumber], 46);
             itemDropRate2.CopyTo(ParentTable.Data[EntryNumber], 47);
             itemDropRate3.CopyTo(ParentTable.Data[EntryNumber], 48);
-            unknown2.CopyTo(ParentTable.Data[EntryNumber], 49);
-            unknown3.CopyTo(ParentTable.Data[EntryNumber], 50);
-            unknown4.CopyTo(ParentTable.Data[EntryNumber], 51);
+            unknown1.CopyTo(ParentTable.Data[EntryNumber], 49);
+            unknown2.CopyTo(ParentTable.Data[EntryNumber], 50);
+            unknown3.CopyTo(ParentTable.Data[EntryNumber], 51);
             experience.CopyTo(ParentTable.Data[EntryNumber], 52);
-            level.CopyTo(ParentTable.Data[EntryNumber], 56);
+            unknown4.CopyTo(ParentTable.Data[EntryNumber], 56);
             Buffer.BlockCopy(Encoding.ASCII.GetBytes(aiName.PadRight(16, '\0')), 0, ParentTable.Data[EntryNumber], 58, 16);
             Buffer.BlockCopy(Encoding.ASCII.GetBytes(spriteName.PadRight(14, '\0')), 0, ParentTable.Data[EntryNumber], 74, 14);
             unknown5.CopyTo(ParentTable.Data[EntryNumber], 88);

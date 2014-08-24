@@ -112,6 +112,8 @@ namespace Yggdrasil
                 tsslStatus.Text = "Ready";
                 saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = false;
             }
+
+            tableEntryEditor.UpdateNodeText(sender);
         }
 
         private void gameDataManager_SelectedLanguageChangedEvent(object sender, EventArgs e)
@@ -160,7 +162,10 @@ namespace Yggdrasil
 
         private void CommandAbout()
         {
-            MessageBox.Show(string.Format("{0} {1}\n\nWritten 2014 by xdaniel - https://github.com/xdanieldzd/", Application.ProductName, VersionManagement.CreateVersionString(Application.ProductVersion)),
+            string description = System.Reflection.Assembly.GetExecutingAssembly().GetAttribute<System.Reflection.AssemblyDescriptionAttribute>().Description;
+
+            MessageBox.Show(string.Format("{0} {1} - {2}\n\nWritten 2014 by xdaniel - https://github.com/xdanieldzd/",
+                Application.ProductName, VersionManagement.CreateVersionString(Application.ProductVersion), description),
                 "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 

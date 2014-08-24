@@ -40,6 +40,8 @@ namespace Yggdrasil.Controls
 
         public void Initialize(GameDataManager gameDataManager)
         {
+            Program.Logger.LogMessage("Initializing {0}...", this.GetType().Name);
+
             this.gameDataManager = gameDataManager;
             this.Font = GUIHelpers.GetSuggestedGUIFont(gameDataManager.Version);
 
@@ -50,6 +52,11 @@ namespace Yggdrasil.Controls
         {
             if (this.gameDataManager.MessageFiles != null)
             {
+                System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+                stopwatch.Start();
+
+                Program.Logger.LogMessage("Rebuilding {0} nodes...", this.GetType().Name);
+
                 treeViewWorker = new BackgroundWorker();
                 treeViewWorker.DoWork += ((s, e) =>
                 {
@@ -59,6 +66,8 @@ namespace Yggdrasil.Controls
                     foreach (TBB messageFile in this.gameDataManager.MessageFiles)
                     {
                         TreeNode fileNode = new TreeNode(Path.GetFileNameWithoutExtension(messageFile.Filename)) { Tag = messageFile };
+
+                        Program.Logger.LogMessage("Generating tree nodes for {0}...", fileNode.Text);
 
                         for (int i = 0; i < messageFile.Tables.Length; i++)
                         {
@@ -82,6 +91,12 @@ namespace Yggdrasil.Controls
                         tvMessageFiles.Invoke(new Action(() => { tvMessageFiles.Nodes.Add(fileNode); }));
                     }
                     tvMessageFiles.Invoke(new Action(() => { tvMessageFiles.Invalidate(); }));
+                });
+
+                treeViewWorker.RunWorkerCompleted += ((s, e) =>
+                {
+                    stopwatch.Stop();
+                    Program.Logger.LogMessage("Nodes rebuilt in {0:0.000} sec...", stopwatch.Elapsed.TotalSeconds);
                 });
 
                 treeViewWorker.RunWorkerAsync();

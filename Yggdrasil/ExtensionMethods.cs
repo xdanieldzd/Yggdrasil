@@ -19,6 +19,8 @@ namespace Yggdrasil
         {
             if (obj is Type)
                 return (obj as Type).GetCustomAttributes(typeof(T), false).FirstOrDefault();
+            else if (obj is Assembly)
+                return (obj as Assembly).GetCustomAttributes(typeof(T), false).FirstOrDefault();
             else
                 return obj.GetType().GetCustomAttributes(typeof(T), false).FirstOrDefault();
         }

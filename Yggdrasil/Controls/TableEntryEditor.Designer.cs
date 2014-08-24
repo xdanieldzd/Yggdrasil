@@ -31,9 +31,9 @@
             this.components = new System.ComponentModel.Container();
             this.pgData = new System.Windows.Forms.PropertyGrid();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.tvParsers = new Yggdrasil.Controls.TreeViewEx();
             this.cmsDataGrid = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.resetPropertyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tvParsers = new Yggdrasil.Controls.TreeViewEx();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -70,16 +70,6 @@
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
             // 
-            // tvParsers
-            // 
-            this.tvParsers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tvParsers.HideSelection = false;
-            this.tvParsers.Location = new System.Drawing.Point(0, 0);
-            this.tvParsers.Name = "tvParsers";
-            this.tvParsers.Size = new System.Drawing.Size(166, 400);
-            this.tvParsers.TabIndex = 0;
-            this.tvParsers.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvParsers_AfterSelect);
-            // 
             // cmsDataGrid
             // 
             this.cmsDataGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -94,6 +84,16 @@
             this.resetPropertyToolStripMenuItem.Tag = "&Reset Property";
             this.resetPropertyToolStripMenuItem.Text = "-----";
             this.resetPropertyToolStripMenuItem.Click += new System.EventHandler(this.resetPropertyToolStripMenuItem_Click);
+            // 
+            // tvParsers
+            // 
+            this.tvParsers.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tvParsers.HideSelection = false;
+            this.tvParsers.Location = new System.Drawing.Point(0, 0);
+            this.tvParsers.Name = "tvParsers";
+            this.tvParsers.Size = new System.Drawing.Size(166, 400);
+            this.tvParsers.TabIndex = 0;
+            this.tvParsers.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvParsers_AfterSelect);
             // 
             // TableEntryEditor
             // 

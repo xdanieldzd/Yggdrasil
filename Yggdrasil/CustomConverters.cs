@@ -169,9 +169,11 @@ namespace Yggdrasil
             public override string Suffix { get { return "EXP"; } }
         }
 
-        public class ItemNameConverter : TypeConverter
+        public abstract class DictionaryStringConverter : TypeConverter
         {
-            List<string> itemNameList;
+            public virtual Dictionary<ushort, string> Dictionary { get { return null; } }
+
+            List<ushort> valueList;
 
             public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
             {
@@ -180,13 +182,13 @@ namespace Yggdrasil
 
             public override System.ComponentModel.TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                if (itemNameList == null)
+                if (valueList == null)
                 {
-                    itemNameList = new List<string>();
-                    foreach (KeyValuePair<ushort, string> pair in GameDataManager.ItemNames) itemNameList.Add(pair.Value);
+                    valueList = new List<ushort>();
+                    foreach (KeyValuePair<ushort, string> pair in Dictionary) valueList.Add(pair.Key);
                 }
 
-                return new StandardValuesCollection(itemNameList.ToArray());
+                return new StandardValuesCollection(valueList.ToArray());
             }
 
             public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
@@ -204,7 +206,7 @@ namespace Yggdrasil
             public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
             {
                 if (destinationType == typeof(string) && value.GetType() == typeof(ushort))
-                    return GameDataManager.ItemNames[(ushort)value];
+                    return Dictionary[(ushort)value];
                 else
                     return base.ConvertTo(context, culture, value, destinationType);
             }
@@ -216,7 +218,7 @@ namespace Yggdrasil
                     try
                     {
                         KeyValuePair<ushort, string> pair =
-                            GameDataManager.ItemNames
+                            Dictionary
                             .OrderBy(x => x.Key)
                             .FirstOrDefault(x => x.Value.ToLowerInvariant().Contains((value as string).ToLowerInvariant()));
 
@@ -230,6 +232,21 @@ namespace Yggdrasil
                 else
                     return base.ConvertFrom(context, culture, value);
             }
+        }
+
+        public class ItemNameConverter : DictionaryStringConverter
+        {
+            public override Dictionary<ushort, string> Dictionary { get { return GameDataManager.ItemNames; } }
+        }
+
+        public class EnemyNameConverter : DictionaryStringConverter
+        {
+            public override Dictionary<ushort, string> Dictionary { get { return GameDataManager.EnemyNames; } }
+        }
+
+        public class EncounterConverter : DictionaryStringConverter
+        {
+            public override Dictionary<ushort, string> Dictionary { get { return GameDataManager.EncounterDescriptions; } }
         }
     }
 }

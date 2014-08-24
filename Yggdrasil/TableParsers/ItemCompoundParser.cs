@@ -9,6 +9,7 @@ using Yggdrasil.FileTypes;
 
 namespace Yggdrasil.TableParsers
 {
+    [TreeNodeCategory("Items")]
     [ParserUsage("ItemCompound.tbb", 0)]
     [PrioritizedDescription("Item Requirements", 2)]
     public class ItemCompoundParser : BaseItemParser

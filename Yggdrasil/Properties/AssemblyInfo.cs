@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die mit einer Assembly verknüpft sind.
 [assembly: AssemblyTitle("Yggdrasil")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("General data editor for Etrian Odyssey")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Yggdrasil")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // Sie können alle Werte angeben oder die standardmäßigen Build- und Revisionsnummern 
 // übernehmen, indem Sie "*" eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.3.0.256")]
-[assembly: AssemblyFileVersion("0.3.0.256")]
+[assembly: AssemblyVersion("0.4.0.256")]
+[assembly: AssemblyFileVersion("0.4.0.256")]
