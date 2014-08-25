@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Yggdrasil.Helpers
+namespace Yggdrasil.DataCompression
 {
     public static partial class Decompressor
     {

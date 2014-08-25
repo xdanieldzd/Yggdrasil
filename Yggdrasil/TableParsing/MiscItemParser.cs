@@ -5,9 +5,11 @@ using System.Text;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-using Yggdrasil.FileTypes;
+using Yggdrasil.FileHandling;
+using Yggdrasil.FileHandling.TableHandling;
+using Yggdrasil.Attributes;
 
-namespace Yggdrasil.TableParsers
+namespace Yggdrasil.TableParsing
 {
     [TreeNodeCategory("Items")]
     [ParserUsage("Item.tbb", 1)]
@@ -20,7 +22,7 @@ namespace Yggdrasil.TableParsers
         // "special item" ??
         // 0009 + unk2 0005 -> in battle, STR UP, DEF DOWN
         ushort unknown1;
-        [DisplayName("Unknown 1"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Unknown 1"), TypeConverter(typeof(TypeConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
         public ushort Unknown1
         {
             get { return unknown1; }
@@ -31,7 +33,7 @@ namespace Yggdrasil.TableParsers
 
         // "special item variable" ??
         ushort unknown2;
-        [DisplayName("Unknown 2"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Unknown 2"), TypeConverter(typeof(TypeConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
         public ushort Unknown2
         {
             get { return unknown2; }
@@ -75,7 +77,7 @@ namespace Yggdrasil.TableParsers
 
         // 0004 -> can USE
         ushort unknown3Flags;
-        [DisplayName("Unknown 3 (Flags)"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Unknown 3 (Flags)"), TypeConverter(typeof(TypeConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
         public ushort Unknown3Flags
         {
             get { return unknown3Flags; }
@@ -85,7 +87,7 @@ namespace Yggdrasil.TableParsers
         public void ResetUnknown3Flags() { this.Unknown3Flags = (dynamic)base.originalValues["Unknown3Flags"]; }
 
         byte unknown4;
-        [DisplayName("Unknown 4"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Unknown 4"), TypeConverter(typeof(TypeConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
         public byte Unknown4
         {
             get { return unknown4; }
@@ -98,7 +100,7 @@ namespace Yggdrasil.TableParsers
         // 08 -> can't DISCARD nor SELL
         // 20 -> USE: target whole group
         byte unknown5Flags;
-        [DisplayName("Unknown 5 (Flags)"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Unknown 5 (Flags)"), TypeConverter(typeof(TypeConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
         public byte Unknown5Flags
         {
             get { return unknown5Flags; }
@@ -108,7 +110,7 @@ namespace Yggdrasil.TableParsers
         public void ResetUnknown5Flags() { this.Unknown5Flags = (dynamic)base.originalValues["Unknown5Flags"]; }
 
         uint buyPrice;
-        [DisplayName("Buy Price"), TypeConverter(typeof(CustomConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 1)]
+        [DisplayName("Buy Price"), TypeConverter(typeof(TypeConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 1)]
         [Description("Price when buying item from Shilleka's Goods or Ceft Apothecary.")]
         public uint BuyPrice
         {
@@ -119,7 +121,7 @@ namespace Yggdrasil.TableParsers
         public void ResetBuyPrice() { this.BuyPrice = (dynamic)base.originalValues["BuyPrice"]; }
 
         uint sellPrice;
-        [DisplayName("Sell Price"), TypeConverter(typeof(CustomConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 1)]
+        [DisplayName("Sell Price"), TypeConverter(typeof(TypeConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 1)]
         [Description("Return when selling item to Shilleka's Goods.")]
         public uint SellPrice
         {
@@ -129,7 +131,7 @@ namespace Yggdrasil.TableParsers
         public bool ShouldSerializeSellPrice() { return !(this.SellPrice == (dynamic)base.originalValues["SellPrice"]); }
         public void ResetSellPrice() { this.SellPrice = (dynamic)base.originalValues["SellPrice"]; }
 
-        public MiscItemParser(GameDataManager gameDataManager, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
+        public MiscItemParser(GameDataManager gameDataManager, DataTable table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
             base(gameDataManager, table, entryNumber, propertyChanged) { Load(); }
 
         protected override void Load()

@@ -27,7 +27,7 @@ namespace Yggdrasil.Helpers
         {
             this.GameDataManager = gameDataManager;
             Filename = path;
-            fontRaw = Decompressor.Decompress(Filename, out fontCompressed);
+            fontRaw = DataCompression.Decompressor.Decompress(Filename, out fontCompressed);
 
             paletteRaw = File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(Filename), Path.GetFileNameWithoutExtension(Filename) + ".ntfp"));
             palette = new List<Color>()

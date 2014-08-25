@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace Yggdrasil
 {
-    class CustomConverters
+    class TypeConverters
     {
         public class HexByteConverter : TypeConverter
         {

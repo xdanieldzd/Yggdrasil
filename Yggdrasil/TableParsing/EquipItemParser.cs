@@ -5,9 +5,11 @@ using System.Text;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-using Yggdrasil.FileTypes;
+using Yggdrasil.FileHandling;
+using Yggdrasil.FileHandling.TableHandling;
+using Yggdrasil.Attributes;
 
-namespace Yggdrasil.TableParsers
+namespace Yggdrasil.TableParsing
 {
     [TreeNodeCategory("Items")]
     [ParserUsage("Item.tbb", 0)]
@@ -37,7 +39,7 @@ namespace Yggdrasil.TableParsers
         public override string EntryDescription { get { return Name; } }
 
         ushort itemType;
-        [DisplayName("Item Type"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("General", 6)]
+        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.HexUshortConverter)), PrioritizedCategory("General", 6)]
         public ushort ItemType
         {
             get { return itemType; }
@@ -101,7 +103,7 @@ namespace Yggdrasil.TableParsers
         public void ResetUnknown1() { this.Unknown1 = (dynamic)base.originalValues["Unknown1"]; }
 
         sbyte resistSlash;
-        [DisplayName("Slash Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
+        [DisplayName("Slash Resistance"), TypeConverter(typeof(TypeConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
         [Description("Modifier for resistance to slashing attacks in percent.")]
         public sbyte ResistSlash
         {
@@ -112,7 +114,7 @@ namespace Yggdrasil.TableParsers
         public void ResetResistSlash() { this.ResistSlash = (dynamic)base.originalValues["ResistSlash"]; }
 
         sbyte resistBlunt;
-        [DisplayName("Blunt Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
+        [DisplayName("Blunt Resistance"), TypeConverter(typeof(TypeConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
         [Description("Modifier for resistance to blunt attacks in percent.")]
         public sbyte ResistBlunt
         {
@@ -123,7 +125,7 @@ namespace Yggdrasil.TableParsers
         public void ResetResistBlunt() { this.ResistBlunt = (dynamic)base.originalValues["ResistBlunt"]; }
 
         sbyte resistPierce;
-        [DisplayName("Pierce Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
+        [DisplayName("Pierce Resistance"), TypeConverter(typeof(TypeConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
         [Description("Modifier for resistance to piercing attacks in percent.")]
         public sbyte ResistPierce
         {
@@ -134,7 +136,7 @@ namespace Yggdrasil.TableParsers
         public void ResetResistPierce() { this.ResistPierce = (dynamic)base.originalValues["ResistPierce"]; }
 
         sbyte resistFire;
-        [DisplayName("Fire Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
+        [DisplayName("Fire Resistance"), TypeConverter(typeof(TypeConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
         [Description("Modifier for resistance to fire elemental attacks in percent.")]
         public sbyte ResistFire
         {
@@ -145,7 +147,7 @@ namespace Yggdrasil.TableParsers
         public void ResetResistFire() { this.ResistFire = (dynamic)base.originalValues["ResistFire"]; }
 
         sbyte resistIce;
-        [DisplayName("Ice Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
+        [DisplayName("Ice Resistance"), TypeConverter(typeof(TypeConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
         [Description("Modifier for resistance to ice elemental attacks in percent.")]
         public sbyte ResistIce
         {
@@ -156,7 +158,7 @@ namespace Yggdrasil.TableParsers
         public void ResetResistIce() { this.ResistIce = (dynamic)base.originalValues["ResistIce"]; }
 
         sbyte resistVolt;
-        [DisplayName("Volt Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
+        [DisplayName("Volt Resistance"), TypeConverter(typeof(TypeConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
         [Description("Modifier for resistance to electrical elemental attacks in percent.")]
         public sbyte ResistVolt
         {
@@ -167,7 +169,7 @@ namespace Yggdrasil.TableParsers
         public void ResetResistVolt() { this.ResistVolt = (dynamic)base.originalValues["ResistVolt"]; }
 
         sbyte resistDeath;
-        [DisplayName("OHKO Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
+        [DisplayName("OHKO Resistance"), TypeConverter(typeof(TypeConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
         [Description("Modifier for resistance to instant death attacks in percent.")]
         public sbyte ResistDeath
         {
@@ -178,7 +180,7 @@ namespace Yggdrasil.TableParsers
         public void ResetResistDeath() { this.ResistDeath = (dynamic)base.originalValues["ResistDeath"]; }
 
         sbyte resistAilment;
-        [DisplayName("Ailment Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
+        [DisplayName("Ailment Resistance"), TypeConverter(typeof(TypeConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
         [Description("Modifier for resistance to ailments in percent.")]
         public sbyte ResistAilment
         {
@@ -189,7 +191,7 @@ namespace Yggdrasil.TableParsers
         public void ResetResistAilment() { this.ResistAilment = (dynamic)base.originalValues["ResistAilment"]; }
 
         sbyte resistHeadBind;
-        [DisplayName("Head Bind Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
+        [DisplayName("Head Bind Resistance"), TypeConverter(typeof(TypeConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
         [Description("Modifier for resistance to head binding attacks in percent.")]
         public sbyte ResistHeadBind
         {
@@ -200,7 +202,7 @@ namespace Yggdrasil.TableParsers
         public void ResetResistHeadBind() { this.ResistHeadBind = (dynamic)base.originalValues["ResistHeadBind"]; }
 
         sbyte resistArmBind;
-        [DisplayName("Arm Bind Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
+        [DisplayName("Arm Bind Resistance"), TypeConverter(typeof(TypeConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
         [Description("Modifier for resistance to arm binding attacks in percent.")]
         public sbyte ResistArmBind
         {
@@ -211,7 +213,7 @@ namespace Yggdrasil.TableParsers
         public void ResetResistArmBind() { this.ResistArmBind = (dynamic)base.originalValues["ResistArmBind"]; }
 
         sbyte resistLegBind;
-        [DisplayName("Leg Bind Resistance"), TypeConverter(typeof(CustomConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
+        [DisplayName("Leg Bind Resistance"), TypeConverter(typeof(TypeConverters.SbytePercentageConverter)), PrioritizedCategory("Resistances", 2)]
         [Description("Modifier for resistance to leg binding attacks in percent.")]
         public sbyte ResistLegBind
         {
@@ -310,7 +312,7 @@ namespace Yggdrasil.TableParsers
         public void ResetBoostModifier() { this.BoostModifier = (dynamic)base.originalValues["BoostModifier"]; }
 
         byte unknown2;
-        [DisplayName("Unknown 2"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Unknown 2"), TypeConverter(typeof(TypeConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
         public byte Unknown2
         {
             get { return unknown2; }
@@ -320,7 +322,7 @@ namespace Yggdrasil.TableParsers
         public void ResetUnknown2() { this.Unknown2 = (dynamic)base.originalValues["Unknown2"]; }
 
         uint buyPrice;
-        [DisplayName("Buy Price"), TypeConverter(typeof(CustomConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 4)]
+        [DisplayName("Buy Price"), TypeConverter(typeof(TypeConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 4)]
         [Description("Price when buying item from Shilleka's Goods or Ceft Apothecary.")]
         public uint BuyPrice
         {
@@ -331,7 +333,7 @@ namespace Yggdrasil.TableParsers
         public void ResetBuyPrice() { this.BuyPrice = (dynamic)base.originalValues["BuyPrice"]; }
 
         uint sellPrice;
-        [DisplayName("Sell Price"), TypeConverter(typeof(CustomConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 4)]
+        [DisplayName("Sell Price"), TypeConverter(typeof(TypeConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 4)]
         [Description("Return when selling item to Shilleka's Goods.")]
         public uint SellPrice
         {
@@ -440,7 +442,7 @@ namespace Yggdrasil.TableParsers
         public void ResetUseableByHexcaster() { this.UseableByHexcaster = (dynamic)base.originalValues["UseableByHexcaster"]; }
 
         ushort unknown3;
-        [DisplayName("Unknown 3"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Unknown 3"), TypeConverter(typeof(TypeConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
         public ushort Unknown3
         {
             get { return unknown3; }
@@ -449,7 +451,7 @@ namespace Yggdrasil.TableParsers
         public bool ShouldSerializeUnknown3() { return !(this.Unknown3 == (dynamic)base.originalValues["Unknown3"]); }
         public void ResetUnknown3() { this.Unknown3 = (dynamic)base.originalValues["Unknown3"]; }
 
-        [DisplayName("Unknown 4"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Unknown 4"), TypeConverter(typeof(TypeConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
         public ushort Unknown4
         {
             get { return (ushort)(classUsability & ~(ushort)UsabilityMask.All); }
@@ -458,7 +460,7 @@ namespace Yggdrasil.TableParsers
         public bool ShouldSerializeUnknown4() { return !(this.Unknown4 == (dynamic)base.originalValues["Unknown4"]); }
         public void ResetUnknown4() { this.Unknown4 = (dynamic)base.originalValues["Unknown4"]; }
 
-        public EquipItemParser(GameDataManager gameDataManager, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
+        public EquipItemParser(GameDataManager gameDataManager, DataTable table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
             base(gameDataManager, table, entryNumber, propertyChanged) { Load(); }
 
         protected override void Load()

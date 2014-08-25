@@ -8,9 +8,11 @@ using System.Reflection;
 using System.Windows.Forms;
 
 using Yggdrasil.Forms;
-using Yggdrasil.FileTypes;
+using Yggdrasil.FileHandling;
+using Yggdrasil.FileHandling.TableHandling;
 using Yggdrasil.Helpers;
-using Yggdrasil.TableParsers;
+using Yggdrasil.TableParsing;
+using Yggdrasil.Attributes;
 
 namespace Yggdrasil
 {
@@ -31,7 +33,7 @@ namespace Yggdrasil
 
         public string DataPath { get; private set; }
 
-        public Header Header { get; private set; }
+        public HeaderFile Header { get; private set; }
         public Versions Version { get; private set; }
 
         Languages language;
@@ -63,9 +65,9 @@ namespace Yggdrasil
         public bool IsInitialized { get; private set; }
 
         public FontRenderer FontRenderer { get; private set; }
-        public List<TBB> MessageFiles { get; private set; }
+        public List<TableFile> MessageFiles { get; private set; }
 
-        List<TBB> dataTableFiles;
+        List<TableFile> dataTableFiles;
         List<BaseParser> parsedData;
 
         List<BaseParser> changedParsedData;
@@ -128,7 +130,7 @@ namespace Yggdrasil
 
                     IsInitialized = true;
                 }
-                catch (GameDataManagerException gameException)
+                catch (Exceptions.GameDataManagerException gameException)
                 {
                     MessageBox.Show(
                         string.Format("{0}{1}{1}{2}", gameException.Message, Environment.NewLine, "Please ensure you've selected a valid game data directory."), "Error",
@@ -164,7 +166,7 @@ namespace Yggdrasil
         {
             if (parsedData == null || changedParsedData == null) return 0;
 
-            List<TBB.ITable> needToSave = new List<TBB.ITable>();
+            List<DataTable> needToSave = new List<DataTable>();
             List<string> changedFiles = new List<string>();
 
             foreach (BaseParser data in changedParsedData)
@@ -173,11 +175,11 @@ namespace Yggdrasil
                 needToSave.Add(data.ParentTable);
             }
 
-            foreach (TBB.ITable table in needToSave.Distinct())
+            foreach (DataTable table in needToSave.Distinct())
             {
                 table.Save();
 
-                TBB file = table.GetParent();
+                TableFile file = table.TableFile;
                 if (!file.IsCompressed)
                 {
                     changedFiles.Add(file.Filename);
@@ -198,9 +200,9 @@ namespace Yggdrasil
         {
             loadWaitWorker.ReportProgress(-1, "Reading header data...");
 
-            if (!File.Exists(Path.Combine(DataPath, "header.bin"))) throw new GameDataManagerException("File header.bin not found.");
+            if (!File.Exists(Path.Combine(DataPath, "header.bin"))) throw new Exceptions.GameDataManagerException("File header.bin not found.");
 
-            Header = new FileTypes.Header(this, Path.Combine(DataPath, "header.bin"));
+            Header = new FileHandling.HeaderFile(this, Path.Combine(DataPath, "header.bin"));
             switch (Header.GameCode)
             {
                 case "AKYP":
@@ -218,7 +220,7 @@ namespace Yggdrasil
                     mainFontFilename = "data\\Data\\Tex\\Font\\Font10x10_00.cmp";
                     break;
 
-                default: throw new GameDataManagerException("Unsupported game data.");
+                default: throw new Exceptions.GameDataManagerException("Unsupported game data.");
             }
 
             Program.Logger.LogMessage("Identified game '{0} {1}' as {2} version.", Header.GameTitle, Header.GameCode, Version);
@@ -305,7 +307,7 @@ namespace Yggdrasil
                         string newPath = Path.Combine(Path.GetDirectoryName(filePath), filePath.Replace(dirExt.Item2, dirExt.Item3));
 
                         bool isCompressed;
-                        byte[] fileData = Helpers.Decompressor.Decompress(filePath, out isCompressed);
+                        byte[] fileData = DataCompression.Decompressor.Decompress(filePath, out isCompressed);
                         if (isCompressed)
                         {
                             BinaryWriter writer = new BinaryWriter(File.Create(newPath));
@@ -378,12 +380,12 @@ namespace Yggdrasil
             }
         }
 
-        private List<TBB> ReadDataTablesByExtension(string extension, string[] directories)
+        private List<TableFile> ReadDataTablesByExtension(string extension, string[] directories)
         {
             if (extension == null || extension == string.Empty) throw new ArgumentException("No extension given");
             if (directories == null) throw new ArgumentNullException("Directories is null");
 
-            List<TBB> dataTables = new List<TBB>();
+            List<TableFile> dataTables = new List<TableFile>();
 
             foreach (string directory in directories)
             {
@@ -396,8 +398,9 @@ namespace Yggdrasil
 
                 foreach (string filePath in filePaths)
                 {
-                    TBB tbb = new TBB(this, filePath);
-                    if (tbb.IsValid()) dataTables.Add(tbb);
+                    TableFile tbb = new TableFile(this, filePath);
+                    /*if (tbb.IsValid())*/
+                    dataTables.Add(tbb);
 
                     loadWaitWorker.ReportProgress(-1, string.Format("Reading {0}...", Path.GetFileName(filePath)));
                 }
@@ -408,19 +411,21 @@ namespace Yggdrasil
 
         private void EnsureMessageTableIntegrity()
         {
-            List<TBB> filesToRemove = new List<TBB>();
-            foreach (TBB messageFile in MessageFiles)
+            if (MessageFiles == null) return;
+
+            List<TableFile> filesToRemove = new List<TableFile>();
+            foreach (TableFile messageFile in MessageFiles)
             {
                 bool removeFile = true;
-                foreach (TBB.ITable table in messageFile.Tables)
+                foreach (BaseTable table in messageFile.Tables)
                 {
-                    if (table is TBB.MTBL) removeFile = false;
+                    if (table is MessageTable) removeFile = false;
                 }
 
                 if (removeFile) filesToRemove.Add(messageFile);
             }
 
-            foreach (TBB file in filesToRemove) MessageFiles.Remove(file);
+            foreach (TableFile file in filesToRemove) MessageFiles.Remove(file);
         }
 
         private List<BaseParser> ParseDataTables()
@@ -434,7 +439,7 @@ namespace Yggdrasil
                 {
                     loadWaitWorker.ReportProgress(-1, string.Format("Parsing {0}...", attrib.FileName));
 
-                    TBB tableFile =
+                    TableFile tableFile =
                         dataTableFiles.FirstOrDefault(x => Path.GetFileName(x.Filename) == attrib.FileName || Path.GetFileNameWithoutExtension(x.Filename) == Path.GetFileNameWithoutExtension(attrib.FileName));
 
                     if (tableFile == null)
@@ -443,10 +448,10 @@ namespace Yggdrasil
                     if (attrib.TableNo >= tableFile.NumTables)
                         throw new ArgumentException(string.Format("Table number {0} does not exist in file", attrib.TableNo));
 
-                    if (!(tableFile.Tables[attrib.TableNo] is TBB.TBL1))
+                    if (!(tableFile.Tables[attrib.TableNo] is DataTable))
                         throw new InvalidCastException(string.Format("Table number {0} is of wrong type {1}", attrib.TableNo, tableFile.Tables[attrib.TableNo].GetType().Name));
 
-                    TBB.TBL1 table = (tableFile.Tables[attrib.TableNo] as TBB.TBL1);
+                    DataTable table = (tableFile.Tables[attrib.TableNo] as DataTable);
                     for (int i = 0; i < table.Data.Length; i++)
                         parsedData.Add((BaseParser)Activator.CreateInstance(type, new object[] { this, table, i, (PropertyChangedEventHandler)ItemDataPropertyChanged }));
                 }
@@ -548,10 +553,10 @@ namespace Yggdrasil
                 e.PropertyName, sender.GetType().Name, sender.GetHashCode(), sender.GetProperty(e.PropertyName)));
         }
 
-        public TBB GetMessageFile(string filename)
+        public TableFile GetMessageFile(string filename)
         {
             filename = (Version == Versions.European ? string.Format("{0}{1}", filename, langSuffixes[Language]) : filename);
-            TBB messageFile = MessageFiles.FirstOrDefault(x => x.Filename != null && Path.GetFileName(x.Filename).StartsWith(filename));
+            TableFile messageFile = MessageFiles.FirstOrDefault(x => x.Filename != null && Path.GetFileName(x.Filename).StartsWith(filename));
 
             if (messageFile == null) throw new ArgumentException("Message file could not be found");
             return messageFile;
@@ -559,8 +564,8 @@ namespace Yggdrasil
 
         public EtrianString GetMessageString(string filename, int tableNo, int messageNo)
         {
-            TBB messageFile = GetMessageFile(filename);
-            return (messageFile.Tables[tableNo] as TBB.MTBL).Messages[messageNo];
+            TableFile messageFile = GetMessageFile(filename);
+            return (messageFile.Tables[tableNo] as MessageTable).Messages[messageNo];
         }
 
         public IList<T> GetParsedData<T>()

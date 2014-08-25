@@ -8,7 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 
-using Yggdrasil.FileTypes;
+using Yggdrasil.FileHandling;
+using Yggdrasil.FileHandling.TableHandling;
 using Yggdrasil.Helpers;
 
 namespace Yggdrasil.Controls
@@ -63,7 +64,7 @@ namespace Yggdrasil.Controls
                     System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
 
                     tvMessageFiles.Invoke(new Action(() => { tvMessageFiles.Nodes.Clear(); }));
-                    foreach (TBB messageFile in this.gameDataManager.MessageFiles)
+                    foreach (TableFile messageFile in this.gameDataManager.MessageFiles)
                     {
                         TreeNode fileNode = new TreeNode(Path.GetFileNameWithoutExtension(messageFile.Filename)) { Tag = messageFile };
 
@@ -71,7 +72,7 @@ namespace Yggdrasil.Controls
 
                         for (int i = 0; i < messageFile.Tables.Length; i++)
                         {
-                            TBB.MTBL messageTable = (messageFile.Tables[i] as TBB.MTBL);
+                            MessageTable messageTable = (messageFile.Tables[i] as MessageTable);
 
                             if (messageTable == null) continue;
 

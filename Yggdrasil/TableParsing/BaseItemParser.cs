@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
-using Yggdrasil.FileTypes;
+using Yggdrasil.FileHandling;
+using Yggdrasil.FileHandling.TableHandling;
+using Yggdrasil.Attributes;
 
-namespace Yggdrasil.TableParsers
+namespace Yggdrasil.TableParsing
 {
     public abstract class BaseItemParser : BaseParser
     {
@@ -27,7 +29,7 @@ namespace Yggdrasil.TableParsers
             set { base.SetProperty(ref itemNumber, value, () => this.ItemNumber); }
         }
 
-        public BaseItemParser(GameDataManager gameDataManager, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
+        public BaseItemParser(GameDataManager gameDataManager, DataTable table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
             base(gameDataManager, table, entryNumber, propertyChanged) { Load(); }
 
         protected override void Load()

@@ -5,9 +5,11 @@ using System.Text;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-using Yggdrasil.FileTypes;
+using Yggdrasil.FileHandling;
+using Yggdrasil.FileHandling.TableHandling;
+using Yggdrasil.Attributes;
 
-namespace Yggdrasil.TableParsers
+namespace Yggdrasil.TableParsing
 {
     [TreeNodeCategory("Items")]
     [ParserUsage("ItemCompound.tbb", 0)]
@@ -18,7 +20,7 @@ namespace Yggdrasil.TableParsers
         public override string EntryDescription { get { return Name; } }
 
         ushort itemCompound1;
-        [DisplayName("Item Type"), TypeConverter(typeof(CustomConverters.ItemNameConverter)), PrioritizedCategory("1st Item", 5)]
+        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.ItemNameConverter)), PrioritizedCategory("1st Item", 5)]
         [Description("First item required to be sold before it becomes available for purchase.")]
         public ushort ItemCompound1
         {
@@ -29,7 +31,7 @@ namespace Yggdrasil.TableParsers
         public void ResetItemCompound1() { this.ItemCompound1 = (dynamic)base.originalValues["ItemCompound1"]; }
 
         ushort itemCompound2;
-        [DisplayName("Item Type"), TypeConverter(typeof(CustomConverters.ItemNameConverter)), PrioritizedCategory("2nd Item", 4)]
+        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.ItemNameConverter)), PrioritizedCategory("2nd Item", 4)]
         [Description("Second item required to be sold before it becomes available for purchase.")]
         public ushort ItemCompound2
         {
@@ -40,7 +42,7 @@ namespace Yggdrasil.TableParsers
         public void ResetItemCompound2() { this.ItemCompound2 = (dynamic)base.originalValues["ItemCompound2"]; }
 
         ushort itemCompound3;
-        [DisplayName("Item Type"), TypeConverter(typeof(CustomConverters.ItemNameConverter)), PrioritizedCategory("3rd Item", 3)]
+        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.ItemNameConverter)), PrioritizedCategory("3rd Item", 3)]
         [Description("Third item required to be sold before it becomes available for purchase.")]
         public ushort ItemCompound3
         {
@@ -51,7 +53,7 @@ namespace Yggdrasil.TableParsers
         public void ResetItemCompound3() { this.ItemCompound3 = (dynamic)base.originalValues["ItemCompound3"]; }
 
         ushort itemCompound4;
-        [DisplayName("Item Type"), TypeConverter(typeof(CustomConverters.ItemNameConverter)), PrioritizedCategory("4th Item", 2)]
+        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.ItemNameConverter)), PrioritizedCategory("4th Item", 2)]
         [Description("Fourth item required to be sold before it becomes available for purchase.")]
         public ushort ItemCompound4
         {
@@ -62,7 +64,7 @@ namespace Yggdrasil.TableParsers
         public void ResetItemCompound4() { this.ItemCompound4 = (dynamic)base.originalValues["ItemCompound4"]; }
 
         ushort itemCompound5;
-        [DisplayName("Item Type"), TypeConverter(typeof(CustomConverters.ItemNameConverter)), PrioritizedCategory("5th Item", 1)]
+        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.ItemNameConverter)), PrioritizedCategory("5th Item", 1)]
         [Description("Fifth item required to be sold before it becomes available for purchase.")]
         public ushort ItemCompound5
         {
@@ -73,7 +75,7 @@ namespace Yggdrasil.TableParsers
         public void ResetItemCompound5() { this.ItemCompound5 = (dynamic)base.originalValues["ItemCompound5"]; }
 
         byte itemCount1;
-        [DisplayName("Amount"), TypeConverter(typeof(CustomConverters.ByteItemCountConverter)), PrioritizedCategory("1st Item", 5)]
+        [DisplayName("Amount"), TypeConverter(typeof(TypeConverters.ByteItemCountConverter)), PrioritizedCategory("1st Item", 5)]
         [Description("Amount of first item required to be sold before it becomes available for purchase.")]
         public byte ItemCount1
         {
@@ -84,7 +86,7 @@ namespace Yggdrasil.TableParsers
         public void ResetItemCount1() { this.ItemCount1 = (dynamic)base.originalValues["ItemCount1"]; }
 
         byte itemCount2;
-        [DisplayName("Amount"), TypeConverter(typeof(CustomConverters.ByteItemCountConverter)), PrioritizedCategory("2nd Item", 4)]
+        [DisplayName("Amount"), TypeConverter(typeof(TypeConverters.ByteItemCountConverter)), PrioritizedCategory("2nd Item", 4)]
         [Description("Amount of second item required to be sold before it becomes available for purchase.")]
         public byte ItemCount2
         {
@@ -95,7 +97,7 @@ namespace Yggdrasil.TableParsers
         public void ResetItemCount2() { this.ItemCount2 = (dynamic)base.originalValues["ItemCount2"]; }
 
         byte itemCount3;
-        [DisplayName("Amount"), TypeConverter(typeof(CustomConverters.ByteItemCountConverter)), PrioritizedCategory("3rd Item", 3)]
+        [DisplayName("Amount"), TypeConverter(typeof(TypeConverters.ByteItemCountConverter)), PrioritizedCategory("3rd Item", 3)]
         [Description("Amount of third item required to be sold before it becomes available for purchase.")]
         public byte ItemCount3
         {
@@ -106,7 +108,7 @@ namespace Yggdrasil.TableParsers
         public void ResetItemCount3() { this.ItemCount3 = (dynamic)base.originalValues["ItemCount3"]; }
 
         byte itemCount4;
-        [DisplayName("Amount"), TypeConverter(typeof(CustomConverters.ByteItemCountConverter)), PrioritizedCategory("4th Item", 2)]
+        [DisplayName("Amount"), TypeConverter(typeof(TypeConverters.ByteItemCountConverter)), PrioritizedCategory("4th Item", 2)]
         [Description("Amount of fourth item required to be sold before it becomes available for purchase.")]
         public byte ItemCount4
         {
@@ -117,7 +119,7 @@ namespace Yggdrasil.TableParsers
         public void ResetItemCount4() { this.ItemCount4 = (dynamic)base.originalValues["ItemCount4"]; }
 
         byte itemCount5;
-        [DisplayName("Amount"), TypeConverter(typeof(CustomConverters.ByteItemCountConverter)), PrioritizedCategory("5th Item", 1)]
+        [DisplayName("Amount"), TypeConverter(typeof(TypeConverters.ByteItemCountConverter)), PrioritizedCategory("5th Item", 1)]
         [Description("Amount of fifth item required to be sold before it becomes available for purchase.")]
         public byte ItemCount5
         {
@@ -128,7 +130,7 @@ namespace Yggdrasil.TableParsers
         public void ResetItemCount5() { this.ItemCount5 = (dynamic)base.originalValues["ItemCount5"]; }
 
         byte unknownPadding;
-        [DisplayName("Padding?"), TypeConverter(typeof(CustomConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Padding?"), TypeConverter(typeof(TypeConverters.HexByteConverter)), PrioritizedCategory("Unknown", 0)]
         [Description("Unknown, possibly padding.")]
         public byte UnknownPadding
         {
@@ -138,7 +140,7 @@ namespace Yggdrasil.TableParsers
         public bool ShouldSerializeUnknownPadding() { return !(this.UnknownPadding == (dynamic)base.originalValues["UnknownPadding"]); }
         public void ResetUnknownPadding() { this.UnknownPadding = (dynamic)base.originalValues["UnknownPadding"]; }
 
-        public ItemCompoundParser(GameDataManager gameDataManager, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
+        public ItemCompoundParser(GameDataManager gameDataManager, DataTable table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
             base(gameDataManager, table, entryNumber, propertyChanged) { Load(); }
 
         protected override void Load()

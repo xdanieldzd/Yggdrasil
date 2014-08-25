@@ -57,7 +57,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes.cs" />
+    <Compile Include="Attributes\MagicNumber.cs" />
+    <Compile Include="Attributes\ParserUsage.cs" />
+    <Compile Include="Attributes\PrioritizedCategory.cs" />
+    <Compile Include="Attributes\PrioritizedDescription.cs" />
+    <Compile Include="Attributes\TreeNodeCategory.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Controls\IEditorControl.cs" />
     <Compile Include="Controls\TableEntryEditor.cs">
@@ -66,22 +70,33 @@
     <Compile Include="Controls\TableEntryEditor.Designer.cs">
       <DependentUpon>TableEntryEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="CustomConverters.cs" />
+    <Compile Include="Exceptions\GameDataManagerException.cs" />
+    <Compile Include="TypeConverters.cs" />
+    <Compile Include="FileHandling\BaseFile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FileHandling\BaseTable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FileHandling\TableHandling\DataTable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FileHandling\HeaderFile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FileHandling\TableHandling\MessageTable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FileHandling\TableFile.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Forms\DataLoadWaitForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\DataLoadWaitForm.Designer.cs">
       <DependentUpon>DataLoadWaitForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dumpers\ItemCompoundDumper.cs" />
-    <Compile Include="Dumpers\ItemDataDumper.cs" />
-    <Compile Include="Dumpers\MessageDumper.cs" />
     <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="FileTypes\BaseFile.cs" />
-    <Compile Include="FileTypes\Header.cs" />
-    <Compile Include="FileTypes\TBB.TBL1.cs" />
-    <Compile Include="FileTypes\TBB.cs" />
-    <Compile Include="FileTypes\TBB.MTBL.cs" />
     <Compile Include="Forms\LogForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -89,12 +104,11 @@
       <DependentUpon>LogForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GameDataManager.cs" />
-    <Compile Include="GameDataManagerException.cs" />
-    <Compile Include="Helpers\Decompressor.cs" />
-    <Compile Include="Helpers\Decompressor.Huffman.cs" />
-    <Compile Include="Helpers\Decompressor.RLE.cs" />
+    <Compile Include="DataCompression\Decompressor.cs" />
+    <Compile Include="DataCompression\Decompressor.Huffman.cs" />
+    <Compile Include="DataCompression\Decompressor.RLE.cs" />
     <Compile Include="Helpers\EtrianString.cs" />
-    <Compile Include="Helpers\Decompressor.LZ77.cs" />
+    <Compile Include="DataCompression\Decompressor.LZ77.cs" />
     <Compile Include="Helpers\FontRenderer.cs" />
     <Compile Include="Helpers\GUIHelpers.cs" />
     <Compile Include="Helpers\Logger.cs" />
@@ -120,18 +134,18 @@
     <Compile Include="Controls\StringPreviewControl.designer.cs">
       <DependentUpon>StringPreviewControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="TableParsers\BaseParser.cs" />
-    <Compile Include="TableParsers\EncounterGroupParser.cs" />
-    <Compile Include="TableParsers\EncounterParser.cs" />
-    <Compile Include="TableParsers\EnemyDataParser.cs" />
-    <Compile Include="TableParsers\EquipItemParser.cs" />
-    <Compile Include="TableParsers\ItemCompoundParser.cs" />
-    <Compile Include="TableParsers\BaseItemParser.cs" />
-    <Compile Include="TableParsers\MiscItemParser.cs" />
+    <Compile Include="TableParsing\BaseParser.cs" />
+    <Compile Include="TableParsing\EncounterGroupParser.cs" />
+    <Compile Include="TableParsing\EncounterParser.cs" />
+    <Compile Include="TableParsing\EnemyDataParser.cs" />
+    <Compile Include="TableParsing\EquipItemParser.cs" />
+    <Compile Include="TableParsing\ItemCompoundParser.cs" />
+    <Compile Include="TableParsing\BaseItemParser.cs" />
+    <Compile Include="TableParsing\MiscItemParser.cs" />
     <Compile Include="Controls\TreeViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="TableParsers\PlayerSkillReqParser.cs" />
+    <Compile Include="TableParsing\PlayerSkillReqParser.cs" />
     <EmbeddedResource Include="Controls\TableEntryEditor.resx">
       <DependentUpon>TableEntryEditor.cs</DependentUpon>
     </EmbeddedResource>

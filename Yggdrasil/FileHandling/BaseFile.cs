@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace Yggdrasil.FileTypes
+namespace Yggdrasil.FileHandling
 {
-    public class BaseFile
+    public abstract class BaseFile
     {
         public GameDataManager GameDataManager { get; private set; }
         public string Filename { get; private set; }
@@ -20,11 +20,19 @@ namespace Yggdrasil.FileTypes
             GameDataManager = gameDataManager;
             Filename = path;
 
-            Data = Helpers.Decompressor.Decompress(Filename, out isCompressed);
+            Data = DataCompression.Decompressor.Decompress(Filename, out isCompressed);
 
             Parse();
         }
 
-        public virtual void Parse() { }
+        public virtual void Parse()
+        {
+            throw new NotImplementedException(string.Format("Parsing not implemented for file type {0}", this.GetType().FullName));
+        }
+
+        public virtual void Save()
+        {
+            throw new NotImplementedException(string.Format("Saving not implemented for file type {0}", this.GetType().FullName));
+        }
     }
 }

@@ -5,9 +5,11 @@ using System.Text;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-using Yggdrasil.FileTypes;
+using Yggdrasil.FileHandling;
+using Yggdrasil.FileHandling.TableHandling;
+using Yggdrasil.Attributes;
 
-namespace Yggdrasil.TableParsers
+namespace Yggdrasil.TableParsing
 {
     [TreeNodeCategory("Enemies")]
     [ParserUsage("EncountData.tbb", 1)]
@@ -30,7 +32,7 @@ namespace Yggdrasil.TableParsers
         public void ResetStratumNumber() { this.StratumNumber = (dynamic)base.originalValues["StratumNumber"]; }
 
         uint unknown1;
-        [DisplayName("Unknown 1"), TypeConverter(typeof(CustomConverters.HexUintConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Unknown 1"), TypeConverter(typeof(TypeConverters.HexUintConverter)), PrioritizedCategory("Unknown", 0)]
         public uint Unknown1
         {
             get { return unknown1; }
@@ -40,7 +42,7 @@ namespace Yggdrasil.TableParsers
         public void ResetUnknown1() { this.Unknown1 = (dynamic)base.originalValues["Unknown1"]; }
 
         ushort encounterNumber1;
-        [DisplayName("Encounter Type"), TypeConverter(typeof(CustomConverters.EncounterConverter)), PrioritizedCategory("1st Encounter", 4)]
+        [DisplayName("Encounter Type"), TypeConverter(typeof(TypeConverters.EncounterConverter)), PrioritizedCategory("1st Encounter", 4)]
         [Description("First possible encounter type in this group.")]
         public ushort EncounterNumber1
         {
@@ -51,7 +53,7 @@ namespace Yggdrasil.TableParsers
         public void ResetEncounterNumber1() { this.EncounterNumber1 = (dynamic)base.originalValues["EncounterNumber1"]; }
 
         ushort encounterProbability1;
-        [DisplayName("Frequency"), TypeConverter(typeof(CustomConverters.UshortPercentageConverter)), PrioritizedCategory("1st Encounter", 4)]
+        [DisplayName("Frequency"), TypeConverter(typeof(TypeConverters.UshortPercentageConverter)), PrioritizedCategory("1st Encounter", 4)]
         [Description("Appearance frequency of first encounter type in this group.")]
         public ushort EncounterProbability1
         {
@@ -62,7 +64,7 @@ namespace Yggdrasil.TableParsers
         public void ResetEncounterProbability1() { this.EncounterProbability1 = (dynamic)base.originalValues["EncounterProbability1"]; }
 
         ushort encounterNumber2;
-        [DisplayName("Encounter Type"), TypeConverter(typeof(CustomConverters.EncounterConverter)), PrioritizedCategory("2nd Encounter", 3)]
+        [DisplayName("Encounter Type"), TypeConverter(typeof(TypeConverters.EncounterConverter)), PrioritizedCategory("2nd Encounter", 3)]
         [Description("Second possible encounter type in this group.")]
         public ushort EncounterNumber2
         {
@@ -73,7 +75,7 @@ namespace Yggdrasil.TableParsers
         public void ResetEncounterNumber2() { this.EncounterNumber2 = (dynamic)base.originalValues["EncounterNumber2"]; }
 
         ushort encounterProbability2;
-        [DisplayName("Frequency"), TypeConverter(typeof(CustomConverters.UshortPercentageConverter)), PrioritizedCategory("2nd Encounter", 3)]
+        [DisplayName("Frequency"), TypeConverter(typeof(TypeConverters.UshortPercentageConverter)), PrioritizedCategory("2nd Encounter", 3)]
         [Description("Appearance frequency of second encounter type in this group.")]
         public ushort EncounterProbability2
         {
@@ -84,7 +86,7 @@ namespace Yggdrasil.TableParsers
         public void ResetEncounterProbability2() { this.EncounterProbability2 = (dynamic)base.originalValues["EncounterProbability2"]; }
 
         ushort encounterNumber3;
-        [DisplayName("Encounter Type"), TypeConverter(typeof(CustomConverters.EncounterConverter)), PrioritizedCategory("3rd Encounter", 2)]
+        [DisplayName("Encounter Type"), TypeConverter(typeof(TypeConverters.EncounterConverter)), PrioritizedCategory("3rd Encounter", 2)]
         [Description("Third possible encounter type in this group.")]
         public ushort EncounterNumber3
         {
@@ -95,7 +97,7 @@ namespace Yggdrasil.TableParsers
         public void ResetEncounterNumber3() { this.EncounterNumber3 = (dynamic)base.originalValues["EncounterNumber3"]; }
 
         ushort encounterProbability3;
-        [DisplayName("Frequency"), TypeConverter(typeof(CustomConverters.UshortPercentageConverter)), PrioritizedCategory("3rd Encounter", 2)]
+        [DisplayName("Frequency"), TypeConverter(typeof(TypeConverters.UshortPercentageConverter)), PrioritizedCategory("3rd Encounter", 2)]
         [Description("Appearance frequency of third encounter type in this group.")]
         public ushort EncounterProbability3
         {
@@ -105,7 +107,7 @@ namespace Yggdrasil.TableParsers
         public bool ShouldSerializeEncounterProbability3() { return !(this.EncounterProbability3 == (dynamic)base.originalValues["EncounterProbability3"]); }
         public void ResetEncounterProbability3() { this.EncounterProbability3 = (dynamic)base.originalValues["EncounterProbability3"]; }
 
-        public EncounterGroupParser(GameDataManager gameDataManager, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
+        public EncounterGroupParser(GameDataManager gameDataManager, DataTable table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
             base(gameDataManager, table, entryNumber, propertyChanged) { Load(); }
 
         protected override void Load()

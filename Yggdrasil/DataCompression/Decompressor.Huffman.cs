@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace Yggdrasil.Helpers
+namespace Yggdrasil.DataCompression
 {
     public static partial class Decompressor
     {

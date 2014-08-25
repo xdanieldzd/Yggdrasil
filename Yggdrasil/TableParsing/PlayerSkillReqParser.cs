@@ -5,9 +5,11 @@ using System.Text;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-using Yggdrasil.FileTypes;
+using Yggdrasil.FileHandling;
+using Yggdrasil.FileHandling.TableHandling;
+using Yggdrasil.Attributes;
 
-namespace Yggdrasil.TableParsers
+namespace Yggdrasil.TableParsing
 {
     [TreeNodeCategory("Player Skills")]
     [ParserUsage("Class2Skill.tbb", 0)]
@@ -35,7 +37,7 @@ namespace Yggdrasil.TableParsers
         public override string EntryDescription { get { return Name; } }
 
         ushort unknown1;
-        [DisplayName("Unknown 1"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Unknown 1"), TypeConverter(typeof(TypeConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
         public ushort Unknown1
         {
             get { return unknown1; }
@@ -45,7 +47,7 @@ namespace Yggdrasil.TableParsers
         public void ResetUnknown1() { this.Unknown1 = (dynamic)base.originalValues["Unknown1"]; }
 
         ushort requiredSkill1;
-        [DisplayName("Required Skill"), TypeConverter(typeof(CustomConverters.PlayerSkillNameConverter)), PrioritizedCategory("1st Requirement", 2)]
+        [DisplayName("Required Skill"), TypeConverter(typeof(TypeConverters.PlayerSkillNameConverter)), PrioritizedCategory("1st Requirement", 2)]
         public ushort RequiredSkill1
         {
             get { return requiredSkill1; }
@@ -65,7 +67,7 @@ namespace Yggdrasil.TableParsers
         public void ResetRequiredSkillLevel1() { this.RequiredSkillLevel1 = (dynamic)base.originalValues["RequiredSkillLevel1"]; }
 
         ushort requiredSkill2;
-        [DisplayName("Required Skill"), TypeConverter(typeof(CustomConverters.PlayerSkillNameConverter)), PrioritizedCategory("2nd Requirement", 1)]
+        [DisplayName("Required Skill"), TypeConverter(typeof(TypeConverters.PlayerSkillNameConverter)), PrioritizedCategory("2nd Requirement", 1)]
         public ushort RequiredSkill2
         {
             get { return requiredSkill2; }
@@ -84,7 +86,7 @@ namespace Yggdrasil.TableParsers
         public bool ShouldSerializeRequiredSkillLevel2() { return !(this.RequiredSkillLevel2 == (dynamic)base.originalValues["RequiredSkillLevel2"]); }
         public void ResetRequiredSkillLevel2() { this.RequiredSkillLevel2 = (dynamic)base.originalValues["RequiredSkillLevel2"]; }
 
-        public PlayerSkillReqParser(GameDataManager gameDataManager, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
+        public PlayerSkillReqParser(GameDataManager gameDataManager, DataTable table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
             base(gameDataManager, table, entryNumber, propertyChanged) { Load(); }
 
         protected override void Load()

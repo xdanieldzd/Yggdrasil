@@ -5,9 +5,11 @@ using System.Text;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-using Yggdrasil.FileTypes;
+using Yggdrasil.FileHandling;
+using Yggdrasil.FileHandling.TableHandling;
+using Yggdrasil.Attributes;
 
-namespace Yggdrasil.TableParsers
+namespace Yggdrasil.TableParsing
 {
     [TreeNodeCategory("Enemies")]
     [ParserUsage("EncountData.tbb", 0)]
@@ -42,7 +44,7 @@ namespace Yggdrasil.TableParsers
         }
 
         uint unknown1;
-        [DisplayName("Unknown 1"), TypeConverter(typeof(CustomConverters.HexUintConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Unknown 1"), TypeConverter(typeof(TypeConverters.HexUintConverter)), PrioritizedCategory("Unknown", 0)]
         [Description("Unknown, never higher than 5; possibly related to number of stratum encounter appears in?")]
         public uint Unknown1
         {
@@ -53,7 +55,7 @@ namespace Yggdrasil.TableParsers
         public void ResetUnknown1() { this.Unknown1 = (dynamic)base.originalValues["Unknown1"]; }
 
         uint unknown2;
-        [DisplayName("Unknown 2"), TypeConverter(typeof(CustomConverters.HexUintConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Unknown 2"), TypeConverter(typeof(TypeConverters.HexUintConverter)), PrioritizedCategory("Unknown", 0)]
         public uint Unknown2
         {
             get { return unknown2; }
@@ -63,7 +65,7 @@ namespace Yggdrasil.TableParsers
         public void ResetUnknown2() { this.Unknown2 = (dynamic)base.originalValues["Unknown2"]; }
 
         ushort enemyNumber1;
-        [DisplayName("1st Enemy"), TypeConverter(typeof(CustomConverters.EnemyNameConverter)), PrioritizedCategory("Enemies", 1)]
+        [DisplayName("1st Enemy"), TypeConverter(typeof(TypeConverters.EnemyNameConverter)), PrioritizedCategory("Enemies", 1)]
         [Description("First enemy in encounter formation.")]
         public ushort EnemyNumber1
         {
@@ -74,7 +76,7 @@ namespace Yggdrasil.TableParsers
         public void ResetEnemyNumber1() { this.EnemyNumber1 = (dynamic)base.originalValues["EnemyNumber1"]; }
 
         ushort enemyNumber2;
-        [DisplayName("2nd Enemy"), TypeConverter(typeof(CustomConverters.EnemyNameConverter)), PrioritizedCategory("Enemies", 1)]
+        [DisplayName("2nd Enemy"), TypeConverter(typeof(TypeConverters.EnemyNameConverter)), PrioritizedCategory("Enemies", 1)]
         [Description("Second enemy in encounter formation.")]
         public ushort EnemyNumber2
         {
@@ -85,7 +87,7 @@ namespace Yggdrasil.TableParsers
         public void ResetEnemyNumber2() { this.EnemyNumber2 = (dynamic)base.originalValues["EnemyNumber2"]; }
 
         ushort enemyNumber3;
-        [DisplayName("3rd Enemy"), TypeConverter(typeof(CustomConverters.EnemyNameConverter)), PrioritizedCategory("Enemies", 1)]
+        [DisplayName("3rd Enemy"), TypeConverter(typeof(TypeConverters.EnemyNameConverter)), PrioritizedCategory("Enemies", 1)]
         [Description("Third enemy in encounter formation.")]
         public ushort EnemyNumber3
         {
@@ -96,7 +98,7 @@ namespace Yggdrasil.TableParsers
         public void ResetEnemyNumber3() { this.EnemyNumber3 = (dynamic)base.originalValues["EnemyNumber3"]; }
 
         ushort enemyNumber4;
-        [DisplayName("4th Enemy"), TypeConverter(typeof(CustomConverters.EnemyNameConverter)), PrioritizedCategory("Enemies", 1)]
+        [DisplayName("4th Enemy"), TypeConverter(typeof(TypeConverters.EnemyNameConverter)), PrioritizedCategory("Enemies", 1)]
         [Description("Fourth enemy in encounter formation.")]
         public ushort EnemyNumber4
         {
@@ -107,7 +109,7 @@ namespace Yggdrasil.TableParsers
         public void ResetEnemyNumber4() { this.EnemyNumber4 = (dynamic)base.originalValues["EnemyNumber4"]; }
 
         ushort enemyNumber5;
-        [DisplayName("5th Enemy"), TypeConverter(typeof(CustomConverters.EnemyNameConverter)), PrioritizedCategory("Enemies", 1)]
+        [DisplayName("5th Enemy"), TypeConverter(typeof(TypeConverters.EnemyNameConverter)), PrioritizedCategory("Enemies", 1)]
         [Description("Fifth enemy in encounter formation.")]
         public ushort EnemyNumber5
         {
@@ -118,7 +120,7 @@ namespace Yggdrasil.TableParsers
         public void ResetEnemyNumber5() { this.EnemyNumber5 = (dynamic)base.originalValues["EnemyNumber5"]; }
 
         ushort unknown3;
-        [DisplayName("Unknown 3"), TypeConverter(typeof(CustomConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Unknown 3"), TypeConverter(typeof(TypeConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
         public ushort Unknown3
         {
             get { return unknown3; }
@@ -128,7 +130,7 @@ namespace Yggdrasil.TableParsers
         public void ResetUnknown3() { this.Unknown3 = (dynamic)base.originalValues["Unknown3"]; }
 
         uint unknown4;
-        [DisplayName("Unknown 4"), TypeConverter(typeof(CustomConverters.HexUintConverter)), PrioritizedCategory("Unknown", 0)]
+        [DisplayName("Unknown 4"), TypeConverter(typeof(TypeConverters.HexUintConverter)), PrioritizedCategory("Unknown", 0)]
         public uint Unknown4
         {
             get { return unknown4; }
@@ -137,7 +139,7 @@ namespace Yggdrasil.TableParsers
         public bool ShouldSerializeUnknown4() { return !(this.Unknown4 == (dynamic)base.originalValues["Unknown4"]); }
         public void ResetUnknown4() { this.Unknown4 = (dynamic)base.originalValues["Unknown4"]; }
 
-        public EncounterParser(GameDataManager gameDataManager, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
+        public EncounterParser(GameDataManager gameDataManager, DataTable table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
             base(gameDataManager, table, entryNumber, propertyChanged) { Load(); }
 
         protected override void Load()

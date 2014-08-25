@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Yggdrasil.FileTypes
+namespace Yggdrasil.FileHandling
 {
-    public class Header : BaseFile
+    public class HeaderFile : BaseFile
     {
-        public Header(GameDataManager gameDataManager, string path) : base(gameDataManager, path) { }
+        public HeaderFile(GameDataManager gameDataManager, string path) : base(gameDataManager, path) { }
 
         public string GameTitle { get; private set; }
         public string GameCode { get; private set; }

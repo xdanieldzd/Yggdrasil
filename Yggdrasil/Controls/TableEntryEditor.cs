@@ -9,9 +9,10 @@ using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
 
-using Yggdrasil.FileTypes;
+using Yggdrasil.FileHandling;
 using Yggdrasil.Helpers;
-using Yggdrasil.TableParsers;
+using Yggdrasil.TableParsing;
+using Yggdrasil.Attributes;
 
 namespace Yggdrasil.Controls
 {
@@ -175,7 +176,7 @@ namespace Yggdrasil.Controls
 
         private void pgData_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            if ((s as PropertyGrid).SelectedObject is EquipItemParser && e.ChangedItem.Value is TableParsers.EquipItemParser.Groups) Rebuild();
+            if ((s as PropertyGrid).SelectedObject is EquipItemParser && e.ChangedItem.Value is TableParsing.EquipItemParser.Groups) Rebuild();
         }
     }
 }

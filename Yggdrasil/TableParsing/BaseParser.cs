@@ -6,9 +6,10 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Reflection;
 
-using Yggdrasil.FileTypes;
+using Yggdrasil.FileHandling;
+using Yggdrasil.FileHandling.TableHandling;
 
-namespace Yggdrasil.TableParsers
+namespace Yggdrasil.TableParsing
 {
     public abstract class BaseParser : INotifyPropertyChanged
     {
@@ -17,7 +18,7 @@ namespace Yggdrasil.TableParsers
         [Browsable(false)]
         public GameDataManager GameDataManager { get; private set; }
         [Browsable(false)]
-        public TBB.TBL1 ParentTable { get; private set; }
+        public DataTable ParentTable { get; private set; }
         [Browsable(false)]
         public int EntryNumber { get; private set; }
 
@@ -29,7 +30,7 @@ namespace Yggdrasil.TableParsers
         [Browsable(false)]
         public bool HasChanged { get { return this.GetType().GetProperties().Any(x => originalValues.ContainsKey(x.Name) && (dynamic)x.GetValue(this, null) != (dynamic)originalValues[x.Name]); } }
 
-        public BaseParser(GameDataManager gameDataManager, TBB.TBL1 table, int entryNumber, PropertyChangedEventHandler propertyChanged = null)
+        public BaseParser(GameDataManager gameDataManager, DataTable table, int entryNumber, PropertyChangedEventHandler propertyChanged = null)
         {
             GameDataManager = gameDataManager;
             ParentTable = table;

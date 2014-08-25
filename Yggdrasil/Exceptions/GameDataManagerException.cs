@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Yggdrasil
+namespace Yggdrasil.Exceptions
 {
-    class GameDataManagerException : Exception
+    public class GameDataManagerException : Exception
     {
         public GameDataManagerException(string message) : base(message) { }
         public GameDataManagerException(string message, Exception innerException) : base(message, innerException) { }
