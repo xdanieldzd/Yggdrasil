@@ -17,10 +17,10 @@ namespace Yggdrasil.FileHandling
 
         public BaseTable(GameDataManager gameDataManager, TableFile tableFile, int number)
         {
-            this.GameDataManager = gameDataManager;
-            this.TableFile = tableFile;
-            this.Number = number;
+            GameDataManager = gameDataManager;
+            TableFile = tableFile;
 
+            Number = number;
             Offset = TableFile.TableOffsets[number];
 
             TableSignature = Encoding.ASCII.GetString(TableFile.Data, (int)Offset, 4);

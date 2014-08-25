@@ -75,7 +75,7 @@
     <Compile Include="FileHandling\BaseFile.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FileHandling\BaseTable.cs">
+    <Compile Include="FileHandling\TableHandling\BaseTable.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FileHandling\TableHandling\DataTable.cs">

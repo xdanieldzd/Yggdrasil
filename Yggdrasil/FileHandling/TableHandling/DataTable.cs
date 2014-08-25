@@ -27,13 +27,14 @@ namespace Yggdrasil.FileHandling.TableHandling
             EntrySize = BitConverter.ToUInt32(TableFile.Data, (int)Offset + 12);
 
             numEntries = (int)(DataSize / EntrySize);
-            Data = new byte[numEntries][];
             DataOffsets = new int[numEntries];
+            Data = new byte[numEntries][];
 
             for (int i = 0; i < numEntries; i++)
             {
-                Data[i] = new byte[EntrySize];
                 DataOffsets[i] = (int)(Offset + 16 + (i * EntrySize));
+
+                Data[i] = new byte[EntrySize];
                 Buffer.BlockCopy(TableFile.Data, DataOffsets[i], Data[i], 0, (int)EntrySize);
             }
         }

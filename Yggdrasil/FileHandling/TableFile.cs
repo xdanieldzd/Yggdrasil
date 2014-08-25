@@ -53,7 +53,7 @@ namespace Yggdrasil.FileHandling
 
         public override void Save()
         {
-            foreach (dynamic table in Tables) table.Save();
+            foreach (BaseTable table in Tables) table.Save();
         }
     }
 }
