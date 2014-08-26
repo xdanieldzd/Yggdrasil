@@ -90,13 +90,10 @@ namespace Yggdrasil
         public static Dictionary<ushort, string> EnemyNames { get; private set; }
         public static Dictionary<ushort, string> EncounterDescriptions { get; private set; }
         public static Dictionary<ushort, string> PlayerSkillNames { get; private set; }
+        public static List<string> AINames { get; private set; }
+        public static List<string> SpriteNames { get; private set; }
 
-        public GameDataManager()
-        {
-            MessageFiles = null;
-            dataTableFiles = null;
-            parsedData = null;
-        }
+        public GameDataManager() { }
 
         public void ReadGameDirectory(string path)
         {
@@ -135,11 +132,7 @@ namespace Yggdrasil
                     parsedData = ParseDataTables();
                     changedParsedData = new List<BaseParser>();
 
-                    loadWaitWorker.ReportProgress(-1, "Generating various dictionaries...");
-                    FetchItemNames();
-                    FetchEnemyNames();
-                    FetchEncounterDescriptions();
-                    FetchPlayerSkillNames();
+                    GenerateDictionariesLists();
 
                     IsInitialized = true;
                 }
@@ -473,102 +466,113 @@ namespace Yggdrasil
             return parsedData;
         }
 
+        private void GenerateDictionariesLists()
+        {
+            loadWaitWorker.ReportProgress(-1, "Generating various dictionaries...");
+
+            FetchItemNames();
+            FetchEnemyNames();
+            FetchEncounterDescriptions();
+            FetchPlayerSkillNames();
+
+            SpriteNames = Directory.EnumerateFiles(Path.Combine(DataPath, "data\\Data\\Tex\\Enemy"), "*.*", SearchOption.AllDirectories).Select(x => Path.GetFileNameWithoutExtension(x).Substring(3)).ToList();
+            AINames = Directory.EnumerateFiles(Path.Combine(DataPath, "data\\Data\\Battle"), "ai_*.tbb", SearchOption.AllDirectories).Select(x => Path.GetFileNameWithoutExtension(x).Substring(3)).ToList();
+        }
+
         private void FetchItemNames()
         {
             ItemNames = new Dictionary<ushort, string>();
             ItemNames.Add(0, "(None)");
-            foreach (BaseParser parser in parsedData.Where(x => (x is EquipItemParser || x is MiscItemParser)))
-            {
-                ushort itemNumber = (parser as BaseItemParser).ItemNumber;
-                ItemNames.Add(itemNumber, GetItemName(itemNumber));
-            }
+            foreach (BaseItemParser parser in parsedData.Where(x => (x is EquipItemParser || x is MiscItemParser))) ItemNames.Add(parser.ItemNumber, parser.Name);
         }
 
         private void FetchEnemyNames()
         {
             EnemyNames = new Dictionary<ushort, string>();
             EnemyNames.Add(0, "(None)");
-            foreach (BaseParser parser in parsedData.Where(x => (x is EnemyDataParser)))
-            {
-                ushort enemyNumber = (parser as EnemyDataParser).EnemyNumber;
-                if (enemyNumber != 0) EnemyNames.Add(enemyNumber, GetEnemyName(enemyNumber));
-            }
+            foreach (EnemyDataParser parser in parsedData.Where(x => (x is EnemyDataParser))) if (parser.EnemyNumber != 0) EnemyNames.Add(parser.EnemyNumber, parser.Name);
         }
 
         private void FetchEncounterDescriptions()
         {
             EncounterDescriptions = new Dictionary<ushort, string>();
-            foreach (BaseParser parser in parsedData.Where(x => (x is EncounterParser)))
-            {
-                ushort encounterNumber = (parser as EncounterParser).EncounterNumber;
-                EncounterDescriptions.Add(encounterNumber, parser.EntryDescription);
-            }
+            foreach (EncounterParser parser in parsedData.Where(x => (x is EncounterParser))) EncounterDescriptions.Add(parser.EncounterNumber, parser.EntryDescription);
         }
 
         private void FetchPlayerSkillNames()
         {
             PlayerSkillNames = new Dictionary<ushort, string>();
             PlayerSkillNames.Add(0, "(None)");
-            foreach (BaseParser parser in parsedData.Where(x => (x is PlayerSkillReqParser)))
-            {
-                ushort skillNumber = (parser as PlayerSkillReqParser).SkillNumber;
-                PlayerSkillNames.Add(skillNumber, GetPlayerSkillName(skillNumber));
-            }
+            foreach (PlayerSkillReqParser parser in parsedData.Where(x => (x is PlayerSkillReqParser))) PlayerSkillNames.Add(parser.SkillNumber, parser.Name);
         }
 
-        public string GetItemName(ushort itemNumber)
+        public string GetItemName(ushort number)
         {
-            string value = GetMessageString(ItemNameFile, 0, itemNumber - 1);
+            string value = GetMessageString(ItemNameFile, 0, number - 1);
             return (value != string.Empty ? value : "(Unnamed)");
         }
 
-        public void SetItemName(ushort itemNumber, EtrianString message)
+        public void SetItemName(ushort number, EtrianString message)
         {
-            if (GetMessageString(ItemNameFile, 0, itemNumber - 1) == string.Empty) return;
-            SetMessageString(ItemNameFile, 0, itemNumber - 1, message);
+            if (GetMessageString(ItemNameFile, 0, number - 1) == string.Empty) return;
+            SetMessageString(ItemNameFile, 0, number - 1, message);
         }
 
-        public string GetItemDescription(ushort itemNumber)
+        public string GetItemDescription(ushort number)
         {
-            string value = GetMessageString(ItemInfoFile, 0, itemNumber - 1);
+            string value = GetMessageString(ItemInfoFile, 0, number - 1);
             return (value != string.Empty ? value : "(Unnamed)");
         }
 
-        public void SetItemDescription(ushort itemNumber, EtrianString message)
+        public void SetItemDescription(ushort number, EtrianString message)
         {
-            if (GetMessageString(ItemInfoFile, 0, itemNumber - 1) == string.Empty) return;
-            SetMessageString(ItemInfoFile, 0, itemNumber - 1, message);
+            if (GetMessageString(ItemInfoFile, 0, number - 1) == string.Empty) return;
+            SetMessageString(ItemInfoFile, 0, number - 1, message);
         }
 
-        public string GetEnemyName(ushort enemyNumber)
+        public string GetEnemyName(ushort number)
         {
-            if ((enemyNumber - 1) < 0) return "(Unnamed)";
-            string value = GetMessageString(EnemyNameFile, 0, enemyNumber - 1);
+            if ((number - 1) < 0) return "(Unnamed)";
+            string value = GetMessageString(EnemyNameFile, 0, number - 1);
             return (value != string.Empty ? value : "(Unnamed)");
         }
 
-        public string GetEnemyDescription(ushort enemyNumber)
+        public void SetEnemyName(ushort number, EtrianString message)
         {
-            if ((enemyNumber - 1) < 0) return "(Unnamed)";
-            string value = GetMessageString(EnemyInfoFile, 0, enemyNumber - 1);
+            if ((number - 1) < 0 || GetMessageString(EnemyNameFile, 0, number - 1) == string.Empty) return;
+            SetMessageString(EnemyNameFile, 0, number - 1, message);
+        }
+
+        public string GetEnemyDescription(ushort number)
+        {
+            if ((number - 1) < 0) return "(Unnamed)";
+            string value = GetMessageString(EnemyInfoFile, 0, number - 1);
             return (value != string.Empty ? value : "(Unnamed)");
         }
 
-        public string GetPlayerSkillName(ushort skillNumber)
+        public void SetEnemyDescription(ushort number, EtrianString message)
         {
-            string value = GetMessageString(PlayerSkillNameFile, 0, skillNumber - 1);
+            if (GetMessageString(EnemyInfoFile, 0, number - 1) == string.Empty) return;
+            SetMessageString(EnemyInfoFile, 0, number - 1, message);
+        }
+
+        public string GetPlayerSkillName(ushort number)
+        {
+            string value = GetMessageString(PlayerSkillNameFile, 0, number - 1);
             return (value != string.Empty ? value : "(Unnamed)");
         }
 
-        public string GetPlayerSkillDescription(ushort skillNumber)
+        public string GetPlayerSkillDescription(ushort number)
         {
-            string value = GetMessageString(CampSkillInfoFile, 0, skillNumber - 1);
+            string value = GetMessageString(CampSkillInfoFile, 0, number - 1);
             return (value != string.Empty ? value : "(Unnamed)");
         }
 
         private void ItemDataPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             changedParsedData = parsedData.Where(x => x.HasChanged).ToList();
+
+            if (sender is BaseItemParser) FetchItemNames();
 
             var handler = ItemDataPropertyChangedEvent;
             if (handler != null) handler(sender, e);

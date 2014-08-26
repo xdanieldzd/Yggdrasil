@@ -180,7 +180,7 @@ namespace Yggdrasil
                 return true;
             }
 
-            public override System.ComponentModel.TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
                 if (valueList == null)
                 {
@@ -252,6 +252,70 @@ namespace Yggdrasil
         public class PlayerSkillNameConverter : DictionaryStringConverter
         {
             public override Dictionary<ushort, string> Dictionary { get { return GameDataManager.PlayerSkillNames; } }
+        }
+
+        public abstract class StringListConverter : TypeConverter
+        {
+            public virtual List<string> Strings { get { return null; } }
+
+            public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+            {
+                return true;
+            }
+
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                return new StandardValuesCollection(Strings);
+            }
+
+            public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+            {
+                if (sourceType == typeof(string)) return true;
+                else return base.CanConvertFrom(context, sourceType);
+            }
+
+            public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+            {
+                if (destinationType == typeof(string)) return true;
+                else return base.CanConvertTo(context, destinationType);
+            }
+
+            public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+            {
+                if (value.GetType() == typeof(string))
+                {
+                    try
+                    {
+                        string result = (Strings.FirstOrDefault(x => x.ToLowerInvariant().Contains((value as string).ToLowerInvariant())) as string);
+                        if (result == null)
+                        {
+                            var gridItem = (context as System.Windows.Forms.GridItem);
+                            if (gridItem == null)
+                                return null;
+                            else
+                                return gridItem.Value;
+                        }
+                        else
+                            return result;
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+                else
+                    return base.ConvertFrom(context, culture, value);
+            }
+        }
+
+        public class SpriteNameListConverter : StringListConverter
+        {
+            public override List<string> Strings { get { return GameDataManager.SpriteNames; } }
+        }
+
+        public class AINameListConverter : StringListConverter
+        {
+            public override List<string> Strings { get { return GameDataManager.AINames; } }
         }
     }
 }

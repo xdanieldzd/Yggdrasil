@@ -21,13 +21,37 @@ namespace Yggdrasil.TableParsing
             None, Normal, FOE, Boss
         };
 
+        string name;
         [DisplayName("(Name)"), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("In-game enemy name.")]
-        public string Name { get { return GameDataManager.GetEnemyName(EnemyNumber); } }
+        [ReadOnly(true)]
+        public string Name
+        {
+            get
+            {
+                this.ChangeReadOnlyAttribute("Name", EnemyNumber <= 0);
+                return name;
+            }
+            set { base.SetProperty(ref name, value, () => this.Name); }
+        }
+        public bool ShouldSerializeName() { return !(this.Name == (dynamic)base.originalValues["Name"]); }
+        public void ResetName() { this.Name = (dynamic)base.originalValues["Name"]; }
 
+        string description;
         [DisplayName("(Description)"), Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor)), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("In-game enemy description.")]
-        public string Description { get { return GameDataManager.GetEnemyDescription(EnemyNumber); } }
+        [ReadOnly(true)]
+        public string Description
+        {
+            get
+            {
+                this.ChangeReadOnlyAttribute("Description", EnemyNumber <= 0);
+                return description;
+            }
+            set { base.SetProperty(ref description, value, () => this.Description); }
+        }
+        public bool ShouldSerializeDescription() { return !(this.Description == (dynamic)base.originalValues["Description"]); }
+        public void ResetDescription() { this.Description = (dynamic)base.originalValues["Description"]; }
 
         [DisplayName("(ID)"), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("Internal ID number of enemy.")]
@@ -352,7 +376,7 @@ namespace Yggdrasil.TableParsing
         public void ResetUnknown4() { this.Unknown4 = (dynamic)base.originalValues["Unknown4"]; }
 
         string aiName;
-        [DisplayName("AI Name"), PrioritizedCategory("External Data", 1)]
+        [DisplayName("AI Name"), TypeConverter(typeof(TypeConverters.AINameListConverter)), PrioritizedCategory("External Data", 1)]
         [Description("Name of AI script used by enemy.")]
         public string AiName
         {
@@ -363,7 +387,7 @@ namespace Yggdrasil.TableParsing
         public void ResetAiName() { this.AiName = (dynamic)base.originalValues["AiName"]; }
 
         string spriteName;
-        [DisplayName("Sprite Name"), PrioritizedCategory("External Data", 1)]
+        [DisplayName("Sprite Name"), TypeConverter(typeof(TypeConverters.SpriteNameListConverter)), PrioritizedCategory("External Data", 1)]
         [Description("Name of sprite image used by enemy.")]
         public string SpriteName
         {
@@ -418,6 +442,9 @@ namespace Yggdrasil.TableParsing
 
         protected override void Load()
         {
+            name = GameDataManager.GetEnemyName(EnemyNumber);
+            description = GameDataManager.GetEnemyDescription(EnemyNumber);
+
             hitPoints = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 0);
             enemyType = (EnemyTypes)BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 4);
             strPoints = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 8);
@@ -459,6 +486,9 @@ namespace Yggdrasil.TableParsing
 
         public override void Save()
         {
+            if (ShouldSerializeName()) GameDataManager.SetEnemyName(EnemyNumber, name);
+            if (ShouldSerializeDescription()) GameDataManager.SetEnemyDescription(EnemyNumber, description);
+
             hitPoints.CopyTo(ParentTable.Data[EntryNumber], 0);
             Convert.ToUInt32(enemyType).CopyTo(ParentTable.Data[EntryNumber], 4);
             strPoints.CopyTo(ParentTable.Data[EntryNumber], 8);

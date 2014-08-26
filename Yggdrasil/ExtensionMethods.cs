@@ -94,5 +94,13 @@ namespace Yggdrasil
             }
             return null;
         }
+
+        public static void ChangeReadOnlyAttribute(this object obj, string fieldName, bool newState)
+        {
+            PropertyDescriptor descriptor = TypeDescriptor.GetProperties(obj.GetType())[fieldName];
+            ReadOnlyAttribute attribute = (ReadOnlyAttribute)descriptor.Attributes[typeof(ReadOnlyAttribute)];
+            FieldInfo fieldToChange = attribute.GetType().GetField("isReadOnly", BindingFlags.NonPublic | BindingFlags.Instance);
+            fieldToChange.SetValue(attribute, newState);
+        }
     }
 }
