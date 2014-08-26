@@ -134,6 +134,37 @@ namespace Yggdrasil.Controls
             treeViewWorker.RunWorkerAsync();
         }
 
+        public void UpdateNodeText()
+        {
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+
+            Program.Logger.LogMessage("Updating {0} node text...", this.GetType().Name);
+
+            treeViewWorker = new BackgroundWorker();
+            treeViewWorker.DoWork += ((s, e) =>
+            {
+                System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
+
+                List<TreeNode> nodes = null;
+                tvParsers.Invoke(new Action(() => { nodes = tvParsers.FlattenTree().Where(x => x.Tag is BaseParser).ToList(); }));
+
+                foreach (TreeNode node in nodes)
+                {
+                    BaseParser parser = (node.Tag as BaseParser);
+                    if (parser.EntryDescription != node.Text) tvParsers.Invoke(new Action(() => { node.Text = parser.EntryDescription; }));
+                }
+            });
+
+            treeViewWorker.RunWorkerCompleted += ((s, e) =>
+            {
+                stopwatch.Stop();
+                Program.Logger.LogMessage("Node text updated in {0:0.000} sec...", stopwatch.Elapsed.TotalSeconds);
+            });
+
+            treeViewWorker.RunWorkerAsync();
+        }
+
         public void UpdateNodeText(object tag)
         {
             TreeNode node = tvParsers.FindNodeByTag(tag);

@@ -16,13 +16,38 @@ namespace Yggdrasil.TableParsing
     [PrioritizedDescription("Skill Requirements", 0)]
     public class PlayerSkillReqParser : BaseParser
     {
+        string name;
         [DisplayName("(Name)"), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("In-game skill name.")]
-        public string Name { get { return GameDataManager.GetPlayerSkillName(SkillNumber); } }
+        public string Name
+        {
+            get { return name; }
+            set { base.SetProperty(ref name, value, () => this.Name); }
+        }
+        public bool ShouldSerializeName() { return !(this.Name == (dynamic)base.originalValues["Name"]); }
+        public void ResetName() { this.Name = (dynamic)base.originalValues["Name"]; }
 
+        string shortDescription;
+        [DisplayName("(Short Description)"), PrioritizedCategory("Information", byte.MaxValue)]
+        [Description("In-game short skill description.")]
+        public string ShortDescription
+        {
+            get { return shortDescription; }
+            set { base.SetProperty(ref shortDescription, value, () => this.ShortDescription); }
+        }
+        public bool ShouldSerializeShortDescription() { return !(this.ShortDescription == (dynamic)base.originalValues["ShortDescription"]); }
+        public void ResetShortDescription() { this.ShortDescription = (dynamic)base.originalValues["ShortDescription"]; }
+
+        string description;
         [DisplayName("(Description)"), Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor)), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("In-game skill description.")]
-        public string Description { get { return GameDataManager.GetPlayerSkillDescription(SkillNumber); } }
+        public string Description
+        {
+            get { return description; }
+            set { base.SetProperty(ref description, value, () => this.Description); }
+        }
+        public bool ShouldSerializeDescription() { return !(this.Description == (dynamic)base.originalValues["Description"]); }
+        public void ResetDescription() { this.Description = (dynamic)base.originalValues["Description"]; }
 
         ushort skillNumber;
         [DisplayName("(ID)"), ReadOnly(true), PrioritizedCategory("Information", byte.MaxValue)]
@@ -92,6 +117,11 @@ namespace Yggdrasil.TableParsing
         protected override void Load()
         {
             skillNumber = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 0);
+
+            name = GameDataManager.GetPlayerSkillName(SkillNumber);
+            shortDescription = GameDataManager.GetPlayerSkillShortDescription(SkillNumber);
+            description = GameDataManager.GetPlayerSkillDescription(SkillNumber);
+
             unknown1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 2);
             requiredSkill1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 4);
             requiredSkillLevel1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 6);
@@ -104,6 +134,11 @@ namespace Yggdrasil.TableParsing
         public override void Save()
         {
             skillNumber.CopyTo(ParentTable.Data[EntryNumber], 0);
+
+            if (ShouldSerializeName()) GameDataManager.SetPlayerSkillName(SkillNumber, name);
+            if (ShouldSerializeShortDescription()) GameDataManager.SetPlayerSkillShortDescription(SkillNumber, shortDescription);
+            if (ShouldSerializeDescription()) GameDataManager.SetPlayerSkillDescription(SkillNumber, description);
+
             unknown1.CopyTo(ParentTable.Data[EntryNumber], 2);
             requiredSkill1.CopyTo(ParentTable.Data[EntryNumber], 4);
             requiredSkillLevel1.CopyTo(ParentTable.Data[EntryNumber], 6);

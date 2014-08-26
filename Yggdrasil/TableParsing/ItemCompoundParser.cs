@@ -14,10 +14,24 @@ namespace Yggdrasil.TableParsing
     [TreeNodeCategory("Items")]
     [ParserUsage("ItemCompound.tbb", 0)]
     [PrioritizedDescription("Item Requirements", 2)]
-    public class ItemCompoundParser : BaseItemParser
+    public class ItemCompoundParser : BaseParser
     {
-        [Browsable(false)]
-        public override string EntryDescription { get { return Name; } }
+        [DisplayName("(Name)"), PrioritizedCategory("Information", byte.MaxValue)]
+        [Description("In-game item name.")]
+        public string Name { get { return GameDataManager.GetItemName(ItemNumber); } }
+
+        [DisplayName("(Description)"), Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor)), PrioritizedCategory("Information", byte.MaxValue)]
+        [Description("In-game item description.")]
+        public string Description { get { return GameDataManager.GetItemDescription(ItemNumber); } }
+
+        ushort itemNumber;
+        [DisplayName("(ID)"), ReadOnly(true), PrioritizedCategory("Information", byte.MaxValue)]
+        [Description("Internal ID number of item.")]
+        public ushort ItemNumber
+        {
+            get { return itemNumber; }
+            set { base.SetProperty(ref itemNumber, value, () => this.ItemNumber); }
+        }
 
         ushort itemCompound1;
         [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.ItemNameConverter)), PrioritizedCategory("1st Item", 5)]
@@ -145,6 +159,7 @@ namespace Yggdrasil.TableParsing
 
         protected override void Load()
         {
+            itemNumber = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 0);
             itemCompound1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 2);
             itemCompound2 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 4);
             itemCompound3 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 6);
@@ -162,6 +177,7 @@ namespace Yggdrasil.TableParsing
 
         public override void Save()
         {
+            itemNumber.CopyTo(ParentTable.Data[EntryNumber], 0);
             itemCompound1.CopyTo(ParentTable.Data[EntryNumber], 2);
             itemCompound2.CopyTo(ParentTable.Data[EntryNumber], 4);
             itemCompound3.CopyTo(ParentTable.Data[EntryNumber], 6);

@@ -34,6 +34,7 @@ namespace Yggdrasil
         static readonly string EnemyInfoFile = "EnemyInfo";
         static readonly string PlayerSkillNameFile = "PlayerSkillName";
         static readonly string CampSkillInfoFile = "CampSkillInfo";
+        static readonly string CampSkillExeInfoFile = "CampSkillExeInfo";
 
         public enum Versions { Invalid, European, American, Japanese };
         public enum Languages { English, German, Spanish, French, Italian };
@@ -508,32 +509,46 @@ namespace Yggdrasil
 
         public string GetItemName(ushort number)
         {
-            string value = GetMessageString(ItemNameFile, 0, number - 1);
+            if ((number - 1) < 0) return "(Unnamed)";
+
+            string value = string.Empty;
+            if (parsedData == null) value = GetMessageString(ItemNameFile, 0, number - 1);
+            else value = (parsedData.FirstOrDefault(x => x is BaseItemParser && (x as BaseItemParser).ItemNumber == number) as BaseItemParser).Name;
+
             return (value != string.Empty ? value : "(Unnamed)");
         }
 
         public void SetItemName(ushort number, EtrianString message)
         {
-            if (GetMessageString(ItemNameFile, 0, number - 1) == string.Empty) return;
+            if ((number - 1) < 0 || GetMessageString(ItemNameFile, 0, number - 1) == string.Empty) return;
             SetMessageString(ItemNameFile, 0, number - 1, message);
         }
 
         public string GetItemDescription(ushort number)
         {
-            string value = GetMessageString(ItemInfoFile, 0, number - 1);
+            if ((number - 1) < 0) return "(Unnamed)";
+
+            string value = string.Empty;
+            if (parsedData == null) value = GetMessageString(ItemInfoFile, 0, number - 1);
+            else value = (parsedData.FirstOrDefault(x => x is BaseItemParser && (x as BaseItemParser).ItemNumber == number) as BaseItemParser).Description;
+
             return (value != string.Empty ? value : "(Unnamed)");
         }
 
         public void SetItemDescription(ushort number, EtrianString message)
         {
-            if (GetMessageString(ItemInfoFile, 0, number - 1) == string.Empty) return;
+            if ((number - 1) < 0 || GetMessageString(ItemInfoFile, 0, number - 1) == string.Empty) return;
             SetMessageString(ItemInfoFile, 0, number - 1, message);
         }
 
         public string GetEnemyName(ushort number)
         {
             if ((number - 1) < 0) return "(Unnamed)";
-            string value = GetMessageString(EnemyNameFile, 0, number - 1);
+
+            string value = string.Empty;
+            if (parsedData == null) value = GetMessageString(EnemyNameFile, 0, number - 1);
+            else value = (parsedData.FirstOrDefault(x => x is EnemyDataParser && (x as EnemyDataParser).EnemyNumber == number) as EnemyDataParser).Name;
+
             return (value != string.Empty ? value : "(Unnamed)");
         }
 
@@ -546,26 +561,69 @@ namespace Yggdrasil
         public string GetEnemyDescription(ushort number)
         {
             if ((number - 1) < 0) return "(Unnamed)";
-            string value = GetMessageString(EnemyInfoFile, 0, number - 1);
+
+            string value = string.Empty;
+            if (parsedData == null) value = GetMessageString(EnemyInfoFile, 0, number - 1);
+            else value = (parsedData.FirstOrDefault(x => x is EnemyDataParser && (x as EnemyDataParser).EnemyNumber == number) as EnemyDataParser).Description;
+
             return (value != string.Empty ? value : "(Unnamed)");
         }
 
         public void SetEnemyDescription(ushort number, EtrianString message)
         {
-            if (GetMessageString(EnemyInfoFile, 0, number - 1) == string.Empty) return;
+            if ((number - 1) < 0 || GetMessageString(EnemyInfoFile, 0, number - 1) == string.Empty) return;
             SetMessageString(EnemyInfoFile, 0, number - 1, message);
         }
 
         public string GetPlayerSkillName(ushort number)
         {
-            string value = GetMessageString(PlayerSkillNameFile, 0, number - 1);
+            if ((number - 1) < 0) return "(Unnamed)";
+
+            string value = string.Empty;
+            if (parsedData == null) value = GetMessageString(PlayerSkillNameFile, 0, number - 1);
+            else value = (parsedData.FirstOrDefault(x => x is PlayerSkillReqParser && (x as PlayerSkillReqParser).SkillNumber == number) as PlayerSkillReqParser).Name;
+
             return (value != string.Empty ? value : "(Unnamed)");
+        }
+
+        public void SetPlayerSkillName(ushort number, EtrianString message)
+        {
+            if ((number - 1) < 0 || GetMessageString(PlayerSkillNameFile, 0, number - 1) == string.Empty) return;
+            SetMessageString(PlayerSkillNameFile, 0, number - 1, message);
+        }
+
+        public string GetPlayerSkillShortDescription(ushort number)
+        {
+            if ((number - 1) < 0) return "(Unnamed)";
+
+            string value = string.Empty;
+            if (parsedData == null) value = GetMessageString(CampSkillExeInfoFile, 0, number - 1);
+            else value = (parsedData.FirstOrDefault(x => x is PlayerSkillReqParser && (x as PlayerSkillReqParser).SkillNumber == number) as PlayerSkillReqParser).Description;
+
+            return (value != string.Empty ? value : "(Unnamed)");
+        }
+
+        public void SetPlayerSkillShortDescription(ushort number, EtrianString message)
+        {
+            if ((number - 1) < 0 || GetMessageString(CampSkillExeInfoFile, 0, number - 1) == string.Empty) return;
+            SetMessageString(CampSkillExeInfoFile, 0, number - 1, message);
         }
 
         public string GetPlayerSkillDescription(ushort number)
         {
-            string value = GetMessageString(CampSkillInfoFile, 0, number - 1);
+            if ((number - 1) < 0) return "(Unnamed)";
+
+            string value = string.Empty;
+            if (parsedData == null) value = GetMessageString(CampSkillInfoFile, 0, number - 1);
+            else value = (parsedData.FirstOrDefault(x => x is PlayerSkillReqParser && (x as PlayerSkillReqParser).SkillNumber == number) as PlayerSkillReqParser).Description;
+
             return (value != string.Empty ? value : "(Unnamed)");
+        }
+
+        public void SetPlayerSkillDescription(ushort number, EtrianString message)
+        {
+            if ((number - 1) < 0 || GetMessageString(CampSkillInfoFile, 0, number - 1) == string.Empty) return;
+            SetMessageString(CampSkillInfoFile, 0, number - 1, message);
         }
 
         private void ItemDataPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -573,6 +631,14 @@ namespace Yggdrasil
             changedParsedData = parsedData.Where(x => x.HasChanged).ToList();
 
             if (sender is BaseItemParser) FetchItemNames();
+
+            if (sender is EnemyDataParser)
+            {
+                FetchEnemyNames();
+                FetchEncounterDescriptions();
+            }
+
+            if (sender is PlayerSkillReqParser) FetchPlayerSkillNames();
 
             var handler = ItemDataPropertyChangedEvent;
             if (handler != null) handler(sender, e);
