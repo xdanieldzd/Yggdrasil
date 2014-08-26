@@ -40,5 +40,48 @@ namespace Yggdrasil.FileHandling.TableHandling
                     Messages[i] = new EtrianString(TableFile.Data, (int)(Offset + 0x10 + MessageOffsets[i]));
             }
         }
+
+        public override byte[] Rebuild()
+        {
+            List<byte> rebuilt = new List<byte>();
+
+            rebuilt.AddRange(Encoding.ASCII.GetBytes(TableSignature));
+            rebuilt.AddRange(BitConverter.GetBytes(Unknown));
+            rebuilt.AddRange(BitConverter.GetBytes(Size));
+            rebuilt.AddRange(BitConverter.GetBytes(NumMessages));
+            rebuilt.AddRange(BitConverter.GetBytes(Unknown2));
+
+            int messageDataLocation = ((int)(rebuilt.Count + (NumMessages * sizeof(uint)))).Round(16) - 16;
+
+            List<int> messageOffsets = new List<int>();
+            List<byte> messageData = new List<byte>();
+
+            int offset = messageDataLocation;
+            for (int i = 0; i < NumMessages; i++)
+            {
+                if (Messages[i] != string.Empty)
+                {
+                    foreach (ushort val in Messages[i].RawData) messageData.AddRange(BitConverter.GetBytes(val));
+                    messageData.AddRange(new byte[2]);
+
+                    int padding = (messageData.Count.Round(16) - messageData.Count);
+                    messageData.AddRange(new byte[padding]);
+
+                    messageOffsets.Add(offset);
+                    offset = messageDataLocation + messageData.Count;
+                }
+                else
+                {
+                    messageOffsets.Add(0);
+                }
+            }
+
+            foreach (int messageOffset in messageOffsets) rebuilt.AddRange(BitConverter.GetBytes(messageOffset));
+            rebuilt.AddRange(new byte[(rebuilt.Count.Round(16) - rebuilt.Count)]);
+
+            rebuilt.AddRange(messageData);
+
+            return rebuilt.ToArray();
+        }
     }
 }

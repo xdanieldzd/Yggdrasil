@@ -10,7 +10,7 @@ namespace Yggdrasil.FileHandling
     {
         public GameDataManager GameDataManager { get; private set; }
         public string Filename { get; private set; }
-        public byte[] Data { get; private set; }
+        public byte[] Data { get; set; }
 
         bool isCompressed;
         public bool IsCompressed { get { return isCompressed; } }

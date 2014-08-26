@@ -28,6 +28,13 @@ namespace Yggdrasil
             "data\\Data\\Param", "data\\Data\\Battle", "data\\Data\\Event"
         };
 
+        static readonly string ItemNameFile = "ItemName";
+        static readonly string ItemInfoFile = "ItemInfo";
+        static readonly string EnemyNameFile = "EnemyName";
+        static readonly string EnemyInfoFile = "EnemyInfo";
+        static readonly string PlayerSkillNameFile = "PlayerSkillName";
+        static readonly string CampSkillInfoFile = "CampSkillInfo";
+
         public enum Versions { Invalid, European, American, Japanese };
         public enum Languages { English, German, Spanish, French, Italian };
 
@@ -65,7 +72,11 @@ namespace Yggdrasil
         public bool IsInitialized { get; private set; }
 
         public FontRenderer FontRenderer { get; private set; }
+
         public List<TableFile> MessageFiles { get; private set; }
+        List<TableFile> changedMessageFiles;
+        public bool MessageFileHasChanged { get { return (changedMessageFiles != null && changedMessageFiles.Count > 0); } }
+        public int ChangedMessageFileCount { get { return (changedMessageFiles != null ? changedMessageFiles.Count : -1); } }
 
         List<TableFile> dataTableFiles;
         List<BaseParser> parsedData;
@@ -119,6 +130,8 @@ namespace Yggdrasil
 
                     EnsureMessageTableIntegrity();
 
+                    changedMessageFiles = new List<TableFile>();
+
                     parsedData = ParseDataTables();
                     changedParsedData = new List<BaseParser>();
 
@@ -166,23 +179,22 @@ namespace Yggdrasil
         {
             if (parsedData == null || changedParsedData == null) return 0;
 
-            List<DataTable> needToSave = new List<DataTable>();
-            List<string> changedFiles = new List<string>();
+            List<TableFile> changedFiles = new List<TableFile>();
 
             foreach (BaseParser data in changedParsedData)
             {
                 data.Save();
-                needToSave.Add(data.ParentTable);
+                if (!changedFiles.Contains(data.ParentTable.TableFile)) changedFiles.Add(data.ParentTable.TableFile);
             }
 
-            foreach (DataTable table in needToSave.Distinct())
-            {
-                table.Save();
+            changedFiles.AddRange(changedMessageFiles);
 
-                TableFile file = table.TableFile;
+            foreach (TableFile file in changedFiles)
+            {
                 if (!file.IsCompressed)
                 {
-                    changedFiles.Add(file.Filename);
+                    file.Save();
+
                     BinaryWriter writer = new BinaryWriter(File.Open(file.Filename, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite));
                     writer.Write(file.Data);
                     writer.Close();
@@ -192,8 +204,9 @@ namespace Yggdrasil
             }
 
             changedParsedData.Clear();
+            changedMessageFiles.Clear();
 
-            return changedFiles.Distinct().Count();
+            return changedFiles.Count();
         }
 
         private void ReadHeaderIdentify()
@@ -505,39 +518,51 @@ namespace Yggdrasil
 
         public string GetItemName(ushort itemNumber)
         {
-            string value = GetMessageString("ItemName", 0, itemNumber - 1);
+            string value = GetMessageString(ItemNameFile, 0, itemNumber - 1);
             return (value != string.Empty ? value : "(Unnamed)");
+        }
+
+        public void SetItemName(ushort itemNumber, EtrianString message)
+        {
+            if (GetMessageString(ItemNameFile, 0, itemNumber - 1) == string.Empty) return;
+            SetMessageString(ItemNameFile, 0, itemNumber - 1, message);
         }
 
         public string GetItemDescription(ushort itemNumber)
         {
-            string value = GetMessageString("ItemInfo", 0, itemNumber - 1);
+            string value = GetMessageString(ItemInfoFile, 0, itemNumber - 1);
             return (value != string.Empty ? value : "(Unnamed)");
+        }
+
+        public void SetItemDescription(ushort itemNumber, EtrianString message)
+        {
+            if (GetMessageString(ItemInfoFile, 0, itemNumber - 1) == string.Empty) return;
+            SetMessageString(ItemInfoFile, 0, itemNumber - 1, message);
         }
 
         public string GetEnemyName(ushort enemyNumber)
         {
             if ((enemyNumber - 1) < 0) return "(Unnamed)";
-            string value = GetMessageString("EnemyName", 0, enemyNumber - 1);
+            string value = GetMessageString(EnemyNameFile, 0, enemyNumber - 1);
             return (value != string.Empty ? value : "(Unnamed)");
         }
 
         public string GetEnemyDescription(ushort enemyNumber)
         {
             if ((enemyNumber - 1) < 0) return "(Unnamed)";
-            string value = GetMessageString("EnemyInfo", 0, enemyNumber - 1);
+            string value = GetMessageString(EnemyInfoFile, 0, enemyNumber - 1);
             return (value != string.Empty ? value : "(Unnamed)");
         }
 
         public string GetPlayerSkillName(ushort skillNumber)
         {
-            string value = GetMessageString("PlayerSkillName", 0, skillNumber - 1);
+            string value = GetMessageString(PlayerSkillNameFile, 0, skillNumber - 1);
             return (value != string.Empty ? value : "(Unnamed)");
         }
 
         public string GetPlayerSkillDescription(ushort skillNumber)
         {
-            string value = GetMessageString("CampSkillInfo", 0, skillNumber - 1);
+            string value = GetMessageString(CampSkillInfoFile, 0, skillNumber - 1);
             return (value != string.Empty ? value : "(Unnamed)");
         }
 
@@ -566,6 +591,13 @@ namespace Yggdrasil
         {
             TableFile messageFile = GetMessageFile(filename);
             return (messageFile.Tables[tableNo] as MessageTable).Messages[messageNo];
+        }
+
+        public void SetMessageString(string filename, int tableNo, int messageNo, EtrianString message)
+        {
+            TableFile messageFile = GetMessageFile(filename);
+            (messageFile.Tables[tableNo] as MessageTable).Messages[messageNo] = message;
+            if (!changedMessageFiles.Contains(messageFile)) changedMessageFiles.Add(messageFile);
         }
 
         public IList<T> GetParsedData<T>()

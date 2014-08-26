@@ -39,12 +39,19 @@ namespace Yggdrasil.FileHandling.TableHandling
             }
         }
 
-        public override void Save()
+        public override byte[] Rebuild()
         {
-            for (int i = 0; i < numEntries; i++)
-            {
-                Buffer.BlockCopy(Data[i], 0, TableFile.Data, DataOffsets[i], (int)EntrySize);
-            }
+            List<byte> rebuilt = new List<byte>();
+
+            rebuilt.AddRange(Encoding.ASCII.GetBytes(TableSignature));
+            rebuilt.AddRange(BitConverter.GetBytes(Unknown));
+            rebuilt.AddRange(BitConverter.GetBytes(DataSize));
+            rebuilt.AddRange(BitConverter.GetBytes(EntrySize));
+
+            foreach (byte[] entryData in Data) rebuilt.AddRange(entryData);
+            rebuilt.AddRange(new byte[(rebuilt.Count.Round(16) - rebuilt.Count)]);
+
+            return rebuilt.ToArray();
         }
     }
 }

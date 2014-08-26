@@ -53,7 +53,34 @@ namespace Yggdrasil.FileHandling
 
         public override void Save()
         {
-            foreach (BaseTable table in Tables) table.Save();
+            List<byte> rebuilt = new List<byte>();
+
+            rebuilt.AddRange(Encoding.ASCII.GetBytes(FileSignature));
+            rebuilt.AddRange(BitConverter.GetBytes(Unknown));
+            rebuilt.AddRange(BitConverter.GetBytes(NumTables));
+            rebuilt.AddRange(BitConverter.GetBytes(FileSize));
+
+            int tableDataLocation = ((int)(rebuilt.Count + (NumTables * sizeof(uint)))).Round(16);
+
+            List<int> tableOffsets = new List<int>();
+            List<byte> tableData = new List<byte>();
+
+            int offset = tableDataLocation;
+            for (int i = 0; i < NumTables; i++)
+            {
+                tableData.AddRange(Tables[i].Rebuild());
+                tableData.AddRange(new byte[(tableData.Count.Round(16) - tableData.Count)]);
+
+                tableOffsets.Add(offset);
+                offset = tableDataLocation + tableData.Count;
+            }
+
+            foreach (int tableOffset in tableOffsets) rebuilt.AddRange(BitConverter.GetBytes(tableOffset));
+            rebuilt.AddRange(new byte[(rebuilt.Count.Round(16) - rebuilt.Count)]);
+
+            rebuilt.AddRange(tableData);
+
+            Data = rebuilt.ToArray();
         }
     }
 }

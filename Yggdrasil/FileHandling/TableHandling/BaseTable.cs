@@ -28,12 +28,12 @@ namespace Yggdrasil.FileHandling
 
         protected virtual void Parse()
         {
-            throw new NotImplementedException(string.Format("Parsing not implemented for file type {0}", this.GetType().FullName));
+            throw new NotImplementedException(string.Format("Parsing not implemented for table type {0}", this.GetType().FullName));
         }
 
-        public virtual void Save()
+        public virtual byte[] Rebuild()
         {
-            throw new NotImplementedException(string.Format("Saving not implemented for file type {0}", this.GetType().FullName));
+            throw new NotImplementedException(string.Format("Rebuilding not implemented for table type {0}", this.GetType().FullName));
         }
     }
 }

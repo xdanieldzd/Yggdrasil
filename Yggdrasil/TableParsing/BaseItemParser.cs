@@ -12,13 +12,27 @@ namespace Yggdrasil.TableParsing
 {
     public abstract class BaseItemParser : BaseParser
     {
+        string name;
         [DisplayName("(Name)"), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("In-game item name.")]
-        public string Name { get { return GameDataManager.GetItemName(ItemNumber); } }
+        public string Name
+        {
+            get { return name; }
+            set { base.SetProperty(ref name, value, () => this.Name); }
+        }
+        public bool ShouldSerializeName() { return !(this.Name == (dynamic)base.originalValues["Name"]); }
+        public void ResetName() { this.Name = (dynamic)base.originalValues["Name"]; }
 
+        string description;
         [DisplayName("(Description)"), Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor)), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("In-game item description.")]
-        public string Description { get { return GameDataManager.GetItemDescription(ItemNumber); } }
+        public string Description
+        {
+            get { return description; }
+            set { base.SetProperty(ref description, value, () => this.Description); }
+        }
+        public bool ShouldSerializeDescription() { return !(this.Description == (dynamic)base.originalValues["Description"]); }
+        public void ResetDescription() { this.Description = (dynamic)base.originalValues["Description"]; }
 
         ushort itemNumber;
         [DisplayName("(ID)"), ReadOnly(true), PrioritizedCategory("Information", byte.MaxValue)]
@@ -36,12 +50,18 @@ namespace Yggdrasil.TableParsing
         {
             itemNumber = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 0);
 
+            name = GameDataManager.GetItemName(ItemNumber);
+            description = GameDataManager.GetItemDescription(ItemNumber);
+
             base.Load();
         }
 
         public override void Save()
         {
             itemNumber.CopyTo(ParentTable.Data[EntryNumber], 0);
+
+            if (ShouldSerializeName()) GameDataManager.SetItemName(ItemNumber, name);
+            if (ShouldSerializeDescription()) GameDataManager.SetItemDescription(ItemNumber, description);
 
             base.Save();
         }
