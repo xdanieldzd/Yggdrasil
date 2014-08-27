@@ -18,11 +18,29 @@ namespace Yggdrasil.TableParsing
     {
         [DisplayName("(Name)"), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("In-game item name.")]
-        public string Name { get { return GameDataManager.GetItemName(ItemNumber); } }
+        public string Name
+        {
+            get
+            {
+                if (GameDataManager.ItemNames.ContainsKey(ItemNumber))
+                    return GameDataManager.ItemNames[ItemNumber];
+                else
+                    return "(Invalid)";
+            }
+        }
 
         [DisplayName("(Description)"), Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor)), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("In-game item description.")]
-        public string Description { get { return GameDataManager.GetItemDescription(ItemNumber); } }
+        public string Description
+        {
+            get
+            {
+                if (GameDataManager.ItemDescriptions.ContainsKey(ItemNumber))
+                    return GameDataManager.ItemDescriptions[ItemNumber];
+                else
+                    return "(Invalid)";
+            }
+        }
 
         ushort itemNumber;
         [DisplayName("(ID)"), ReadOnly(true), PrioritizedCategory("Information", byte.MaxValue)]
@@ -32,6 +50,9 @@ namespace Yggdrasil.TableParsing
             get { return itemNumber; }
             set { base.SetProperty(ref itemNumber, value, () => this.ItemNumber); }
         }
+
+        [Browsable(false)]
+        public override string EntryDescription { get { return Name; } }
 
         ushort itemCompound1;
         [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.ItemNameConverter)), PrioritizedCategory("1st Item", 5)]

@@ -442,8 +442,8 @@ namespace Yggdrasil.TableParsing
 
         protected override void Load()
         {
-            name = GameDataManager.GetEnemyName(EnemyNumber);
-            description = GameDataManager.GetEnemyDescription(EnemyNumber);
+            name = GameDataManager.EnemyNames[EnemyNumber];
+            description = GameDataManager.EnemyDescriptions[EnemyNumber];
 
             hitPoints = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 0);
             enemyType = (EnemyTypes)BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 4);
@@ -486,9 +486,6 @@ namespace Yggdrasil.TableParsing
 
         public override void Save()
         {
-            if (ShouldSerializeName()) GameDataManager.SetEnemyName(EnemyNumber, name);
-            if (ShouldSerializeDescription()) GameDataManager.SetEnemyDescription(EnemyNumber, description);
-
             hitPoints.CopyTo(ParentTable.Data[EntryNumber], 0);
             Convert.ToUInt32(enemyType).CopyTo(ParentTable.Data[EntryNumber], 4);
             strPoints.CopyTo(ParentTable.Data[EntryNumber], 8);

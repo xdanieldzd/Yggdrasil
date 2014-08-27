@@ -21,8 +21,8 @@ namespace Yggdrasil.TableParsing
         public ushort GroupNumber { get { return (ushort)EntryNumber; } }
 
         uint stratumNumber;
-        [DisplayName("Battle Background"), PrioritizedCategory("General", 1)]
-        [Description("Background used by this group in battle; usually the zero-based number of stratum this group appears in.")]
+        [DisplayName("Background"), PrioritizedCategory("Battle Scene", 1)]
+        [Description("Background graphics used by this group in battle; usually the zero-based number of stratum this group appears in.")]
         public uint StratumNumber
         {
             get { return stratumNumber; }
@@ -31,15 +31,16 @@ namespace Yggdrasil.TableParsing
         public bool ShouldSerializeStratumNumber() { return !(this.StratumNumber == (dynamic)base.originalValues["StratumNumber"]); }
         public void ResetStratumNumber() { this.StratumNumber = (dynamic)base.originalValues["StratumNumber"]; }
 
-        uint unknown1;
-        [DisplayName("Unknown 1"), TypeConverter(typeof(TypeConverters.HexUintConverter)), PrioritizedCategory("Unknown", 0)]
-        public uint Unknown1
+        uint battleBGM;
+        [DisplayName("BGM"), PrioritizedCategory("Battle Scene", 1)]
+        [Description("Background music theme used by this group in battle.")]
+        public uint BattleBGM
         {
-            get { return unknown1; }
-            set { base.SetProperty(ref unknown1, value, () => this.Unknown1); }
+            get { return battleBGM; }
+            set { base.SetProperty(ref battleBGM, value, () => this.BattleBGM); }
         }
-        public bool ShouldSerializeUnknown1() { return !(this.Unknown1 == (dynamic)base.originalValues["Unknown1"]); }
-        public void ResetUnknown1() { this.Unknown1 = (dynamic)base.originalValues["Unknown1"]; }
+        public bool ShouldSerializeBattleBGM() { return !(this.BattleBGM == (dynamic)base.originalValues["BattleBGM"]); }
+        public void ResetBattleBGM() { this.BattleBGM = (dynamic)base.originalValues["BattleBGM"]; }
 
         ushort encounterNumber1;
         [DisplayName("Encounter Type"), TypeConverter(typeof(TypeConverters.EncounterConverter)), PrioritizedCategory("1st Encounter", 4)]
@@ -113,7 +114,7 @@ namespace Yggdrasil.TableParsing
         protected override void Load()
         {
             stratumNumber = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 0);
-            unknown1 = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 4);
+            battleBGM = BitConverter.ToUInt32(ParentTable.Data[EntryNumber], 4);
             encounterNumber1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 8);
             encounterProbability1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 10);
             encounterNumber2 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 12);
@@ -127,7 +128,7 @@ namespace Yggdrasil.TableParsing
         public override void Save()
         {
             stratumNumber.CopyTo(ParentTable.Data[EntryNumber], 0);
-            unknown1.CopyTo(ParentTable.Data[EntryNumber], 4);
+            battleBGM.CopyTo(ParentTable.Data[EntryNumber], 4);
             encounterNumber1.CopyTo(ParentTable.Data[EntryNumber], 8);
             encounterProbability1.CopyTo(ParentTable.Data[EntryNumber], 10);
             encounterNumber2.CopyTo(ParentTable.Data[EntryNumber], 12);

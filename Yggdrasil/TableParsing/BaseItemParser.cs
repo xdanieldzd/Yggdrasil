@@ -50,8 +50,8 @@ namespace Yggdrasil.TableParsing
         {
             itemNumber = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 0);
 
-            name = GameDataManager.GetItemName(ItemNumber);
-            description = GameDataManager.GetItemDescription(ItemNumber);
+            name = GameDataManager.ItemNames[ItemNumber];
+            description = GameDataManager.ItemDescriptions[ItemNumber];
 
             base.Load();
         }
@@ -59,9 +59,6 @@ namespace Yggdrasil.TableParsing
         public override void Save()
         {
             itemNumber.CopyTo(ParentTable.Data[EntryNumber], 0);
-
-            if (ShouldSerializeName()) GameDataManager.SetItemName(ItemNumber, name);
-            if (ShouldSerializeDescription()) GameDataManager.SetItemDescription(ItemNumber, description);
 
             base.Save();
         }

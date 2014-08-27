@@ -27,11 +27,11 @@ namespace Yggdrasil.TableParsing
             {
                 var enemies = new[]
                 {
-                    new { Number = enemyNumber1, Name = GameDataManager.GetEnemyName(enemyNumber1) },
-                    new { Number = enemyNumber2, Name = GameDataManager.GetEnemyName(enemyNumber2) },
-                    new { Number = enemyNumber3, Name = GameDataManager.GetEnemyName(enemyNumber3) },
-                    new { Number = enemyNumber4, Name = GameDataManager.GetEnemyName(enemyNumber4) },
-                    new { Number = enemyNumber5, Name = GameDataManager.GetEnemyName(enemyNumber5) },
+                    new { Number = enemyNumber1, Name = GameDataManager.EnemyNames[enemyNumber1] },
+                    new { Number = enemyNumber2, Name = GameDataManager.EnemyNames[enemyNumber2] },
+                    new { Number = enemyNumber3, Name = GameDataManager.EnemyNames[enemyNumber3] },
+                    new { Number = enemyNumber4, Name = GameDataManager.EnemyNames[enemyNumber4] },
+                    new { Number = enemyNumber5, Name = GameDataManager.EnemyNames[enemyNumber5] },
                 };
                 var query = enemies.Where(x => x.Number != 0).GroupBy(y => y).Select(z => new { Name = z.Key.Name, Count = z.Count() });
 

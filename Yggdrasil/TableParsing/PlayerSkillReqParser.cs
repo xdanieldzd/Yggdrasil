@@ -118,9 +118,9 @@ namespace Yggdrasil.TableParsing
         {
             skillNumber = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 0);
 
-            name = GameDataManager.GetPlayerSkillName(SkillNumber);
-            shortDescription = GameDataManager.GetPlayerSkillShortDescription(SkillNumber);
-            description = GameDataManager.GetPlayerSkillDescription(SkillNumber);
+            name = GameDataManager.PlayerSkillNames[SkillNumber];
+            shortDescription = GameDataManager.PlayerSkillShortDescriptions[SkillNumber];
+            description = GameDataManager.PlayerSkillDescriptions[SkillNumber];
 
             unknown1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 2);
             requiredSkill1 = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 4);
@@ -134,10 +134,6 @@ namespace Yggdrasil.TableParsing
         public override void Save()
         {
             skillNumber.CopyTo(ParentTable.Data[EntryNumber], 0);
-
-            if (ShouldSerializeName()) GameDataManager.SetPlayerSkillName(SkillNumber, name);
-            if (ShouldSerializeShortDescription()) GameDataManager.SetPlayerSkillShortDescription(SkillNumber, shortDescription);
-            if (ShouldSerializeDescription()) GameDataManager.SetPlayerSkillDescription(SkillNumber, description);
 
             unknown1.CopyTo(ParentTable.Data[EntryNumber], 2);
             requiredSkill1.CopyTo(ParentTable.Data[EntryNumber], 4);
