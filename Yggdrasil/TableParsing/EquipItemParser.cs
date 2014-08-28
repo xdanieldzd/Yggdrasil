@@ -36,21 +36,22 @@ namespace Yggdrasil.TableParsing
         };
 
         [Browsable(false)]
-        public override string EntryDescription { get { return Name; } }
+        public override string EntryDescription { get { return (Name == string.Empty ? string.Format("(Equipment #{0})", ItemNumber) : Name.Truncate(20)); } }
 
-        ushort itemType;
-        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.HexUshortConverter)), PrioritizedCategory("General", 6)]
-        public ushort ItemType
+        ushort itemEffects;
+        [DisplayName("Item Effects"), TypeConverter(typeof(TypeConverters.HexUshortConverter)), PrioritizedCategory("General", 6)]
+        [Description("Appears to influence attack type and elemental affinity; undocumented.")]
+        public ushort ItemEffects
         {
-            get { return itemType; }
-            set { base.SetProperty(ref itemType, value, () => this.ItemType); }
+            get { return itemEffects; }
+            set { base.SetProperty(ref itemEffects, value, () => this.ItemEffects); }
         }
-        public bool ShouldSerializeItemType() { return !(this.ItemType == (dynamic)base.originalValues["ItemType"]); }
-        public void ResetItemType() { this.ItemType = (dynamic)base.originalValues["ItemType"]; }
+        public bool ShouldSerializeItemEffects() { return !(this.ItemEffects == (dynamic)base.originalValues["ItemEffects"]); }
+        public void ResetItemEffects() { this.ItemEffects = (dynamic)base.originalValues["ItemEffects"]; }
 
         ushort attack;
         [DisplayName("Attack"), PrioritizedCategory("Stats", 5)]
-        [Description("Modifier for character's attack strength.")]
+        [Description("Modifier for character's attack strength; set to zero if item is armor.")]
         public ushort Attack
         {
             get { return attack; }
@@ -72,7 +73,7 @@ namespace Yggdrasil.TableParsing
 
         ushort defense;
         [DisplayName("Defense"), PrioritizedCategory("Stats", 5)]
-        [Description("Modifier for character's defense stat.")]
+        [Description("Modifier for character's defense stat; set to zero if item is weapon.")]
         public ushort Defense
         {
             get { return defense; }
@@ -83,7 +84,7 @@ namespace Yggdrasil.TableParsing
 
         Groups group;
         [DisplayName("Group"), TypeConverter(typeof(EnumConverter)), PrioritizedCategory("General", 6)]
-        [Description("Type of item used for sorting, ex. when buying at Shilleka's Goods")]
+        [Description("Type of item, used ex. to determine if ATK or DEF should be applied, or for sorting when buying at Shilleka's Goods.")]
         public Groups Group
         {
             get { return group; }
@@ -465,7 +466,7 @@ namespace Yggdrasil.TableParsing
 
         protected override void Load()
         {
-            itemType = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 2);
+            itemEffects = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 2);
             attack = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 4);
             attackAlt = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 6);
             defense = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 8);
@@ -501,7 +502,7 @@ namespace Yggdrasil.TableParsing
 
         public override void Save()
         {
-            itemType.CopyTo(ParentTable.Data[EntryNumber], 2);
+            itemEffects.CopyTo(ParentTable.Data[EntryNumber], 2);
             attack.CopyTo(ParentTable.Data[EntryNumber], 4);
             attackAlt.CopyTo(ParentTable.Data[EntryNumber], 6);
             defense.CopyTo(ParentTable.Data[EntryNumber], 8);
@@ -535,20 +536,17 @@ namespace Yggdrasil.TableParsing
             base.Save();
         }
 
-        public static TreeNode GenerateTreeNode(GameDataManager gameDataManager, IList<BaseParser> parsedData)
+        public static void GenerateEquipmentNodes(TreeNode parserNode, List<BaseParser> currentParsers)
         {
-            string description = (typeof(EquipItemParser).GetCustomAttributes(false).FirstOrDefault(x => x is DescriptionAttribute) as DescriptionAttribute).Description;
-            TreeNode node = new TreeNode(description) { Tag = parsedData };
-
             foreach (Groups group in (Groups[])Enum.GetValues(typeof(Groups)))
             {
                 TreeNode groupNode = new TreeNode(group.ToString()) { Tag = group };
-                foreach (BaseParser parsed in parsedData.Where(x => (x as EquipItemParser).Group == group))
-                    groupNode.Nodes.Add(new TreeNode(parsed.EntryDescription.Truncate(20)) { Tag = parsed });
-                node.Nodes.Add(groupNode);
-            }
 
-            return node;
+                foreach (BaseParser parsed in currentParsers.Where(x => (x as EquipItemParser).Group == group))
+                    groupNode.Nodes.Add(new TreeNode(parsed.EntryDescription) { Tag = parsed });
+
+                parserNode.Nodes.Add(groupNode);
+            }
         }
     }
 }

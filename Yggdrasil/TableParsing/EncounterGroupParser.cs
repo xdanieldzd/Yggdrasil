@@ -16,6 +16,9 @@ namespace Yggdrasil.TableParsing
     [PrioritizedDescription("Encounters Groups", 2)]
     public class EncounterGroupParser : BaseParser
     {
+        [Browsable(false)]
+        public override string EntryDescription { get { return string.Format("Group #{0}", GroupNumber); } }
+
         [DisplayName("(ID)"), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("Internal ID number of encounter group.")]
         public ushort GroupNumber { get { return (ushort)EntryNumber; } }
@@ -137,17 +140,6 @@ namespace Yggdrasil.TableParsing
             encounterProbability3.CopyTo(ParentTable.Data[EntryNumber], 18);
 
             base.Save();
-        }
-
-        public static TreeNode GenerateTreeNode(GameDataManager gameDataManager, IList<BaseParser> parsedData)
-        {
-            string description = (typeof(EncounterGroupParser).GetCustomAttributes(false).FirstOrDefault(x => x is DescriptionAttribute) as DescriptionAttribute).Description;
-            TreeNode node = new TreeNode(description) { Tag = parsedData };
-
-            foreach (BaseParser parsed in parsedData)
-                node.Nodes.Add(new TreeNode(parsed.EntryDescription) { Tag = parsed });
-
-            return node;
         }
     }
 }

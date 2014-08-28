@@ -64,7 +64,7 @@ namespace Yggdrasil.Controls
                     System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
 
                     tvMessageFiles.Invoke(new Action(() => { tvMessageFiles.Nodes.Clear(); }));
-                    foreach (TableFile messageFile in this.gameDataManager.MessageFiles)
+                    foreach (TableFile messageFile in this.gameDataManager.MessageFiles.OrderBy(x => Path.GetFileName(x.Filename)))
                     {
                         TreeNode fileNode = new TreeNode(Path.GetFileNameWithoutExtension(messageFile.Filename)) { Tag = messageFile };
 

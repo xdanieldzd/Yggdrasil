@@ -129,8 +129,8 @@ namespace Yggdrasil
                     loadWaitWorker.ReportProgress(-1, "Initializing font renderer...");
                     FontRenderer = new FontRenderer(this, Path.Combine(path, mainFontFilename));
 
-                    MessageFiles = ReadDataTablesByExtension(".mbb", messageDirs);
-                    dataTableFiles = ReadDataTablesByExtension(".tbb", dataDirs);
+                    MessageFiles = ReadDataTablesByExtension(new string[] { ".mbb", ".tbb" }, messageDirs);
+                    dataTableFiles = ReadDataTablesByExtension(new string[] { ".tbb" }, dataDirs);
 
                     EnsureMessageTableIntegrity();
                     GenerateDictionariesLists();
@@ -395,9 +395,9 @@ namespace Yggdrasil
             }
         }
 
-        private List<TableFile> ReadDataTablesByExtension(string extension, string[] directories)
+        private List<TableFile> ReadDataTablesByExtension(string[] extensions, string[] directories)
         {
-            if (extension == null || extension == string.Empty) throw new ArgumentException("No extension given");
+            if (extensions == null || extensions.Length == 0) throw new ArgumentException("No extension given");
             if (directories == null) throw new ArgumentNullException("Directories is null");
 
             List<TableFile> dataTables = new List<TableFile>();
@@ -408,20 +408,19 @@ namespace Yggdrasil
                 if (!Directory.Exists(localDataPath)) continue;
 
                 List<string> filePaths = Directory.EnumerateFiles(localDataPath, "*.*", SearchOption.AllDirectories)
-                    .Where(x => x.ToLowerInvariant().EndsWith(extension) || x.ToLowerInvariant().EndsWith(".cmp"))
+                    .Where(x => extensions.Contains(Path.GetExtension(x.ToLowerInvariant())) || Path.GetExtension(x.ToLowerInvariant()) == ".cmp")
                     .ToList();
 
                 foreach (string filePath in filePaths)
                 {
                     TableFile tbb = new TableFile(this, filePath);
-                    /*if (tbb.IsValid())*/
                     dataTables.Add(tbb);
 
                     loadWaitWorker.ReportProgress(-1, string.Format("Reading {0}...", Path.GetFileName(filePath)));
                 }
             }
 
-            return dataTables;
+            return dataTables.OrderBy(x => x.Filename).ToList();
         }
 
         private void EnsureMessageTableIntegrity()
@@ -499,11 +498,7 @@ namespace Yggdrasil
             TableFile messageFile = GetMessageFile(filename);
             MessageTable messageTable = (messageFile.Tables[tableNo] as MessageTable);
 
-            for (ushort number = 1; number <= messageTable.NumMessages; number++)
-            {
-                if (messageTable.Messages[number - 1] != string.Empty) dict.Add(number, messageTable.Messages[number - 1]);
-                else dict.Add(number, string.Format("(Unnamed #{0})", number));
-            }
+            for (ushort number = 1; number <= messageTable.NumMessages; number++) dict.Add(number, messageTable.Messages[number - 1]);
 
             return dict;
         }
@@ -592,12 +587,6 @@ namespace Yggdrasil
             return messageFile;
         }
 
-        public EtrianString GetMessageString(string filename, int tableNo, int messageNo)
-        {
-            TableFile messageFile = GetMessageFile(filename);
-            return (messageFile.Tables[tableNo] as MessageTable).Messages[messageNo];
-        }
-
         public void SetMessageString(string filename, int tableNo, int messageNo, EtrianString message)
         {
             TableFile messageFile = GetMessageFile(filename);
@@ -605,28 +594,22 @@ namespace Yggdrasil
             if (!changedMessageFiles.Contains(messageFile)) changedMessageFiles.Add(messageFile);
         }
 
-        public IList<T> GetParsedData<T>()
+        public TreeNode GenerateTreeNode(Type parserType, Action<TreeNode, List<BaseParser>> customChildCreator = null)
         {
-            return parsedData.Where(x => x is T).Cast<T>().ToList();
-        }
+            List<BaseParser> currentParsers = parsedData.Where(x => x.GetType() == parserType).ToList();
+            TreeNode parserNode = new TreeNode(parserType.GetAttribute<DescriptionAttribute>().Description) { Tag = currentParsers };
 
-        public IList<Tuple<Type, IList<BaseParser>>> GetAllParsedData(bool mustSupportSave)
-        {
-            List<Tuple<Type, IList<BaseParser>>> output = new List<Tuple<Type, IList<BaseParser>>>();
-
-            List<Type> typesWithAttrib = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.GetCustomAttributes(typeof(ParserUsage), false).Length > 0).ToList();
-            foreach (Type type in typesWithAttrib.OrderBy(x => ((PrioritizedDescription)x.GetAttribute<PrioritizedDescription>()).Priority))
+            if (customChildCreator != null)
+                customChildCreator.Invoke(parserNode, currentParsers);
+            else
             {
-                if (mustSupportSave)
+                foreach (BaseParser parser in currentParsers)
                 {
-                    MethodInfo mi = type.GetMethod("Save", BindingFlags.Instance | BindingFlags.Public);
-                    if (mi.DeclaringType == typeof(BaseParser)) continue;
+                    parserNode.Nodes.Add(new TreeNode(parser.EntryDescription) { Tag = parser });
                 }
-
-                output.Add(new Tuple<Type, IList<BaseParser>>(type, parsedData.Where(x => x.GetType() == type).ToList()));
             }
 
-            return output;
+            return parserNode;
         }
     }
 }

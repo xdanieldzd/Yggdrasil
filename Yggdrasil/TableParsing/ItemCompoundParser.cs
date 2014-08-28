@@ -25,7 +25,7 @@ namespace Yggdrasil.TableParsing
                 if (GameDataManager.ItemNames.ContainsKey(ItemNumber))
                     return GameDataManager.ItemNames[ItemNumber];
                 else
-                    return "(Invalid)";
+                    return "(Invalid Item)";
             }
         }
 
@@ -38,7 +38,7 @@ namespace Yggdrasil.TableParsing
                 if (GameDataManager.ItemDescriptions.ContainsKey(ItemNumber))
                     return GameDataManager.ItemDescriptions[ItemNumber];
                 else
-                    return "(Invalid)";
+                    return "(Invalid Item)";
             }
         }
 
@@ -52,7 +52,7 @@ namespace Yggdrasil.TableParsing
         }
 
         [Browsable(false)]
-        public override string EntryDescription { get { return Name; } }
+        public override string EntryDescription { get { return (Name == string.Empty ? string.Format("(Requirement #{0})", ItemNumber) : Name.Truncate(20)); } }
 
         ushort itemCompound1;
         [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.ItemNameConverter)), PrioritizedCategory("1st Item", 5)]
@@ -212,17 +212,6 @@ namespace Yggdrasil.TableParsing
             unknownPadding.CopyTo(ParentTable.Data[EntryNumber], 17);
 
             base.Save();
-        }
-
-        public static TreeNode GenerateTreeNode(GameDataManager gameDataManager, IList<BaseParser> parsedData)
-        {
-            string description = (typeof(ItemCompoundParser).GetCustomAttributes(false).FirstOrDefault(x => x is DescriptionAttribute) as DescriptionAttribute).Description;
-            TreeNode node = new TreeNode(description) { Tag = parsedData };
-
-            foreach (BaseParser parsed in parsedData)
-                node.Nodes.Add(new TreeNode(parsed.EntryDescription) { Tag = parsed });
-
-            return node;
         }
     }
 }

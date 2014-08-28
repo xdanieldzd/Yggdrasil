@@ -17,7 +17,7 @@ namespace Yggdrasil.TableParsing
     public class MiscItemParser : BaseItemParser
     {
         [Browsable(false)]
-        public override string EntryDescription { get { return Name; } }
+        public override string EntryDescription { get { return (Name == string.Empty ? string.Format("(Item #{0})", ItemNumber) : Name.Truncate(20)); } }
 
         // "special item" ??
         // 0009 + unk2 0005 -> in battle, STR UP, DEF DOWN
@@ -164,17 +164,6 @@ namespace Yggdrasil.TableParsing
             sellPrice.CopyTo(ParentTable.Data[EntryNumber], 20);
 
             base.Save();
-        }
-
-        public static TreeNode GenerateTreeNode(GameDataManager gameDataManager, IList<BaseParser> parsedData)
-        {
-            string description = (typeof(MiscItemParser).GetCustomAttributes(false).FirstOrDefault(x => x is DescriptionAttribute) as DescriptionAttribute).Description;
-            TreeNode node = new TreeNode(description) { Tag = parsedData };
-
-            foreach (BaseParser parsed in parsedData)
-                node.Nodes.Add(new TreeNode(parsed.EntryDescription) { Tag = parsed });
-
-            return node;
         }
     }
 }

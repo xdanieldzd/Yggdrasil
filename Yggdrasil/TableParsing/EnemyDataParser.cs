@@ -524,16 +524,5 @@ namespace Yggdrasil.TableParsing
 
             base.Save();
         }
-
-        public static TreeNode GenerateTreeNode(GameDataManager gameDataManager, IList<BaseParser> parsedData)
-        {
-            string description = (typeof(EnemyDataParser).GetCustomAttributes(false).FirstOrDefault(x => x is DescriptionAttribute) as DescriptionAttribute).Description;
-            TreeNode node = new TreeNode(description) { Tag = parsedData };
-
-            foreach (BaseParser parsed in parsedData)
-                node.Nodes.Add(new TreeNode(parsed.EntryDescription) { Tag = parsed });
-
-            return node;
-        }
     }
 }

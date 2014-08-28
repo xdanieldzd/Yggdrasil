@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Diagnostics;
 
 namespace Yggdrasil.FileHandling
 {
+    [DebuggerDisplay("{Filename}")]
     public abstract class BaseFile
     {
         public GameDataManager GameDataManager { get; private set; }

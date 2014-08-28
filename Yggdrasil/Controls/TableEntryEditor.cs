@@ -30,6 +30,11 @@ namespace Yggdrasil.Controls
         BackgroundWorker treeViewWorker;
         PropertyGridMessageFilter messageFilter;
 
+        Dictionary<Type, Action<TreeNode, List<BaseParser>>> customChildCreators = new Dictionary<Type, Action<TreeNode, List<BaseParser>>>()
+        {
+            { typeof(EquipItemParser), EquipItemParser.GenerateEquipmentNodes }
+        };
+
         public TableEntryEditor()
         {
             InitializeComponent();
@@ -98,24 +103,22 @@ namespace Yggdrasil.Controls
                 tvParsers.Invoke(new Action(() => { tvParsers.Nodes.Clear(); }));
 
                 List<TreeNode> categories = new List<TreeNode>();
-                foreach (Tuple<Type, IList<BaseParser>> parsedTuple in this.gameDataManager.GetAllParsedData(true))
+
+                List<Type> typesWithAttrib = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.GetCustomAttributes(typeof(ParserUsage), false).Length > 0).ToList();
+                foreach (Type type in typesWithAttrib.OrderBy(x => ((PrioritizedDescription)x.GetAttribute<PrioritizedDescription>()).Priority))
                 {
-                    TreeNodeCategory categoryAttrib = parsedTuple.Item1.GetAttribute<TreeNodeCategory>();
-                    MethodInfo mi = parsedTuple.Item1.GetMethod("GenerateTreeNode", BindingFlags.Static | BindingFlags.Public);
-                    if (mi != null)
+                    TreeNodeCategory categoryAttrib = type.GetAttribute<TreeNodeCategory>();
+
+                    TreeNode dataNode = gameDataManager.GenerateTreeNode(type, customChildCreators.ContainsKey(type) ? customChildCreators[type] : null);
+
+                    tvParsers.Invoke(new Action(() =>
                     {
-                        Program.Logger.LogMessage("Generating tree node '{0}' ({1})...", parsedTuple.Item1.GetAttribute<DescriptionAttribute>().Description, parsedTuple.Item1.Name);
+                        if (tvParsers.Nodes[categoryAttrib.CategoryName] == null)
+                            tvParsers.Nodes.Add(new TreeNode(categoryAttrib.CategoryName) { Name = categoryAttrib.CategoryName });
 
-                        TreeNode dataNode = (TreeNode)mi.Invoke(null, new object[] { gameDataManager, parsedTuple.Item2 });
-                        tvParsers.Invoke(new Action(() =>
-                        {
-                            if (tvParsers.Nodes[categoryAttrib.CategoryName] == null)
-                                tvParsers.Nodes.Add(new TreeNode(categoryAttrib.CategoryName) { Name = categoryAttrib.CategoryName });
-
-                            tvParsers.Nodes[categoryAttrib.CategoryName].Nodes.Add(dataNode);
-                            tvParsers.Nodes[categoryAttrib.CategoryName].Expand();
-                        }));
-                    }
+                        tvParsers.Nodes[categoryAttrib.CategoryName].Nodes.Add(dataNode);
+                        tvParsers.Nodes[categoryAttrib.CategoryName].Expand();
+                    }));
                 }
 
                 tvParsers.Invoke(new Action(() =>
