@@ -9,12 +9,13 @@ using System.Windows.Forms;
 
 using Microsoft.WindowsAPICodePack.Dialogs;
 
+using Yggdrasil.Forms;
 using Yggdrasil.Helpers;
 using Yggdrasil.Controls;
 
 namespace Yggdrasil
 {
-    public partial class MainForm : Form
+    public partial class MainForm : ModernForm
     {
         GameDataManager gameDataManager;
 
@@ -139,6 +140,7 @@ namespace Yggdrasil
             {
                 FolderBrowserDialog fbd = new FolderBrowserDialog();
                 fbd.Description = "Please select folder with extracted Etrian Odyssey game data.";
+                fbd.SelectedPath = Configuration.LastDataPath;
                 fbd.ShowNewFolderButton = false;
                 if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK) LoadGameData(fbd.SelectedPath);
             }

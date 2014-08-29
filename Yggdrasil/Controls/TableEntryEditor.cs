@@ -80,7 +80,6 @@ namespace Yggdrasil.Controls
             Application.AddMessageFilter(messageFilter);
 
             this.gameDataManager = gameDataManager;
-            this.Font = GUIHelpers.GetSuggestedGUIFont(gameDataManager.Version);
 
             Rebuild();
         }

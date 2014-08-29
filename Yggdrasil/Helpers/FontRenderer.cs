@@ -14,7 +14,6 @@ namespace Yggdrasil.Helpers
         public GameDataManager GameDataManager { get; private set; }
         public string Filename { get; private set; }
 
-        bool fontCompressed;
         byte[] fontRaw, paletteRaw;
         List<Color> palette;
         Bitmap fontImage;
@@ -27,7 +26,7 @@ namespace Yggdrasil.Helpers
         {
             this.GameDataManager = gameDataManager;
             Filename = path;
-            fontRaw = DataCompression.Decompressor.Decompress(Filename, out fontCompressed);
+            fontRaw = File.ReadAllBytes(Filename);
 
             paletteRaw = File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(Filename), Path.GetFileNameWithoutExtension(Filename) + ".ntfp"));
             palette = new List<Color>()

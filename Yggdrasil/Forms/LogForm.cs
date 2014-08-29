@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Yggdrasil.Forms
 {
-    public partial class LogForm : Form
+    public partial class LogForm : ModernForm
     {
         public LogForm()
         {

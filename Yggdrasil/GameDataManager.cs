@@ -57,7 +57,7 @@ namespace Yggdrasil
         }
         public event EventHandler SelectedLanguageChangedEvent;
 
-        string mainFontFilename;
+        string mainFontFilename, smallFontFilename;
         Dictionary<Languages, string> langSuffixes = new Dictionary<Languages, string>()
         {
             { Languages.German, "_DE" },
@@ -127,7 +127,7 @@ namespace Yggdrasil
                     EtrianString.GameVersion = Version;
 
                     loadWaitWorker.ReportProgress(-1, "Initializing font renderer...");
-                    FontRenderer = new FontRenderer(this, Path.Combine(path, mainFontFilename));
+                    FontRenderer = new FontRenderer(this, Path.Combine(path, mainFontFilename + ".ntft"));
 
                     MessageFiles = ReadDataTablesByExtension(new string[] { ".mbb", ".tbb" }, messageDirs);
                     dataTableFiles = ReadDataTablesByExtension(new string[] { ".tbb" }, dataDirs);
@@ -147,16 +147,16 @@ namespace Yggdrasil
                 }
                 catch (Exceptions.GameDataManagerException gameException)
                 {
-                    MessageBox.Show(
-                        string.Format("{0}{1}{1}{2}", gameException.Message, Environment.NewLine, "Please ensure you've selected a valid game data directory."), "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    GUIHelpers.ShowErrorMessage(
+                        "Application Error", "An error occured while loading the game data.", "Please ensure you've selected a valid game data directory.",
+                        gameException.Message, gameException.ToString(), (IntPtr)loadWaitForm.Invoke(new Func<IntPtr>(() => { return loadWaitForm.Handle; })));
                 }
 #if !DEBUG
                 catch (Exception exception)
                 {
-                    MessageBox.Show(
-                        string.Format("{0} occured: {1}{2}{2}{3}", exception.GetType().FullName, exception.Message, Environment.NewLine, "Please contact a developer about this message."), "Exception",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    GUIHelpers.ShowErrorMessage(
+                        "Application Error", "The application performed an illegal operation.", "Please contact a developer with the details of this message.",
+                        exception.Message, exception.ToString(), (IntPtr)loadWaitForm.Invoke(new Func<IntPtr>(() => { return loadWaitForm.Handle; })));
                 }
 #endif
             });
@@ -193,16 +193,11 @@ namespace Yggdrasil
 
             foreach (TableFile file in changedFiles)
             {
-                if (!file.IsCompressed)
-                {
-                    file.Save();
+                file.Save();
 
-                    BinaryWriter writer = new BinaryWriter(File.Open(file.Filename, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite));
-                    writer.Write(file.Data);
-                    writer.Close();
-                }
-                else
-                    throw new NotImplementedException("Saving to compressed file not implemented");
+                BinaryWriter writer = new BinaryWriter(File.Open(file.Filename, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite));
+                writer.Write(file.Data);
+                writer.Close();
             }
 
             changedParsedData.Clear();
@@ -215,24 +210,27 @@ namespace Yggdrasil
         {
             loadWaitWorker.ReportProgress(-1, "Reading header data...");
 
-            if (!File.Exists(Path.Combine(DataPath, "header.bin"))) throw new Exceptions.GameDataManagerException("File header.bin not found.");
+            if (!File.Exists(Path.Combine(DataPath, "header.bin"))) throw new Exceptions.GameDataManagerException("File header.bin could not be found.");
 
             Header = new FileHandling.HeaderFile(this, Path.Combine(DataPath, "header.bin"));
             switch (Header.GameCode)
             {
                 case "AKYP":
                     Version = Versions.European;
-                    mainFontFilename = "data\\Data\\Tex\\Font\\Font14x11_00.cmp";
+                    mainFontFilename = "data\\Data\\Tex\\Font\\Font14x11_00";
+                    smallFontFilename = "data\\Data\\Tex\\Font\\Font10x9_00";
                     break;
 
                 case "AKYE":
                     Version = Versions.American;
-                    mainFontFilename = "data\\Data\\Tex\\Font\\Font10x5_00.cmp";
+                    mainFontFilename = "data\\Data\\Tex\\Font\\Font10x5_00";
+                    smallFontFilename = "data\\Data\\Tex\\Font\\Font8x4_00";
                     break;
 
                 case "AKYJ":
                     Version = Versions.Japanese;
-                    mainFontFilename = "data\\Data\\Tex\\Font\\Font10x10_00.cmp";
+                    mainFontFilename = "data\\Data\\Tex\\Font\\Font10x10_00";
+                    smallFontFilename = "data\\Data\\Tex\\Font\\Font8x8_00";
                     break;
 
                 default: throw new Exceptions.GameDataManagerException("Unsupported game data.");
@@ -245,13 +243,11 @@ namespace Yggdrasil
         {
             /* Do we need to decompress anything? */
             string checkPath = Path.Combine(DataPath, "data\\Data\\Event", "DUN_01F.evt");
-            bool needToUnpack = !File.Exists(checkPath);
+            if (File.Exists(checkPath)) return;
 
-            if (needToUnpack)
-            {
-                loadWaitWorker.ReportProgress(-1, "Preparing to decompress files...");
+            loadWaitWorker.ReportProgress(-1, "Preparing to decompress files...");
 
-                List<Tuple<string, string, string, bool, bool>> dirExtTuples = new List<Tuple<string, string, string, bool, bool>>
+            List<Tuple<string, string, string, bool, bool>> dirExtTuples = new List<Tuple<string, string, string, bool, bool>>
                 { 
                     /* Path, Original Name/Ext, New Name/Ext, Localized?, ARM9-Autofix? */
                     new Tuple<string, string, string, bool, bool>("data\\Data\\Event", ".cmp", ".evt", false, false),
@@ -274,125 +270,127 @@ namespace Yggdrasil
                     new Tuple<string, string, string, bool, bool>("data\\Data\\Param", "ItemName.cmp", "ItemName.mbb", true, true),
                     
                     new Tuple<string, string, string, bool, bool>("data\\Data\\Battle", "BtlMess.cmp", "BtlMess.mbb", true, true),
+
+                    new Tuple<string, string, string, bool, bool>("data\\Data\\Tex\\Font", Path.GetFileName(mainFontFilename) + ".cmp", Path.GetFileName(mainFontFilename) + ".ntft", false, false),
+                    new Tuple<string, string, string, bool, bool>("data\\Data\\Tex\\Font", Path.GetFileName(smallFontFilename) + ".cmp", Path.GetFileName(smallFontFilename) + ".ntft", false, false),
                 };
 
-                List<Tuple<string, string, string, bool, bool>> dirExtTuplesLocalized = new List<Tuple<string, string, string, bool, bool>>();
+            List<Tuple<string, string, string, bool, bool>> dirExtTuplesLocalized = new List<Tuple<string, string, string, bool, bool>>();
 
-                if (Version == Versions.European)
+            if (Version == Versions.European)
+            {
+                dirExtTuplesLocalized.AddRange(dirExtTuples.Where(x => !x.Item4));
+
+                foreach (Tuple<string, string, string, bool, bool> dirExt in dirExtTuples.Where(x => x.Item4))
                 {
-                    dirExtTuplesLocalized.AddRange(dirExtTuples.Where(x => !x.Item4));
+                    int sourcePeriodIdx = dirExt.Item2.IndexOf('.');
+                    string sourceFileName = dirExt.Item2.Substring(0, sourcePeriodIdx);
+                    string sourceFileExt = dirExt.Item2.Substring(sourcePeriodIdx);
 
-                    foreach (Tuple<string, string, string, bool, bool> dirExt in dirExtTuples.Where(x => x.Item4))
+                    int destPeriodIdx = dirExt.Item3.IndexOf('.');
+                    string destFileName = dirExt.Item3.Substring(0, sourcePeriodIdx);
+                    string destFileExt = dirExt.Item3.Substring(sourcePeriodIdx);
+
+                    foreach (KeyValuePair<Languages, string> langSuffix in langSuffixes)
                     {
-                        int sourcePeriodIdx = dirExt.Item2.IndexOf('.');
-                        string sourceFileName = dirExt.Item2.Substring(0, sourcePeriodIdx);
-                        string sourceFileExt = dirExt.Item2.Substring(sourcePeriodIdx);
+                        dirExtTuplesLocalized.Add(new Tuple<string, string, string, bool, bool>(
+                            dirExt.Item1,
+                            string.Format("{0}{1}{2}", sourceFileName, langSuffix.Value, sourceFileExt),
+                            string.Format("{0}{1}{2}", destFileName, langSuffix.Value, destFileExt),
+                            false,
+                            dirExt.Item5));
+                    }
+                }
+            }
 
-                        int destPeriodIdx = dirExt.Item3.IndexOf('.');
-                        string destFileName = dirExt.Item3.Substring(0, sourcePeriodIdx);
-                        string destFileExt = dirExt.Item3.Substring(sourcePeriodIdx);
+            /* Find and decompress files */
+            foreach (Tuple<string, string, string, bool, bool> dirExt in (Version == Versions.European ? dirExtTuplesLocalized : dirExtTuples))
+            {
+                string localDataPath = Path.Combine(DataPath, dirExt.Item1);
+                if (!Directory.Exists(localDataPath)) continue;
 
-                        foreach (KeyValuePair<Languages, string> langSuffix in langSuffixes)
-                        {
-                            dirExtTuplesLocalized.Add(new Tuple<string, string, string, bool, bool>(
-                                dirExt.Item1,
-                                string.Format("{0}{1}{2}", sourceFileName, langSuffix.Value, sourceFileExt),
-                                string.Format("{0}{1}{2}", destFileName, langSuffix.Value, destFileExt),
-                                false,
-                                dirExt.Item5));
-                        }
+                List<string> filePathsAll = Directory.EnumerateFiles(localDataPath, "*.*", SearchOption.AllDirectories).ToList();
+                List<string> filePaths = filePathsAll
+                    .Where(x => x.ToLowerInvariant().EndsWith(dirExt.Item2.ToLowerInvariant()) || Path.GetFileName(x.ToLowerInvariant()) == dirExt.Item2.ToLowerInvariant())
+                    .ToList();
+
+                foreach (string filePath in filePaths)
+                {
+                    loadWaitWorker.ReportProgress(-1, string.Format("Decompressing {0}...", Path.GetFileName(filePath)));
+
+                    string newPath = Path.Combine(Path.GetDirectoryName(filePath), filePath.Replace(dirExt.Item2, dirExt.Item3));
+
+                    bool isCompressed;
+                    byte[] fileData = DataCompression.Decompressor.Decompress(filePath, out isCompressed);
+                    if (isCompressed)
+                    {
+                        BinaryWriter writer = new BinaryWriter(File.Create(newPath));
+                        writer.Write(fileData);
+                        writer.Close();
+
+                        File.Delete(filePath);
+                    }
+                }
+            }
+
+            /* Read ARM9 binary */
+            BinaryReader arm9Reader = new BinaryReader(File.Open(Path.Combine(DataPath, "arm9.bin"), FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite));
+            byte[] arm9Data = new byte[arm9Reader.BaseStream.Length];
+            arm9Reader.Read(arm9Data, 0, arm9Data.Length);
+            arm9Reader.Close();
+
+            /* Apply ARM9 patches */
+            loadWaitWorker.ReportProgress(-1, "Patching ARM9 binary...");
+
+            bool eventsPatched = false, mapsPatched = false;
+            for (int i = 0; i < arm9Data.Length; i += 4)
+            {
+                string check = string.Empty;
+
+                /* Event data */
+                if (!eventsPatched && i < arm9Data.Length - 8)
+                {
+                    check = Encoding.ASCII.GetString(arm9Data, i, 8);
+                    if (check == "MIS_\0\0\0\0")
+                    {
+                        Buffer.BlockCopy(Encoding.ASCII.GetBytes(".evt"), 0, arm9Data, i + 0x1C, 4);
+                        eventsPatched = true;
                     }
                 }
 
-                /* Find and decompress files */
-                foreach (Tuple<string, string, string, bool, bool> dirExt in (Version == Versions.European ? dirExtTuplesLocalized : dirExtTuples))
+                /* Map data */
+                if (!mapsPatched && i < arm9Data.Length - 8)
                 {
-                    string localDataPath = Path.Combine(DataPath, dirExt.Item1);
-                    if (!Directory.Exists(localDataPath)) continue;
-
-                    List<string> filePathsAll = Directory.EnumerateFiles(localDataPath, "*.*", SearchOption.AllDirectories).ToList();
-                    List<string> filePaths = filePathsAll
-                        .Where(x => x.ToLowerInvariant().EndsWith(dirExt.Item2.ToLowerInvariant()) || Path.GetFileName(x.ToLowerInvariant()) == dirExt.Item2.ToLowerInvariant())
-                        .ToList();
-
-                    foreach (string filePath in filePaths)
+                    check = Encoding.ASCII.GetString(arm9Data, i, 8);
+                    if (check == "_ymd.cmp")
                     {
-                        loadWaitWorker.ReportProgress(-1, string.Format("Decompressing {0}...", Path.GetFileName(filePath)));
-
-                        string newPath = Path.Combine(Path.GetDirectoryName(filePath), filePath.Replace(dirExt.Item2, dirExt.Item3));
-
-                        bool isCompressed;
-                        byte[] fileData = DataCompression.Decompressor.Decompress(filePath, out isCompressed);
-                        if (isCompressed)
-                        {
-                            BinaryWriter writer = new BinaryWriter(File.Create(newPath));
-                            writer.Write(fileData);
-                            writer.Close();
-
-                            File.Delete(filePath);
-                        }
+                        Buffer.BlockCopy(Encoding.ASCII.GetBytes(".ymd\0\0\0\0"), 0, arm9Data, i, 8);
+                        Buffer.BlockCopy(Encoding.ASCII.GetBytes(".ydd\0\0\0\0"), 0, arm9Data, i + 0xC, 8);
+                        mapsPatched = true;
                     }
                 }
+            }
 
-                /* Read ARM9 binary */
-                BinaryReader arm9Reader = new BinaryReader(File.Open(Path.Combine(DataPath, "arm9.bin"), FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite));
-                byte[] arm9Data = new byte[arm9Reader.BaseStream.Length];
-                arm9Reader.Read(arm9Data, 0, arm9Data.Length);
-                arm9Reader.Close();
+            /* Data/message tables */
+            foreach (Tuple<string, string, string, bool, bool> e in dirExtTuples.Where(x => x.Item5))
+            {
+                string originalData = e.Item1.Substring(e.Item1.IndexOf('\\') + 1).Replace('\\', '/') + "/" + e.Item2;
+                string replacedData = e.Item1.Substring(e.Item1.IndexOf('\\') + 1).Replace('\\', '/') + "/" + e.Item3;
 
-                /* Apply ARM9 patches */
-                loadWaitWorker.ReportProgress(-1, "Patching ARM9 binary...");
-
-                bool eventsPatched = false, mapsPatched = false;
                 for (int i = 0; i < arm9Data.Length; i += 4)
                 {
-                    string check = string.Empty;
-
-                    /* Event data */
-                    if (!eventsPatched && i < arm9Data.Length - 8)
+                    if (i < arm9Data.Length - originalData.Length)
                     {
-                        check = Encoding.ASCII.GetString(arm9Data, i, 8);
-                        if (check == "MIS_\0\0\0\0")
-                        {
-                            Buffer.BlockCopy(Encoding.ASCII.GetBytes(".evt"), 0, arm9Data, i + 0x1C, 4);
-                            eventsPatched = true;
-                        }
-                    }
-
-                    /* Map data */
-                    if (!mapsPatched && i < arm9Data.Length - 8)
-                    {
-                        check = Encoding.ASCII.GetString(arm9Data, i, 8);
-                        if (check == "_ymd.cmp")
-                        {
-                            Buffer.BlockCopy(Encoding.ASCII.GetBytes(".ymd\0\0\0\0"), 0, arm9Data, i, 8);
-                            Buffer.BlockCopy(Encoding.ASCII.GetBytes(".ydd\0\0\0\0"), 0, arm9Data, i + 0xC, 8);
-                            mapsPatched = true;
-                        }
+                        string check = Encoding.ASCII.GetString(arm9Data, i, originalData.Length);
+                        if (check.StartsWith(originalData)) Buffer.BlockCopy(Encoding.ASCII.GetBytes(replacedData), 0, arm9Data, i, replacedData.Length);
                     }
                 }
-
-                /* Data/message tables */
-                foreach (Tuple<string, string, string, bool, bool> e in dirExtTuples.Where(x => x.Item5))
-                {
-                    string originalData = e.Item1.Substring(e.Item1.IndexOf('\\') + 1).Replace('\\', '/') + "/" + e.Item2;
-                    string replacedData = e.Item1.Substring(e.Item1.IndexOf('\\') + 1).Replace('\\', '/') + "/" + e.Item3;
-
-                    for (int i = 0; i < arm9Data.Length; i += 4)
-                    {
-                        if (i < arm9Data.Length - originalData.Length)
-                        {
-                            string check = Encoding.ASCII.GetString(arm9Data, i, originalData.Length);
-                            if (check.StartsWith(originalData)) Buffer.BlockCopy(Encoding.ASCII.GetBytes(replacedData), 0, arm9Data, i, replacedData.Length);
-                        }
-                    }
-                }
-
-                /* Write patched ARM9 binary */
-                BinaryWriter arm9Writer = new BinaryWriter(File.Open(Path.Combine(DataPath, "arm9.bin"), FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite));
-                arm9Writer.Write(arm9Data);
-                arm9Writer.Close();
             }
+
+            /* Write patched ARM9 binary */
+            BinaryWriter arm9Writer = new BinaryWriter(File.Open(Path.Combine(DataPath, "arm9.bin"), FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite));
+            arm9Writer.Write(arm9Data);
+            arm9Writer.Close();
         }
 
         private List<TableFile> ReadDataTablesByExtension(string[] extensions, string[] directories)
@@ -408,7 +406,7 @@ namespace Yggdrasil
                 if (!Directory.Exists(localDataPath)) continue;
 
                 List<string> filePaths = Directory.EnumerateFiles(localDataPath, "*.*", SearchOption.AllDirectories)
-                    .Where(x => extensions.Contains(Path.GetExtension(x.ToLowerInvariant())) || Path.GetExtension(x.ToLowerInvariant()) == ".cmp")
+                    .Where(x => extensions.Contains(Path.GetExtension(x.ToLowerInvariant())))
                     .ToList();
 
                 foreach (string filePath in filePaths)
@@ -486,6 +484,7 @@ namespace Yggdrasil
             PlayerSkillShortDescriptions = GenerateStringDictionary(CampSkillExeInfoFile, 0);
             PlayerSkillDescriptions = GenerateStringDictionary(CampSkillInfoFile, 0);
 
+            loadWaitWorker.ReportProgress(-1, "Reticulating splines...");
             SpriteNames = Directory.EnumerateFiles(Path.Combine(DataPath, "data\\Data\\Tex\\Enemy"), "*.*", SearchOption.AllDirectories).Select(x => Path.GetFileNameWithoutExtension(x).Substring(3)).ToList();
             AINames = Directory.EnumerateFiles(Path.Combine(DataPath, "data\\Data\\Battle"), "ai_*.tbb", SearchOption.AllDirectories).Select(x => Path.GetFileNameWithoutExtension(x).Substring(3)).ToList();
         }

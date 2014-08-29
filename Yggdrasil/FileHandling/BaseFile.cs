@@ -14,15 +14,11 @@ namespace Yggdrasil.FileHandling
         public string Filename { get; private set; }
         public byte[] Data { get; set; }
 
-        bool isCompressed;
-        public bool IsCompressed { get { return isCompressed; } }
-
         public BaseFile(GameDataManager gameDataManager, string path)
         {
             GameDataManager = gameDataManager;
             Filename = path;
-
-            Data = DataCompression.Decompressor.Decompress(Filename, out isCompressed);
+            Data = File.ReadAllBytes(Filename);
 
             Parse();
         }

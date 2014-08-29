@@ -44,7 +44,6 @@ namespace Yggdrasil.Controls
             Program.Logger.LogMessage("Initializing {0}...", this.GetType().Name);
 
             this.gameDataManager = gameDataManager;
-            this.Font = GUIHelpers.GetSuggestedGUIFont(gameDataManager.Version);
 
             Rebuild();
         }

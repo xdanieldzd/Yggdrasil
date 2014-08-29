@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Yggdrasil.Forms
 {
-    public partial class DataLoadWaitForm : Form
+    public partial class DataLoadWaitForm : ModernForm
     {
         public DataLoadWaitForm()
         {
