@@ -67,7 +67,7 @@ namespace Yggdrasil
             { Languages.Italian, "_IT" }
         };
 
-        DataLoadWaitForm loadWaitForm;
+        ProgressDialog loadWaitDialog;
         BackgroundWorker loadWaitWorker;
 
         public bool IsInitialized { get; private set; }
@@ -110,6 +110,8 @@ namespace Yggdrasil
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
 
+            System.Threading.Thread workerThread = null;
+
             loadWaitWorker = new BackgroundWorker();
             loadWaitWorker.WorkerReportsProgress = true;
             loadWaitWorker.DoWork += ((s, e) =>
@@ -117,6 +119,7 @@ namespace Yggdrasil
                 try
                 {
                     System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
+                    workerThread = System.Threading.Thread.CurrentThread;
 
                     loadWaitWorker.ReportProgress(-1, "Reading game directory...");
                     ReadHeaderIdentify();
@@ -143,38 +146,47 @@ namespace Yggdrasil
                     CleanStringDictionaries();
                     FetchEncounterDescriptions();
 
+                    loadWaitWorker.ReportProgress(-1, "Finished loading.");
                     IsInitialized = true;
                 }
+                catch (System.Threading.ThreadAbortException) { }
                 catch (Exceptions.GameDataManagerException gameException)
                 {
                     GUIHelpers.ShowErrorMessage(
                         "Application Error", "An error occured while loading the game data.", "Please ensure you've selected a valid game data directory.",
-                        gameException.Message, gameException.ToString(), (IntPtr)loadWaitForm.Invoke(new Func<IntPtr>(() => { return loadWaitForm.Handle; })));
+                        gameException.Message, gameException.ToString(), (IntPtr)Program.MainForm.Invoke(new Func<IntPtr>(() => { return Program.MainForm.Handle; })));
                 }
 #if !DEBUG
                 catch (Exception exception)
                 {
                     GUIHelpers.ShowErrorMessage(
                         "Application Error", "The application performed an illegal operation.", "Please contact a developer with the details of this message.",
-                        exception.Message, exception.ToString(), (IntPtr)loadWaitForm.Invoke(new Func<IntPtr>(() => { return loadWaitForm.Handle; })));
+                        exception.Message, exception.ToString(), (IntPtr)Program.MainForm.Invoke(new Func<IntPtr>(() => { return Program.MainForm.Handle; })));
                 }
 #endif
             });
             loadWaitWorker.ProgressChanged += ((s, e) =>
             {
-                loadWaitForm.PrintStatus(e.UserState as string);
+                if (loadWaitDialog.Cancel)
+                {
+                    workerThread.Abort();
+                    Program.Logger.LogMessage("Loading aborted.");
+                    return;
+                }
+
+                loadWaitDialog.Details = (e.UserState as string);
                 Program.Logger.LogMessage(e.UserState as string);
             });
             loadWaitWorker.RunWorkerCompleted += ((s, e) =>
             {
-                loadWaitForm.Close();
+                loadWaitDialog.Close();
                 stopwatch.Stop();
                 Program.Logger.LogMessage("Game directory read in {0:0.000} sec...", stopwatch.Elapsed.TotalSeconds);
             });
             loadWaitWorker.RunWorkerAsync();
 
-            loadWaitForm = new DataLoadWaitForm();
-            loadWaitForm.ShowDialog(Program.MainForm);
+            loadWaitDialog = new ProgressDialog() { Title = "Loading", InstructionText = "Loading game data.", Text = "Please wait while the game data is being loaded...", ParentForm = Program.MainForm };
+            loadWaitDialog.Show(Program.MainForm);
         }
 
         public int SaveAllChanges()

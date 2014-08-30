@@ -79,6 +79,7 @@
     <Compile Include="Forms\ModernForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Helpers\ProgressDialog.cs" />
     <Compile Include="TypeConverters.cs" />
     <Compile Include="FileHandling\BaseFile.cs">
       <SubType>Code</SubType>
@@ -98,11 +99,11 @@
     <Compile Include="FileHandling\TableFile.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Forms\DataLoadWaitForm.cs">
+    <Compile Include="Forms\ProgressForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\DataLoadWaitForm.Designer.cs">
-      <DependentUpon>DataLoadWaitForm.cs</DependentUpon>
+    <Compile Include="Forms\ProgressForm.Designer.cs">
+      <DependentUpon>ProgressForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Forms\LogForm.cs">
@@ -157,8 +158,8 @@
     <EmbeddedResource Include="Controls\TableEntryEditor.resx">
       <DependentUpon>TableEntryEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DataLoadWaitForm.resx">
-      <DependentUpon>DataLoadWaitForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\ProgressForm.resx">
+      <DependentUpon>ProgressForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\LogForm.resx">
       <DependentUpon>LogForm.cs</DependentUpon>
@@ -184,9 +185,7 @@
       <DependentUpon>StringPreviewControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="app.manifest">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
