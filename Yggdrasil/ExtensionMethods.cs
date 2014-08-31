@@ -15,6 +15,16 @@ namespace Yggdrasil
             return obj.GetType().GetProperty(property).GetValue(obj, null);
         }
 
+        public static dynamic GetAttributes<T>(this object obj)
+        {
+            if (obj is Type)
+                return (obj as Type).GetCustomAttributes(typeof(T), false).Cast<T>().ToList();
+            else if (obj is Assembly)
+                return (obj as Assembly).GetCustomAttributes(typeof(T), false).Cast<T>().ToList();
+            else
+                return obj.GetType().GetCustomAttributes(typeof(T), false).Cast<T>().ToList();
+        }
+
         public static dynamic GetAttribute<T>(this object obj)
         {
             if (obj is Type)

@@ -63,9 +63,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\MagicNumber.cs" />
-    <Compile Include="Attributes\ParserUsage.cs" />
+    <Compile Include="Attributes\ParserDescriptor.cs" />
     <Compile Include="Attributes\PrioritizedCategory.cs" />
-    <Compile Include="Attributes\PrioritizedDescription.cs" />
     <Compile Include="Attributes\TreeNodeCategory.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Controls\IEditorControl.cs" />
@@ -80,6 +79,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Helpers\ProgressDialog.cs" />
+    <Compile Include="TableParsing\GatherItemParser.cs" />
     <Compile Include="TypeConverters.cs" />
     <Compile Include="FileHandling\BaseFile.cs">
       <SubType>Code</SubType>

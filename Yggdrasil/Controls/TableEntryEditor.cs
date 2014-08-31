@@ -103,19 +103,19 @@ namespace Yggdrasil.Controls
 
                 List<TreeNode> categories = new List<TreeNode>();
 
-                List<Type> typesWithAttrib = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.GetCustomAttributes(typeof(ParserUsage), false).Length > 0).ToList();
-                foreach (Type type in typesWithAttrib.OrderBy(x => ((PrioritizedDescription)x.GetAttribute<PrioritizedDescription>()).Priority))
+                List<Type> typesWithAttrib = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.GetCustomAttributes(typeof(ParserDescriptor), false).Length > 0).ToList();
+                foreach (Type type in typesWithAttrib.OrderBy(x => ((ParserDescriptor)x.GetAttribute<ParserDescriptor>()).Priority))
                 {
                     TreeNodeCategory categoryAttrib = type.GetAttribute<TreeNodeCategory>();
 
-                    TreeNode dataNode = gameDataManager.GenerateTreeNode(type, customChildCreators.ContainsKey(type) ? customChildCreators[type] : null);
+                    List<TreeNode> dataNodes = gameDataManager.GenerateTreeNodes(type, customChildCreators.ContainsKey(type) ? customChildCreators[type] : null);
 
                     tvParsers.Invoke(new Action(() =>
                     {
                         if (tvParsers.Nodes[categoryAttrib.CategoryName] == null)
                             tvParsers.Nodes.Add(new TreeNode(categoryAttrib.CategoryName) { Name = categoryAttrib.CategoryName });
 
-                        tvParsers.Nodes[categoryAttrib.CategoryName].Nodes.Add(dataNode);
+                        tvParsers.Nodes[categoryAttrib.CategoryName].Nodes.AddRange(dataNodes.ToArray());
                         tvParsers.Nodes[categoryAttrib.CategoryName].Expand();
                     }));
                 }

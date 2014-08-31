@@ -456,10 +456,10 @@ namespace Yggdrasil
         {
             List<BaseParser> parsedData = new List<BaseParser>();
 
-            List<Type> typesWithAttrib = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.GetCustomAttributes(typeof(ParserUsage), false).Length > 0).ToList();
+            List<Type> typesWithAttrib = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.GetCustomAttributes(typeof(ParserDescriptor), false).Length > 0).ToList();
             foreach (Type type in typesWithAttrib)
             {
-                foreach (ParserUsage attrib in type.GetCustomAttributes(false).Where(x => x is ParserUsage))
+                foreach (ParserDescriptor attrib in type.GetCustomAttributes(false).Where(x => x is ParserDescriptor))
                 {
                     loadWaitWorker.ReportProgress(-1, string.Format("Parsing {0}...", attrib.FileName));
 
@@ -605,22 +605,50 @@ namespace Yggdrasil
             if (!changedMessageFiles.Contains(messageFile)) changedMessageFiles.Add(messageFile);
         }
 
-        public TreeNode GenerateTreeNode(Type parserType, Action<TreeNode, List<BaseParser>> customChildCreator = null)
+        public List<TreeNode> GenerateTreeNodes(Type parserType, Action<TreeNode, List<BaseParser>> customChildCreator = null)
         {
+            List<TreeNode> nodes = new List<TreeNode>();
             List<BaseParser> currentParsers = parsedData.Where(x => x.GetType() == parserType).ToList();
-            TreeNode parserNode = new TreeNode(parserType.GetAttribute<DescriptionAttribute>().Description) { Tag = currentParsers };
 
-            if (customChildCreator != null)
-                customChildCreator.Invoke(parserNode, currentParsers);
-            else
+            List<ParserDescriptor> parserDescriptors = parserType.GetAttributes<ParserDescriptor>();
+            if (parserDescriptors.Count > 1)
             {
-                foreach (BaseParser parser in currentParsers)
+                foreach (ParserDescriptor parserDescriptor in parserDescriptors.OrderBy(x => x.Priority).OrderBy(x => x.Description))
                 {
-                    parserNode.Nodes.Add(new TreeNode(parser.EntryDescription) { Tag = parser });
+                    string path = Path.GetDirectoryName(parserDescriptor.Description);
+                    string nodeName = Path.GetFileName(parserDescriptor.Description);
+
+                    TreeNode parentNode = nodes.FirstOrDefault(x => x.Name == path);
+                    if (parentNode == null) nodes.Add(parentNode = new TreeNode(path) { Name = path });
+
+                    List<BaseParser> descriptorParsers = currentParsers.Where(x => Path.GetFileName(x.ParentTable.TableFile.Filename) == parserDescriptor.FileName).ToList();
+                    TreeNode childNode = new TreeNode(nodeName) { Tag = descriptorParsers };
+
+                    if (customChildCreator != null)
+                        customChildCreator.Invoke(parentNode, descriptorParsers);
+                    else
+                    {
+                        foreach (BaseParser parser in descriptorParsers) childNode.Nodes.Add(new TreeNode(parser.EntryDescription) { Tag = parser });
+                    }
+
+                    parentNode.Nodes.Add(childNode);
                 }
             }
+            else
+            {
+                TreeNode parserNode = new TreeNode(parserType.GetAttribute<ParserDescriptor>().Description) { Tag = currentParsers };
 
-            return parserNode;
+                if (customChildCreator != null)
+                    customChildCreator.Invoke(parserNode, currentParsers);
+                else
+                {
+                    foreach (BaseParser parser in currentParsers) parserNode.Nodes.Add(new TreeNode(parser.EntryDescription) { Tag = parser });
+                }
+
+                nodes.Add(parserNode);
+            }
+
+            return nodes;
         }
     }
 }

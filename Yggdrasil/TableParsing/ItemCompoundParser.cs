@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
-using System.Windows.Forms;
 
 using Yggdrasil.FileHandling;
 using Yggdrasil.FileHandling.TableHandling;
@@ -12,8 +11,7 @@ using Yggdrasil.Attributes;
 namespace Yggdrasil.TableParsing
 {
     [TreeNodeCategory("Items")]
-    [ParserUsage("ItemCompound.tbb", 0)]
-    [PrioritizedDescription("Item Requirements", 2)]
+    [ParserDescriptor("ItemCompound.tbb", 0, "Item Requirements", 2)]
     public class ItemCompoundParser : BaseParser
     {
         [DisplayName("(Name)"), PrioritizedCategory("Information", byte.MaxValue)]

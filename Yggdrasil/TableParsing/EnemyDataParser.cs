@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
-using System.Windows.Forms;
 
 using Yggdrasil.FileHandling;
 using Yggdrasil.FileHandling.TableHandling;
@@ -12,8 +11,7 @@ using Yggdrasil.Attributes;
 namespace Yggdrasil.TableParsing
 {
     [TreeNodeCategory("Enemies")]
-    [ParserUsage("EnemyData.tbb", 0)]
-    [PrioritizedDescription("Enemy Data", 0)]
+    [ParserDescriptor("EnemyData.tbb", 0, "Enemy Data", 0)]
     public class EnemyDataParser : BaseParser
     {
         public enum EnemyTypes : uint

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
-using System.Windows.Forms;
 
 using Yggdrasil.FileHandling;
 using Yggdrasil.FileHandling.TableHandling;
@@ -12,8 +11,7 @@ using Yggdrasil.Attributes;
 namespace Yggdrasil.TableParsing
 {
     [TreeNodeCategory("Player Skills")]
-    [ParserUsage("Class2Skill.tbb", 0)]
-    [PrioritizedDescription("Skill Requirements", 0)]
+    [ParserDescriptor("Class2Skill.tbb", 0, "Skill Requirements", 1)]
     public class PlayerSkillReqParser : BaseParser
     {
         string name;

@@ -12,8 +12,7 @@ using Yggdrasil.Attributes;
 namespace Yggdrasil.TableParsing
 {
     [TreeNodeCategory("Items")]
-    [ParserUsage("Item.tbb", 0)]
-    [PrioritizedDescription("Equipment", 0)]
+    [ParserDescriptor("Item.tbb", 0, "Equipment", 0)]
     public class EquipItemParser : BaseItemParser
     {
         public enum Groups : byte

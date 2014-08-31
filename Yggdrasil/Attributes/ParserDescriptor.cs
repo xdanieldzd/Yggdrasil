@@ -7,15 +7,19 @@ using System.ComponentModel;
 namespace Yggdrasil.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class ParserUsage : Attribute
+    public class ParserDescriptor : Attribute
     {
         public string FileName;
         public int TableNo;
+        public string Description;
+        public byte Priority;
 
-        public ParserUsage(string fileName, int tableNo)
+        public ParserDescriptor(string fileName, int tableNo, string description, byte priority)
         {
             this.FileName = fileName;
             this.TableNo = tableNo;
+            this.Description = description;
+            this.Priority = priority;
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
-using System.Windows.Forms;
 
 using Yggdrasil.FileHandling;
 using Yggdrasil.FileHandling.TableHandling;
@@ -12,8 +11,7 @@ using Yggdrasil.Attributes;
 namespace Yggdrasil.TableParsing
 {
     [TreeNodeCategory("Enemies")]
-    [ParserUsage("EncountData.tbb", 1)]
-    [PrioritizedDescription("Encounters Groups", 2)]
+    [ParserDescriptor("EncountData.tbb", 1, "Encounters Groups", 2)]
     public class EncounterGroupParser : BaseParser
     {
         [Browsable(false)]

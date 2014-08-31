@@ -47,7 +47,7 @@ namespace Yggdrasil
             // temporary stupid "sort-of auto-generate tableparser property code" code
             /*using (System.IO.StreamWriter w = System.IO.File.CreateText(@"C:\temp\__eo-codetemp.txt"))
             {
-                System.Reflection.FieldInfo[] fis = typeof(Yggdrasil.TableParsers.PlayerSkillReqParser).GetFields(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                System.Reflection.FieldInfo[] fis = typeof(Yggdrasil.TableParsing.GatherItemParser).GetFields(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                 foreach (System.Reflection.FieldInfo fi in fis.Where(x => x.FieldType != typeof(Dictionary<string, object>)))
                 {
                     System.Text.StringBuilder sb = new System.Text.StringBuilder();
