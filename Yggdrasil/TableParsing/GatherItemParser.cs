@@ -33,6 +33,7 @@ namespace Yggdrasil.TableParsing
 
         ushort unknown1;
         [DisplayName("Unknown 1"), TypeConverter(typeof(TypeConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
+        [Description("Unknown; always zero?")]
         public ushort Unknown1
         {
             get { return unknown1; }
