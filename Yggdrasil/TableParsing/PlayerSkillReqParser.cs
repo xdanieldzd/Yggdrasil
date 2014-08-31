@@ -17,6 +17,7 @@ namespace Yggdrasil.TableParsing
         string name;
         [DisplayName("(Name)"), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("In-game skill name.")]
+        [CausesNodeUpdate(true)]
         public string Name
         {
             get { return name; }

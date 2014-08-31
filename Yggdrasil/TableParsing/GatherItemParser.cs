@@ -45,6 +45,7 @@ namespace Yggdrasil.TableParsing
         byte floorNumber;
         [DisplayName("Floor"), TypeConverter(typeof(TypeConverters.FloorNumberConverter)), PrioritizedCategory("Location", 4)]
         [Description("Labyrinth floor where the gathering point is located.")]
+        [CausesTreeRebuild(true)]
         public byte FloorNumber
         {
             get { return floorNumber; }

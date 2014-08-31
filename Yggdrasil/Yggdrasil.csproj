@@ -62,6 +62,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\Boolean.cs" />
+    <Compile Include="Attributes\CausesNodeUpdate.cs" />
+    <Compile Include="Attributes\CausesTreeRebuild.cs" />
     <Compile Include="Attributes\MagicNumber.cs" />
     <Compile Include="Attributes\ParserDescriptor.cs" />
     <Compile Include="Attributes\PrioritizedCategory.cs" />

@@ -23,6 +23,7 @@ namespace Yggdrasil.TableParsing
         [DisplayName("(Name)"), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("In-game enemy name.")]
         [ReadOnly(true)]
+        [CausesNodeUpdate(true)]
         public string Name
         {
             get

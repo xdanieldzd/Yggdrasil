@@ -167,17 +167,6 @@ namespace Yggdrasil.Controls
             treeViewWorker.RunWorkerAsync();
         }
 
-        public void UpdateNodeText(object tag)
-        {
-            TreeNode node = tvParsers.FindNodeByTag(tag);
-            if (node == null) throw new ArgumentException(string.Format("No node with specified tag (type {0}, hash 0x{1:X8}) found", tag.GetType().FullName, tag.GetHashCode()));
-
-            if (tag is BaseParser)
-            {
-                node.Text = (tag as BaseParser).EntryDescription;
-            }
-        }
-
         public void Terminate()
         {
             Application.RemoveMessageFilter(messageFilter);
@@ -202,22 +191,32 @@ namespace Yggdrasil.Controls
             if (pgData.SelectedGridItem != null && pgData.SelectedGridItem.PropertyDescriptor != null)
             {
                 pgData.SelectedGridItem.PropertyDescriptor.ResetValue(pgData.SelectedObject);
-                CheckRebuildNeeded(pgData.SelectedObject as BaseParser, pgData.SelectedGridItem);
+
+                CheckNodeUpdateNeeded(pgData.SelectedObject as BaseParser, pgData.SelectedGridItem);
+                CheckTreeRebuildNeeded(pgData.SelectedObject as BaseParser, pgData.SelectedGridItem);
+
                 pgData.Refresh();
             }
         }
 
-        private void pgData_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        private void pgData_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
-            CheckRebuildNeeded((s as PropertyGrid).SelectedObject as BaseParser, e.ChangedItem);
+            BaseParser parser = ((sender as PropertyGrid).SelectedObject as BaseParser);
+
+            CheckNodeUpdateNeeded(parser, e.ChangedItem);
+            CheckTreeRebuildNeeded(parser, e.ChangedItem);
         }
 
-        private void CheckRebuildNeeded(BaseParser selectedObject, GridItem selectedProperty)
+        private void CheckNodeUpdateNeeded(BaseParser selectedObject, GridItem selectedProperty)
         {
-            if (
-                selectedObject is EquipItemParser && selectedProperty.Value is TableParsing.EquipItemParser.Groups ||
-                selectedObject is GatherItemParser && selectedProperty.PropertyDescriptor.Converter.GetType() == typeof(TypeConverters.FloorNumberConverter)
-                ) Rebuild();
+            CausesNodeUpdate updateCheck = (selectedProperty.PropertyDescriptor.Attributes[typeof(CausesNodeUpdate)] as CausesNodeUpdate);
+            if (updateCheck != null && updateCheck.Value) UpdateNodeText();
+        }
+
+        private void CheckTreeRebuildNeeded(BaseParser selectedObject, GridItem selectedProperty)
+        {
+            CausesTreeRebuild rebuildCheck = (selectedProperty.PropertyDescriptor.Attributes[typeof(CausesTreeRebuild)] as CausesTreeRebuild);
+            if (rebuildCheck != null && rebuildCheck.Value) Rebuild();
         }
     }
 }

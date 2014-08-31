@@ -84,6 +84,7 @@ namespace Yggdrasil.TableParsing
         Groups group;
         [DisplayName("Group"), TypeConverter(typeof(EnumConverter)), PrioritizedCategory("General", 6)]
         [Description("Type of item, used ex. to determine if ATK or DEF should be applied, or for sorting when buying at Shilleka's Goods.")]
+        [CausesTreeRebuild(true)]
         public Groups Group
         {
             get { return group; }

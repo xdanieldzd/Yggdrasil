@@ -113,8 +113,6 @@ namespace Yggdrasil
                 tsslStatus.Text = "Ready";
                 saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = false;
             }
-
-            tableEntryEditor.UpdateNodeText();
         }
 
         private void gameDataManager_SelectedLanguageChangedEvent(object sender, EventArgs e)
