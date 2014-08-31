@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Windows.Forms;
 
 using Yggdrasil.FileHandling;
 using Yggdrasil.FileHandling.TableHandling;
@@ -28,7 +29,7 @@ namespace Yggdrasil.TableParsing
         public void ResetGatherNumber() { this.GatherNumber = (dynamic)base.originalValues["GatherNumber"]; }
 
         [Browsable(false)]
-        public override string EntryDescription { get { return string.Format("B{0}F ({1}{2})", (FloorNumber + 1), (char)('A' + (YCoord / 5)), (XCoord / 5) + 1); } }
+        public override string EntryDescription { get { return string.Format("{0} ({1}{2})", TypeConverters.FloorNumberConverter.Dictionary[FloorNumber], (char)('A' + (YCoord / 5)), (XCoord / 5) + 1); } }
 
         ushort unknown1;
         [DisplayName("Unknown 1"), TypeConverter(typeof(TypeConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 0)]
@@ -41,8 +42,8 @@ namespace Yggdrasil.TableParsing
         public void ResetUnknown1() { this.Unknown1 = (dynamic)base.originalValues["Unknown1"]; }
 
         byte floorNumber;
-        [DisplayName("Floor"), PrioritizedCategory("Location", 4)]
-        [Description("Number of floor where the gathering point is located.")]
+        [DisplayName("Floor"), TypeConverter(typeof(TypeConverters.FloorNumberConverter)), PrioritizedCategory("Location", 4)]
+        [Description("Labyrinth floor where the gathering point is located.")]
         public byte FloorNumber
         {
             get { return floorNumber; }
@@ -226,6 +227,12 @@ namespace Yggdrasil.TableParsing
             unknown5.CopyTo(ParentTable.Data[EntryNumber], 28);
 
             base.Save();
+        }
+
+        public static void GenerateGatheringNodes(TreeNode parserNode, List<BaseParser> currentParsers)
+        {
+            foreach (BaseParser parser in currentParsers.OrderBy(x => (x as GatherItemParser).XCoord).OrderBy(x => (x as GatherItemParser).FloorNumber))
+                parserNode.Nodes.Add(new TreeNode(parser.EntryDescription) { Tag = parser });
         }
     }
 }

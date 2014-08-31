@@ -317,5 +317,76 @@ namespace Yggdrasil
         {
             public override List<string> Strings { get { return GameDataManager.AINames; } }
         }
+
+        public class FloorNumberConverter : TypeConverter
+        {
+            public static Dictionary<byte, string> Dictionary { get; private set; }
+
+            List<byte> valueList;
+
+            static FloorNumberConverter()
+            {
+                Dictionary = new Dictionary<byte, string>();
+                for (byte i = 0; i < 30; i++) Dictionary.Add(i, string.Format("B{0}F", i + 1));
+            }
+
+            public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+            {
+                return true;
+            }
+
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                if (valueList == null)
+                {
+                    valueList = new List<byte>();
+                    foreach (KeyValuePair<byte, string> pair in Dictionary) valueList.Add(pair.Key);
+                }
+
+                return new StandardValuesCollection(valueList.ToArray());
+            }
+
+            public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+            {
+                if (sourceType == typeof(string)) return true;
+                else return base.CanConvertFrom(context, sourceType);
+            }
+
+            public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+            {
+                if (destinationType == typeof(string)) return true;
+                else return base.CanConvertTo(context, destinationType);
+            }
+
+            public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+            {
+                if (destinationType == typeof(string) && value.GetType() == typeof(byte))
+                    return Dictionary[(byte)value];
+                else
+                    return base.ConvertTo(context, culture, value, destinationType);
+            }
+
+            public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+            {
+                if (value.GetType() == typeof(string))
+                {
+                    try
+                    {
+                        KeyValuePair<byte, string> pair =
+                            Dictionary
+                            .OrderBy(x => x.Key)
+                            .FirstOrDefault(x => x.Value.ToLowerInvariant().Contains((value as string).ToLowerInvariant()));
+
+                        return pair.Key;
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+                else
+                    return base.ConvertFrom(context, culture, value);
+            }
+        }
     }
 }

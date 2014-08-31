@@ -32,7 +32,8 @@ namespace Yggdrasil.Controls
 
         Dictionary<Type, Action<TreeNode, List<BaseParser>>> customChildCreators = new Dictionary<Type, Action<TreeNode, List<BaseParser>>>()
         {
-            { typeof(EquipItemParser), EquipItemParser.GenerateEquipmentNodes }
+            { typeof(EquipItemParser), EquipItemParser.GenerateEquipmentNodes },
+            { typeof(GatherItemParser), GatherItemParser.GenerateGatheringNodes }
         };
 
         public TableEntryEditor()
@@ -87,6 +88,7 @@ namespace Yggdrasil.Controls
         public void Rebuild()
         {
             BaseParser lastObject = (BaseParser)pgData.SelectedObject;
+            GridItem lastProperty = pgData.SelectedGridItem;
             pgData.SelectedObject = null;
 
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
@@ -123,6 +125,7 @@ namespace Yggdrasil.Controls
                 tvParsers.Invoke(new Action(() =>
                 {
                     tvParsers.SelectedNode = tvParsers.FindNodeByTag(lastObject);
+                    if (lastProperty != null) pgData.SelectedGridItem = lastProperty;
                     tvParsers.Invalidate();
                 }));
             });
@@ -151,11 +154,8 @@ namespace Yggdrasil.Controls
                 List<TreeNode> nodes = null;
                 tvParsers.Invoke(new Action(() => { nodes = tvParsers.FlattenTree().Where(x => x.Tag is BaseParser).ToList(); }));
 
-                foreach (TreeNode node in nodes)
-                {
-                    BaseParser parser = (node.Tag as BaseParser);
-                    if (parser.EntryDescription != node.Text) tvParsers.Invoke(new Action(() => { node.Text = parser.EntryDescription; }));
-                }
+                foreach (TreeNode node in nodes.Where(x => (x.Tag is BaseParser) && (x.Tag as BaseParser).EntryDescription != x.Text))
+                    tvParsers.Invoke(new Action(() => { node.Text = (node.Tag as BaseParser).EntryDescription; }));
             });
 
             treeViewWorker.RunWorkerCompleted += ((s, e) =>
@@ -201,15 +201,23 @@ namespace Yggdrasil.Controls
         {
             if (pgData.SelectedGridItem != null && pgData.SelectedGridItem.PropertyDescriptor != null)
             {
-                PropertyDescriptor descriptor = pgData.SelectedGridItem.PropertyDescriptor;
-                descriptor.ResetValue(pgData.SelectedObject);
+                pgData.SelectedGridItem.PropertyDescriptor.ResetValue(pgData.SelectedObject);
+                CheckRebuildNeeded(pgData.SelectedObject as BaseParser, pgData.SelectedGridItem);
                 pgData.Refresh();
             }
         }
 
         private void pgData_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            if ((s as PropertyGrid).SelectedObject is EquipItemParser && e.ChangedItem.Value is TableParsing.EquipItemParser.Groups) Rebuild();
+            CheckRebuildNeeded((s as PropertyGrid).SelectedObject as BaseParser, e.ChangedItem);
+        }
+
+        private void CheckRebuildNeeded(BaseParser selectedObject, GridItem selectedProperty)
+        {
+            if (
+                selectedObject is EquipItemParser && selectedProperty.Value is TableParsing.EquipItemParser.Groups ||
+                selectedObject is GatherItemParser && selectedProperty.PropertyDescriptor.Converter.GetType() == typeof(TypeConverters.FloorNumberConverter)
+                ) Rebuild();
         }
     }
 }

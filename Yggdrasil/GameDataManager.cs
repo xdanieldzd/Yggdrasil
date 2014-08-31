@@ -625,7 +625,7 @@ namespace Yggdrasil
                     TreeNode childNode = new TreeNode(nodeName) { Tag = descriptorParsers };
 
                     if (customChildCreator != null)
-                        customChildCreator.Invoke(parentNode, descriptorParsers);
+                        customChildCreator.Invoke(childNode, descriptorParsers);
                     else
                     {
                         foreach (BaseParser parser in descriptorParsers) childNode.Nodes.Add(new TreeNode(parser.EntryDescription) { Tag = parser });
