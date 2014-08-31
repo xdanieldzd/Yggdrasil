@@ -96,6 +96,7 @@ namespace Yggdrasil
         public static Dictionary<ushort, string> PlayerSkillDescriptions { get; private set; }
 
         public static Dictionary<ushort, string> EncounterDescriptions { get; private set; }
+        public static Dictionary<ushort, string> GeneralItemNames { get; private set; }
 
         public static List<string> AINames { get; private set; }
         public static List<string> SpriteNames { get; private set; }
@@ -144,7 +145,7 @@ namespace Yggdrasil
                     changedParsedData = new List<BaseParser>();
 
                     CleanStringDictionaries();
-                    FetchEncounterDescriptions();
+                    GenerateOtherDictionaries();
 
                     loadWaitWorker.ReportProgress(-1, "Finished loading.");
                     IsInitialized = true;
@@ -486,8 +487,6 @@ namespace Yggdrasil
 
         private void GenerateDictionariesLists()
         {
-            loadWaitWorker.ReportProgress(-1, "Generating various dictionaries...");
-
             ItemNames = GenerateStringDictionary(ItemNameFile, 0);
             ItemDescriptions = GenerateStringDictionary(ItemInfoFile, 0);
             EnemyNames = GenerateStringDictionary(EnemyNameFile, 0);
@@ -503,6 +502,8 @@ namespace Yggdrasil
 
         private Dictionary<ushort, string> GenerateStringDictionary(string filename, int tableNo)
         {
+            loadWaitWorker.ReportProgress(-1, string.Format("Generating dictionary for {0}, table {1}...", filename, tableNo));
+
             Dictionary<ushort, string> dict = new Dictionary<ushort, string>();
             dict.Add(0, "(None)");
 
@@ -536,17 +537,23 @@ namespace Yggdrasil
                 dict.Remove(key);
         }
 
-        private void FetchEncounterDescriptions()
+        private void GenerateOtherDictionaries()
         {
+            loadWaitWorker.ReportProgress(-1, "Generating additional dictionaries...");
+
             EncounterDescriptions = new Dictionary<ushort, string>();
             foreach (EncounterParser parser in parsedData.Where(x => (x is EncounterParser))) EncounterDescriptions.Add(parser.EncounterNumber, parser.EntryDescription);
+
+            GeneralItemNames = new Dictionary<ushort, string>();
+            GeneralItemNames.Add(0, "(None)");
+            foreach (MiscItemParser parser in parsedData.Where(x => (x is MiscItemParser))) GeneralItemNames.Add(parser.ItemNumber, parser.Name);
         }
 
         private void ItemDataPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             changedParsedData = parsedData.Where(x => x.HasChanged).ToList();
 
-            if (sender is EncounterParser) FetchEncounterDescriptions();
+            if (sender is EncounterParser) GenerateOtherDictionaries();
 
             if (sender.GetProperty(e.PropertyName) is string)
             {
@@ -569,7 +576,7 @@ namespace Yggdrasil
                     SetMessageString(EnemyNameFile, 0, parser.EnemyNumber - 1, parser.Name);
                     SetMessageString(EnemyInfoFile, 0, parser.EnemyNumber - 1, parser.Description);
 
-                    FetchEncounterDescriptions();
+                    GenerateOtherDictionaries();
                 }
 
                 if (sender is PlayerSkillReqParser)

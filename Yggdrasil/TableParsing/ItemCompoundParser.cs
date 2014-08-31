@@ -53,7 +53,7 @@ namespace Yggdrasil.TableParsing
         public override string EntryDescription { get { return (Name == string.Empty ? string.Format("(Requirement #{0})", ItemNumber) : Name.Truncate(20)); } }
 
         ushort itemCompound1;
-        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.ItemNameConverter)), PrioritizedCategory("1st Item", 5)]
+        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.GeneralItemNameConverter)), PrioritizedCategory("1st Item", 5)]
         [Description("First item required to be sold before it becomes available for purchase.")]
         public ushort ItemCompound1
         {
@@ -64,7 +64,7 @@ namespace Yggdrasil.TableParsing
         public void ResetItemCompound1() { this.ItemCompound1 = (dynamic)base.originalValues["ItemCompound1"]; }
 
         ushort itemCompound2;
-        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.ItemNameConverter)), PrioritizedCategory("2nd Item", 4)]
+        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.GeneralItemNameConverter)), PrioritizedCategory("2nd Item", 4)]
         [Description("Second item required to be sold before it becomes available for purchase.")]
         public ushort ItemCompound2
         {
@@ -75,7 +75,7 @@ namespace Yggdrasil.TableParsing
         public void ResetItemCompound2() { this.ItemCompound2 = (dynamic)base.originalValues["ItemCompound2"]; }
 
         ushort itemCompound3;
-        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.ItemNameConverter)), PrioritizedCategory("3rd Item", 3)]
+        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.GeneralItemNameConverter)), PrioritizedCategory("3rd Item", 3)]
         [Description("Third item required to be sold before it becomes available for purchase.")]
         public ushort ItemCompound3
         {
@@ -86,7 +86,7 @@ namespace Yggdrasil.TableParsing
         public void ResetItemCompound3() { this.ItemCompound3 = (dynamic)base.originalValues["ItemCompound3"]; }
 
         ushort itemCompound4;
-        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.ItemNameConverter)), PrioritizedCategory("4th Item", 2)]
+        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.GeneralItemNameConverter)), PrioritizedCategory("4th Item", 2)]
         [Description("Fourth item required to be sold before it becomes available for purchase.")]
         public ushort ItemCompound4
         {
@@ -97,7 +97,7 @@ namespace Yggdrasil.TableParsing
         public void ResetItemCompound4() { this.ItemCompound4 = (dynamic)base.originalValues["ItemCompound4"]; }
 
         ushort itemCompound5;
-        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.ItemNameConverter)), PrioritizedCategory("5th Item", 1)]
+        [DisplayName("Item Type"), TypeConverter(typeof(TypeConverters.GeneralItemNameConverter)), PrioritizedCategory("5th Item", 1)]
         [Description("Fifth item required to be sold before it becomes available for purchase.")]
         public ushort ItemCompound5
         {

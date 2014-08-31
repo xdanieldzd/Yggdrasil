@@ -40,7 +40,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>etrian-icon.ico</ApplicationIcon>
+    <ApplicationIcon>ApplicationIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.WindowsAPICodePack">
@@ -74,6 +74,9 @@
     <Compile Include="Attributes\TreeNodeCategory.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Controls\IEditorControl.cs" />
+    <Compile Include="Controls\PropertyGridEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\TableEntryEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -85,6 +88,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Helpers\ProgressDialog.cs" />
+    <Compile Include="Helpers\WinAPI.cs" />
     <Compile Include="TableParsing\GatherItemParser.cs" />
     <Compile Include="TypeConverters.cs" />
     <Compile Include="FileHandling\BaseFile.cs">
@@ -203,7 +207,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="etrian-icon.ico" />
+    <Content Include="ApplicationIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

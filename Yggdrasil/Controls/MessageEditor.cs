@@ -34,11 +34,6 @@ namespace Yggdrasil.Controls
             tvMessageFiles.DoubleBuffered(true);
         }
 
-        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
-        {
-            if (IsInitialized()) Configuration.MessageEditorSplitter = e.SplitX;
-        }
-
         public void Initialize(GameDataManager gameDataManager)
         {
             Program.Logger.LogMessage("Initializing {0}...", this.GetType().Name);

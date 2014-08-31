@@ -36,6 +36,16 @@ namespace Yggdrasil.Controls
             { typeof(GatherItemParser), GatherItemParser.GenerateGatheringNodes }
         };
 
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;   // WS_EX_COMPOSITED
+                return cp;
+            }
+        }
+
         public TableEntryEditor()
         {
             InitializeComponent();
@@ -46,12 +56,6 @@ namespace Yggdrasil.Controls
         public override void Refresh()
         {
             pgData.Refresh();
-            base.Refresh();
-        }
-
-        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
-        {
-            if (IsInitialized()) Configuration.TableEntryEditorSplitter = e.SplitX;
         }
 
         public void Initialize(GameDataManager gameDataManager)
@@ -180,10 +184,10 @@ namespace Yggdrasil.Controls
 
         private void tvParsers_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Tag is BaseParser)
-                pgData.SelectedObject = e.Node.Tag;
-            else
-                pgData.SelectedObject = null;
+            if (e.Node.Tag is BaseParser) pgData.SelectedObject = e.Node.Tag;
+            else pgData.SelectedObject = null;
+
+            pgData.Refresh();
         }
 
         private void resetPropertyToolStripMenuItem_Click(object sender, EventArgs e)

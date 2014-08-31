@@ -71,7 +71,6 @@
             this.splitContainer1.Size = new System.Drawing.Size(500, 400);
             this.splitContainer1.SplitterDistance = 166;
             this.splitContainer1.TabIndex = 0;
-            this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
             // 
             // MessageEditor
             // 

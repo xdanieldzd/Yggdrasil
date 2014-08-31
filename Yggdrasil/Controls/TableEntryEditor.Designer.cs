@@ -29,28 +29,17 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.pgData = new System.Windows.Forms.PropertyGrid();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.tvParsers = new Yggdrasil.Controls.TreeViewEx();
+            this.pgData = new Yggdrasil.Controls.PropertyGridEx();
             this.cmsDataGrid = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.resetPropertyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tvParsers = new Yggdrasil.Controls.TreeViewEx();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.cmsDataGrid.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // pgData
-            // 
-            this.pgData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pgData.Location = new System.Drawing.Point(0, 0);
-            this.pgData.Name = "pgData";
-            this.pgData.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.pgData.Size = new System.Drawing.Size(330, 400);
-            this.pgData.TabIndex = 0;
-            this.pgData.ToolbarVisible = false;
-            this.pgData.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgData_PropertyValueChanged);
             // 
             // splitContainer1
             // 
@@ -68,7 +57,28 @@
             this.splitContainer1.Size = new System.Drawing.Size(500, 400);
             this.splitContainer1.SplitterDistance = 166;
             this.splitContainer1.TabIndex = 0;
-            this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
+            // 
+            // tvParsers
+            // 
+            this.tvParsers.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tvParsers.HideSelection = false;
+            this.tvParsers.Location = new System.Drawing.Point(0, 0);
+            this.tvParsers.Name = "tvParsers";
+            this.tvParsers.Size = new System.Drawing.Size(166, 400);
+            this.tvParsers.TabIndex = 0;
+            this.tvParsers.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvParsers_AfterSelect);
+            // 
+            // pgData
+            // 
+            this.pgData.AutoSizeColumns = true;
+            this.pgData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pgData.Location = new System.Drawing.Point(0, 0);
+            this.pgData.Name = "pgData";
+            this.pgData.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            this.pgData.Size = new System.Drawing.Size(330, 400);
+            this.pgData.TabIndex = 0;
+            this.pgData.ToolbarVisible = false;
+            this.pgData.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgData_PropertyValueChanged);
             // 
             // cmsDataGrid
             // 
@@ -84,16 +94,6 @@
             this.resetPropertyToolStripMenuItem.Tag = "&Reset Property";
             this.resetPropertyToolStripMenuItem.Text = "-----";
             this.resetPropertyToolStripMenuItem.Click += new System.EventHandler(this.resetPropertyToolStripMenuItem_Click);
-            // 
-            // tvParsers
-            // 
-            this.tvParsers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tvParsers.HideSelection = false;
-            this.tvParsers.Location = new System.Drawing.Point(0, 0);
-            this.tvParsers.Name = "tvParsers";
-            this.tvParsers.Size = new System.Drawing.Size(166, 400);
-            this.tvParsers.TabIndex = 0;
-            this.tvParsers.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvParsers_AfterSelect);
             // 
             // TableEntryEditor
             // 
@@ -114,7 +114,7 @@
         #endregion
 
         private TreeViewEx tvParsers;
-        private System.Windows.Forms.PropertyGrid pgData;
+        private PropertyGridEx pgData;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ContextMenuStrip cmsDataGrid;
         private System.Windows.Forms.ToolStripMenuItem resetPropertyToolStripMenuItem;

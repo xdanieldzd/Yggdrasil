@@ -28,9 +28,6 @@ namespace Yggdrasil
             SetFormTitle();
             tsslStatus.Text = "Ready";
 
-            if (Configuration.TableEntryEditorSplitter != -1) tableEntryEditor.SplitterPosition = Configuration.TableEntryEditorSplitter;
-            if (Configuration.MessageEditorSplitter != -1) messageEditor.SplitterPosition = Configuration.MessageEditorSplitter;
-
             gameDataManager = new GameDataManager();
             gameDataManager.Language = Configuration.Language;
 

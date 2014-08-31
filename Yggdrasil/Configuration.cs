@@ -33,18 +33,6 @@ namespace Yggdrasil
             set { source.Configs[ConfigName].Set("LastDataPath", value); }
         }
 
-        public static int TableEntryEditorSplitter
-        {
-            get { return (source.Configs[ConfigName].GetInt("TableEntryEditorSplitter", -1)); }
-            set { source.Configs[ConfigName].Set("TableEntryEditorSplitter", value); }
-        }
-
-        public static int MessageEditorSplitter
-        {
-            get { return (source.Configs[ConfigName].GetInt("MessageEditorSplitter", -1)); }
-            set { source.Configs[ConfigName].Set("MessageEditorSplitter", value); }
-        }
-
         public static GameDataManager.Languages Language
         {
             get { return ((GameDataManager.Languages)Enum.Parse(typeof(GameDataManager.Languages), (source.Configs[ConfigName].GetString("Language", "English")))); }

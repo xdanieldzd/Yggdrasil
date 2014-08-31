@@ -173,7 +173,25 @@ namespace Yggdrasil
         {
             public virtual Dictionary<ushort, string> Dictionary { get { return null; } }
 
-            List<ushort> valueList;
+            Dictionary<ushort, string> fixedDictionary;
+            StandardValuesCollection values;
+
+            public DictionaryStringConverter()
+            {
+                if (fixedDictionary == null)
+                {
+                    fixedDictionary = new Dictionary<ushort, string>();
+                    foreach (KeyValuePair<ushort, string> pair in Dictionary.OrderBy(x => x.Key))
+                        fixedDictionary.Add(pair.Key, (pair.Value == string.Empty ? string.Format("(Entry #{0})", pair.Key) : pair.Value));
+                }
+
+                if (values == null)
+                {
+                    List<ushort> valueList = new List<ushort>();
+                    foreach (KeyValuePair<ushort, string> pair in fixedDictionary) valueList.Add(pair.Key);
+                    values = new StandardValuesCollection(valueList.ToArray());
+                }
+            }
 
             public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
             {
@@ -182,13 +200,7 @@ namespace Yggdrasil
 
             public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                if (valueList == null)
-                {
-                    valueList = new List<ushort>();
-                    foreach (KeyValuePair<ushort, string> pair in Dictionary) valueList.Add(pair.Key);
-                }
-
-                return new StandardValuesCollection(valueList.ToArray());
+                return values;
             }
 
             public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
@@ -206,7 +218,7 @@ namespace Yggdrasil
             public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
             {
                 if (destinationType == typeof(string) && value.GetType() == typeof(ushort))
-                    return Dictionary[(ushort)value];
+                    return fixedDictionary[(ushort)value];
                 else
                     return base.ConvertTo(context, culture, value, destinationType);
             }
@@ -217,12 +229,7 @@ namespace Yggdrasil
                 {
                     try
                     {
-                        KeyValuePair<ushort, string> pair =
-                            Dictionary
-                            .OrderBy(x => x.Key)
-                            .FirstOrDefault(x => x.Value.ToLowerInvariant().Contains((value as string).ToLowerInvariant()));
-
-                        return pair.Key;
+                        return fixedDictionary.FirstOrDefault(x => x.Value.ToLowerInvariant().Contains((value as string).ToLowerInvariant())).Key;
                     }
                     catch (Exception)
                     {
@@ -237,6 +244,11 @@ namespace Yggdrasil
         public class ItemNameConverter : DictionaryStringConverter
         {
             public override Dictionary<ushort, string> Dictionary { get { return GameDataManager.ItemNames; } }
+        }
+
+        public class GeneralItemNameConverter : DictionaryStringConverter
+        {
+            public override Dictionary<ushort, string> Dictionary { get { return GameDataManager.GeneralItemNames; } }
         }
 
         public class EnemyNameConverter : DictionaryStringConverter
