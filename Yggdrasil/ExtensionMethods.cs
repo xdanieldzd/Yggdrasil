@@ -21,6 +21,8 @@ namespace Yggdrasil
                 return (obj as Type).GetCustomAttributes(typeof(T), false).Cast<T>().ToList();
             else if (obj is Assembly)
                 return (obj as Assembly).GetCustomAttributes(typeof(T), false).Cast<T>().ToList();
+            else if (obj is PropertyInfo)
+                return (obj as PropertyInfo).GetCustomAttributes(typeof(T), false).Cast<T>().ToList();
             else
                 return obj.GetType().GetCustomAttributes(typeof(T), false).Cast<T>().ToList();
         }
@@ -31,6 +33,8 @@ namespace Yggdrasil
                 return (obj as Type).GetCustomAttributes(typeof(T), false).FirstOrDefault();
             else if (obj is Assembly)
                 return (obj as Assembly).GetCustomAttributes(typeof(T), false).FirstOrDefault();
+            else if (obj is PropertyInfo)
+                return (obj as PropertyInfo).GetCustomAttributes(typeof(T), false).FirstOrDefault();
             else
                 return obj.GetType().GetCustomAttributes(typeof(T), false).FirstOrDefault();
         }

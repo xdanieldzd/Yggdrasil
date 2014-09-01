@@ -42,7 +42,7 @@
             this.stringPreviewControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.stringPreviewControl.Location = new System.Drawing.Point(0, 0);
             this.stringPreviewControl.Name = "stringPreviewControl";
-            this.stringPreviewControl.Size = new System.Drawing.Size(330, 400);
+            this.stringPreviewControl.Size = new System.Drawing.Size(316, 400);
             this.stringPreviewControl.TabIndex = 0;
             // 
             // tvMessageFiles
@@ -51,13 +51,14 @@
             this.tvMessageFiles.HideSelection = false;
             this.tvMessageFiles.Location = new System.Drawing.Point(0, 0);
             this.tvMessageFiles.Name = "tvMessageFiles";
-            this.tvMessageFiles.Size = new System.Drawing.Size(166, 400);
+            this.tvMessageFiles.Size = new System.Drawing.Size(180, 400);
             this.tvMessageFiles.TabIndex = 0;
             this.tvMessageFiles.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvMessageFiles_AfterSelect);
             // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.IsSplitterFixed = true;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -69,7 +70,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.stringPreviewControl);
             this.splitContainer1.Size = new System.Drawing.Size(500, 400);
-            this.splitContainer1.SplitterDistance = 166;
+            this.splitContainer1.SplitterDistance = 180;
             this.splitContainer1.TabIndex = 0;
             // 
             // MessageEditor

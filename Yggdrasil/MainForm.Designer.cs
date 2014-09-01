@@ -70,7 +70,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(684, 24);
+            this.menuStrip.Size = new System.Drawing.Size(704, 24);
             this.menuStrip.TabIndex = 0;
             // 
             // fileToolStripMenuItem
@@ -161,9 +161,9 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsslStatus});
-            this.statusStrip.Location = new System.Drawing.Point(0, 540);
+            this.statusStrip.Location = new System.Drawing.Point(0, 555);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(684, 22);
+            this.statusStrip.Size = new System.Drawing.Size(704, 22);
             this.statusStrip.TabIndex = 2;
             // 
             // tsslStatus
@@ -181,7 +181,7 @@
             this.tabControl.Location = new System.Drawing.Point(0, 49);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(684, 491);
+            this.tabControl.Size = new System.Drawing.Size(704, 506);
             this.tabControl.TabIndex = 1;
             this.tabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl_Selected);
             // 
@@ -191,7 +191,7 @@
             this.tpTableData.Location = new System.Drawing.Point(4, 22);
             this.tpTableData.Name = "tpTableData";
             this.tpTableData.Padding = new System.Windows.Forms.Padding(3);
-            this.tpTableData.Size = new System.Drawing.Size(676, 465);
+            this.tpTableData.Size = new System.Drawing.Size(696, 480);
             this.tpTableData.TabIndex = 0;
             this.tpTableData.Text = "Data Tables";
             this.tpTableData.UseVisualStyleBackColor = true;
@@ -202,8 +202,7 @@
             this.tableEntryEditor.Enabled = false;
             this.tableEntryEditor.Location = new System.Drawing.Point(3, 3);
             this.tableEntryEditor.Name = "tableEntryEditor";
-            this.tableEntryEditor.Size = new System.Drawing.Size(670, 459);
-            this.tableEntryEditor.SplitterPosition = 221;
+            this.tableEntryEditor.Size = new System.Drawing.Size(690, 474);
             this.tableEntryEditor.TabIndex = 0;
             // 
             // tpMessages
@@ -212,7 +211,7 @@
             this.tpMessages.Location = new System.Drawing.Point(4, 22);
             this.tpMessages.Name = "tpMessages";
             this.tpMessages.Padding = new System.Windows.Forms.Padding(3);
-            this.tpMessages.Size = new System.Drawing.Size(676, 465);
+            this.tpMessages.Size = new System.Drawing.Size(696, 485);
             this.tpMessages.TabIndex = 1;
             this.tpMessages.Text = "Messages";
             this.tpMessages.UseVisualStyleBackColor = true;
@@ -223,8 +222,7 @@
             this.messageEditor.Enabled = false;
             this.messageEditor.Location = new System.Drawing.Point(3, 3);
             this.messageEditor.Name = "messageEditor";
-            this.messageEditor.Size = new System.Drawing.Size(670, 459);
-            this.messageEditor.SplitterPosition = 222;
+            this.messageEditor.Size = new System.Drawing.Size(690, 479);
             this.messageEditor.TabIndex = 0;
             // 
             // toolStrip1
@@ -236,7 +234,7 @@
             this.aboutToolStripButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(684, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(704, 25);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -280,7 +278,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(684, 562);
+            this.ClientSize = new System.Drawing.Size(704, 577);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip);

@@ -7,6 +7,8 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Drawing.Imaging;
 
+using Yggdrasil.TextHandling;
+
 namespace Yggdrasil.Helpers
 {
     public class FontRenderer

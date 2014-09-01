@@ -20,12 +20,6 @@ namespace Yggdrasil.Controls
     {
         public bool IsInitialized() { return (gameDataManager != null); }
 
-        public int SplitterPosition
-        {
-            get { return splitContainer1.SplitterDistance; }
-            set { splitContainer1.SplitterDistance = value; }
-        }
-
         GameDataManager gameDataManager;
         BackgroundWorker treeViewWorker;
         PropertyGridMessageFilter messageFilter;
@@ -33,7 +27,8 @@ namespace Yggdrasil.Controls
         Dictionary<Type, Action<TreeNode, List<BaseParser>>> customChildCreators = new Dictionary<Type, Action<TreeNode, List<BaseParser>>>()
         {
             { typeof(EquipItemParser), EquipItemParser.GenerateEquipmentNodes },
-            { typeof(GatherItemParser), GatherItemParser.GenerateGatheringNodes }
+            { typeof(GatherItemParser), GatherItemParser.GenerateGatheringNodes },
+            { typeof(EnemyDataParser), EnemyDataParser.GenerateEnemyNodes }
         };
 
         protected override CreateParams CreateParams
@@ -221,6 +216,33 @@ namespace Yggdrasil.Controls
         {
             CausesTreeRebuild rebuildCheck = (selectedProperty.PropertyDescriptor.Attributes[typeof(CausesTreeRebuild)] as CausesTreeRebuild);
             if (rebuildCheck != null && rebuildCheck.Value) Rebuild();
+        }
+
+        private void tvParsers_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                TreeView treeView = (sender as TreeView);
+                treeView.SelectedNode = treeView.GetNodeAt(e.X, e.Y);
+
+                if (treeView.SelectedNode != null)
+                {
+                    createHTMLDumpToolStripMenuItem.Enabled = (treeView.SelectedNode.Tag is List<BaseParser>);
+                    cmsTreeView.Show(treeView, e.Location);
+                }
+            }
+        }
+
+        private void createHTMLDumpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.InitialDirectory = Configuration.LastDataPath;
+            sfd.Title = "Save HTML dump";
+            sfd.Filter = "HTML Files (*.htm;*.html)|*.htm;*.html";
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                ParsedDataDumper.Dump(gameDataManager, (tvParsers.SelectedNode.Tag as List<BaseParser>).FirstOrDefault().GetType(), sfd.FileName);
+            }
         }
     }
 }

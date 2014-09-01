@@ -13,6 +13,7 @@ using Yggdrasil.FileHandling.TableHandling;
 using Yggdrasil.Helpers;
 using Yggdrasil.TableParsing;
 using Yggdrasil.Attributes;
+using Yggdrasil.TextHandling;
 
 namespace Yggdrasil
 {
@@ -80,7 +81,7 @@ namespace Yggdrasil
         public int ChangedMessageFileCount { get { return (changedMessageFiles != null ? changedMessageFiles.Count : -1); } }
 
         List<TableFile> dataTableFiles;
-        List<BaseParser> parsedData;
+        public List<BaseParser> ParsedData { get; private set; }
 
         List<BaseParser> changedParsedData;
         public bool DataHasChanged { get { return (changedParsedData != null && changedParsedData.Count > 0); } }
@@ -141,7 +142,7 @@ namespace Yggdrasil
 
                     changedMessageFiles = new List<TableFile>();
 
-                    parsedData = ParseDataTables();
+                    ParsedData = ParseDataTables();
                     changedParsedData = new List<BaseParser>();
 
                     CleanStringDictionaries();
@@ -168,15 +169,18 @@ namespace Yggdrasil
             });
             loadWaitWorker.ProgressChanged += ((s, e) =>
             {
+                string message = (e.UserState as string);
                 if (loadWaitDialog.Cancel)
                 {
                     workerThread.Abort();
                     Program.Logger.LogMessage("Loading aborted.");
+                    Program.MainForm.StatusText = "Ready";
                     return;
                 }
 
-                loadWaitDialog.Details = (e.UserState as string);
-                Program.Logger.LogMessage(e.UserState as string);
+                loadWaitDialog.Details = message;
+                Program.Logger.LogMessage(message);
+                Program.MainForm.StatusText = message;
             });
             loadWaitWorker.RunWorkerCompleted += ((s, e) =>
             {
@@ -192,7 +196,7 @@ namespace Yggdrasil
 
         public int SaveAllChanges()
         {
-            if (parsedData == null || changedParsedData == null) return 0;
+            if (ParsedData == null || changedParsedData == null) return 0;
 
             List<TableFile> changedFiles = new List<TableFile>();
 
@@ -531,7 +535,7 @@ namespace Yggdrasil
         private void CleanStringDictionary(Dictionary<ushort, string> dict, Type parserType, string propertyName)
         {
             foreach (ushort key in dict.Keys
-                .Except<ushort>(parsedData.Where(x => parserType.IsAssignableFrom(x.GetType())).Select(y => (ushort)y.GetProperty(propertyName)))
+                .Except<ushort>(ParsedData.Where(x => parserType.IsAssignableFrom(x.GetType())).Select(y => (ushort)y.GetProperty(propertyName)))
                 .Where(x => x != 0)
                 .ToList())
                 dict.Remove(key);
@@ -542,16 +546,16 @@ namespace Yggdrasil
             loadWaitWorker.ReportProgress(-1, "Generating additional dictionaries...");
 
             EncounterDescriptions = new Dictionary<ushort, string>();
-            foreach (EncounterParser parser in parsedData.Where(x => (x is EncounterParser))) EncounterDescriptions.Add(parser.EncounterNumber, parser.EntryDescription);
+            foreach (EncounterParser parser in ParsedData.Where(x => (x is EncounterParser))) EncounterDescriptions.Add(parser.EncounterNumber, parser.EntryDescription);
 
             GeneralItemNames = new Dictionary<ushort, string>();
             GeneralItemNames.Add(0, "(None)");
-            foreach (MiscItemParser parser in parsedData.Where(x => (x is MiscItemParser))) GeneralItemNames.Add(parser.ItemNumber, parser.Name);
+            foreach (MiscItemParser parser in ParsedData.Where(x => (x is MiscItemParser))) GeneralItemNames.Add(parser.ItemNumber, parser.Name);
         }
 
         private void ItemDataPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            changedParsedData = parsedData.Where(x => x.HasChanged).ToList();
+            changedParsedData = ParsedData.Where(x => x.HasChanged).ToList();
 
             if (sender is EncounterParser) GenerateOtherDictionaries();
 
@@ -615,7 +619,7 @@ namespace Yggdrasil
         public List<TreeNode> GenerateTreeNodes(Type parserType, Action<TreeNode, List<BaseParser>> customChildCreator = null)
         {
             List<TreeNode> nodes = new List<TreeNode>();
-            List<BaseParser> currentParsers = parsedData.Where(x => x.GetType() == parserType).ToList();
+            List<BaseParser> currentParsers = ParsedData.Where(x => x.GetType() == parserType).ToList();
 
             List<ParserDescriptor> parserDescriptors = parserType.GetAttributes<ParserDescriptor>();
             if (parserDescriptors.Count > 1)

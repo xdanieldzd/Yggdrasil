@@ -19,6 +19,16 @@ namespace Yggdrasil
     {
         GameDataManager gameDataManager;
 
+        public string StatusText
+        {
+            get { return tsslStatus.Text; }
+            set
+            {
+                if (InvokeRequired) Invoke(new Action(() => { tsslStatus.Text = value; }));
+                else tsslStatus.Text = value;
+            }
+        }
+
         public MainForm()
         {
             System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
@@ -26,7 +36,7 @@ namespace Yggdrasil
             InitializeComponent();
 
             SetFormTitle();
-            tsslStatus.Text = "Ready";
+            StatusText = "Ready";
 
             gameDataManager = new GameDataManager();
             gameDataManager.Language = Configuration.Language;
@@ -102,12 +112,12 @@ namespace Yggdrasil
         {
             if (gameDataManager.DataHasChanged)
             {
-                tsslStatus.Text = string.Format("Ready; {0} {1} changed", gameDataManager.ChangedDataCount, (gameDataManager.ChangedDataCount != 1 ? "entries" : "entry"));
+                StatusText = string.Format("Ready; {0} {1} changed", gameDataManager.ChangedDataCount, (gameDataManager.ChangedDataCount != 1 ? "entries" : "entry"));
                 saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = true;
             }
             else
             {
-                tsslStatus.Text = "Ready";
+                StatusText = "Ready";
                 saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = false;
             }
         }
@@ -148,9 +158,9 @@ namespace Yggdrasil
                 int changedFiles = gameDataManager.SaveAllChanges();
 
                 if (changedFiles == 0)
-                    tsslStatus.Text = "No changes to save";
+                    StatusText = "No changes to save";
                 else
-                    tsslStatus.Text = string.Format("Data saved; {0} {1} changed", changedFiles, (changedFiles == 1 ? "file" : "files"));
+                    StatusText = string.Format("Data saved; {0} {1} changed", changedFiles, (changedFiles == 1 ? "file" : "files"));
 
                 tableEntryEditor.Refresh();
                 saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = false;
@@ -193,7 +203,7 @@ namespace Yggdrasil
                 SetFormTitle();
                 InitializeTabPage(tabControl.SelectedTab);
 
-                tsslStatus.Text = "Data loaded";
+                StatusText = "Data loaded";
             }
         }
 

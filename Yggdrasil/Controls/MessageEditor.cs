@@ -10,19 +10,13 @@ using System.IO;
 
 using Yggdrasil.FileHandling;
 using Yggdrasil.FileHandling.TableHandling;
-using Yggdrasil.Helpers;
+using Yggdrasil.TextHandling;
 
 namespace Yggdrasil.Controls
 {
     public partial class MessageEditor : UserControl, IEditorControl
     {
         public bool IsInitialized() { return (gameDataManager != null); }
-
-        public int SplitterPosition
-        {
-            get { return splitContainer1.SplitterDistance; }
-            set { splitContainer1.SplitterDistance = value; }
-        }
 
         GameDataManager gameDataManager;
         BackgroundWorker treeViewWorker;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Windows.Forms;
 
 using Yggdrasil.FileHandling;
 using Yggdrasil.FileHandling.TableHandling;
@@ -16,7 +17,7 @@ namespace Yggdrasil.TableParsing
     {
         public enum EnemyTypes : uint
         {
-            None, Normal, FOE, Boss
+            Unspecified, Normal, FOE, Boss
         };
 
         string name;
@@ -73,6 +74,7 @@ namespace Yggdrasil.TableParsing
         EnemyTypes enemyType;
         [DisplayName("Enemy Type"), TypeConverter(typeof(EnumConverter)), PrioritizedCategory("Base Stats", 4)]
         [Description("Type of enemy; not sure what exactly this property influences.")]
+        [CausesTreeRebuild(true)]
         public EnemyTypes EnemyType
         {
             get { return enemyType; }
@@ -522,6 +524,19 @@ namespace Yggdrasil.TableParsing
             unknown8.CopyTo(ParentTable.Data[EntryNumber], 94);
 
             base.Save();
+        }
+
+        public static void GenerateEnemyNodes(TreeNode parserNode, List<BaseParser> currentParsers)
+        {
+            foreach (EnemyTypes type in (EnemyTypes[])Enum.GetValues(typeof(EnemyTypes)))
+            {
+                TreeNode typeNode = new TreeNode(type.ToString()) { Tag = type };
+
+                foreach (BaseParser parsed in currentParsers.Where(x => (x as EnemyDataParser).EnemyType == type))
+                    typeNode.Nodes.Add(new TreeNode(parsed.EntryDescription) { Tag = parsed });
+
+                parserNode.Nodes.Add(typeNode);
+            }
         }
     }
 }
