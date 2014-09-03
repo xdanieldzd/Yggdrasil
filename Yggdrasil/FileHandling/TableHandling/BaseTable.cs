@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace Yggdrasil.FileHandling
 {
@@ -23,7 +24,7 @@ namespace Yggdrasil.FileHandling
             Number = number;
             Offset = TableFile.TableOffsets[number];
 
-            TableSignature = Encoding.ASCII.GetString(TableFile.Data, (int)Offset, 4);
+            TableSignature = Encoding.ASCII.GetString(TableFile.Stream.ToArray(), (int)Offset, 4);
         }
 
         protected virtual void Parse()

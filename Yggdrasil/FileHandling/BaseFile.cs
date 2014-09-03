@@ -5,6 +5,8 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 
+using Yggdrasil.DataCompression;
+
 namespace Yggdrasil.FileHandling
 {
     [DebuggerDisplay("{Filename}")]
@@ -12,13 +14,39 @@ namespace Yggdrasil.FileHandling
     {
         public GameDataManager GameDataManager { get; private set; }
         public string Filename { get; private set; }
-        public byte[] Data { get; set; }
+        public bool InArchive { get; private set; }
+        public ArchiveFile ArchiveFile { get; private set; }
+        public int FileNumber { get; private set; }
+        public MemoryStream Stream { get; set; }
 
         public BaseFile(GameDataManager gameDataManager, string path)
         {
             GameDataManager = gameDataManager;
             Filename = path;
-            Data = File.ReadAllBytes(Filename);
+            InArchive = false;
+            FileNumber = -1;
+
+            using (FileStream fileStream = File.OpenRead(Filename))
+            {
+                if (Path.GetExtension(Filename) == ".cmp" && fileStream.ReadByte() == 0x10)
+                    Stream = new LZ77Stream(LZ77Stream.CompressionMode.Decompress);
+                else
+                    Stream = new MemoryStream();
+
+                fileStream.CopyTo(Stream);
+
+                Parse();
+            }
+        }
+
+        public BaseFile(GameDataManager gameDataManager, MemoryStream memoryStream, ArchiveFile archiveFile, int fileNumber)
+        {
+            GameDataManager = gameDataManager;
+            Filename = archiveFile.Filename;
+            InArchive = true;
+            ArchiveFile = archiveFile;
+            FileNumber = fileNumber;
+            Stream = memoryStream;
 
             Parse();
         }

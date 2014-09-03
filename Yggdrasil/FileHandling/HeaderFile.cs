@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace Yggdrasil.FileHandling
 {
@@ -56,45 +57,53 @@ namespace Yggdrasil.FileHandling
 
         public override void Parse()
         {
-            this.GameTitle = Encoding.ASCII.GetString(Data, 0, 12).TrimEnd('\0');
-            this.GameCode = Encoding.ASCII.GetString(Data, 12, 4).TrimEnd('\0');
-            this.MakerCode = Encoding.ASCII.GetString(Data, 16, 2).TrimEnd('\0');
-            this.UnitCode = Data[0x12];
-            this.EncryptionSeedSelect = Data[0x13];
-            this.DeviceCapacity = Data[0x14];
-            this.ROMVersion = Data[0x1E];
-            this.Autostart = Data[0x1F];
-            this.ARM9_ROMOffset = BitConverter.ToUInt32(Data, 0x20);
-            this.ARM9_EntryAddress = BitConverter.ToUInt32(Data, 0x24);
-            this.ARM9_RAMAddress = BitConverter.ToUInt32(Data, 0x28);
-            this.ARM9_Size = BitConverter.ToUInt32(Data, 0x2C);
-            this.ARM7_ROMOffset = BitConverter.ToUInt32(Data, 0x30);
-            this.ARM7_EntryAddress = BitConverter.ToUInt32(Data, 0x34);
-            this.ARM7_RAMAddress = BitConverter.ToUInt32(Data, 0x38);
-            this.ARM7_Size = BitConverter.ToUInt32(Data, 0x3C);
-            this.FNT_Offset = BitConverter.ToUInt32(Data, 0x40);
-            this.FNT_Size = BitConverter.ToUInt32(Data, 0x44);
-            this.FAT_Offset = BitConverter.ToUInt32(Data, 0x48);
-            this.FAT_Size = BitConverter.ToUInt32(Data, 0x4C);
-            this.ARM9_OverlayOffset = BitConverter.ToUInt32(Data, 0x50);
-            this.ARM9_OverlaySize = BitConverter.ToUInt32(Data, 0x54);
-            this.ARM7_OverlayOffset = BitConverter.ToUInt32(Data, 0x58);
-            this.ARM7_OverlaySize = BitConverter.ToUInt32(Data, 0x5C);
-            this.Port40001A4_NormalCommands = BitConverter.ToUInt32(Data, 0x60);
-            this.Port40001A4_KEY1Commands = BitConverter.ToUInt32(Data, 0x64);
-            this.IconTitleOffset = BitConverter.ToUInt32(Data, 0x68);
-            this.SecureArea_CRC16 = BitConverter.ToUInt16(Data, 0x6C);
-            this.SecureArea_LoadingTimeout = BitConverter.ToUInt16(Data, 0x6E);
-            this.ARM9_AutoLoadListRAMAddress = BitConverter.ToUInt32(Data, 0x70);
-            this.ARM7_AutoLoadListRAMAddress = BitConverter.ToUInt32(Data, 0x74);
-            this.SecureArea_Disable = BitConverter.ToUInt64(Data, 0x78);
-            this.TotalUsedROMSize = BitConverter.ToUInt32(Data, 0x80);
-            this.ROMHeaderSize = BitConverter.ToUInt32(Data, 0x84);
-            this.NintendoLogoCRC16 = BitConverter.ToUInt16(Data, 0x15C);
-            this.HeaderCRC16 = BitConverter.ToUInt16(Data, 0x15E);
-            this.Debug_ROMOffset = BitConverter.ToUInt32(Data, 0x160);
-            this.Debug_Size = BitConverter.ToUInt32(Data, 0x164);
-            this.Debug_RAMAddress = BitConverter.ToUInt32(Data, 0x168);
+            this.GameTitle = Encoding.ASCII.GetString(Stream.ToArray(), 0, 12).TrimEnd('\0');
+            this.GameCode = Encoding.ASCII.GetString(Stream.ToArray(), 12, 4).TrimEnd('\0');
+            this.MakerCode = Encoding.ASCII.GetString(Stream.ToArray(), 16, 2).TrimEnd('\0');
+
+            BinaryReader reader = new BinaryReader(Stream);
+
+            reader.BaseStream.Seek(0x12, SeekOrigin.Begin);
+            this.UnitCode = reader.ReadByte();
+            this.EncryptionSeedSelect = reader.ReadByte();
+            this.DeviceCapacity = reader.ReadByte();
+
+            reader.BaseStream.Seek(0x1E, SeekOrigin.Begin);
+            this.ROMVersion = reader.ReadByte();
+            this.Autostart = reader.ReadByte();
+            this.ARM9_ROMOffset = reader.ReadUInt32();
+            this.ARM9_EntryAddress = reader.ReadUInt32();
+            this.ARM9_RAMAddress = reader.ReadUInt32();
+            this.ARM9_Size = reader.ReadUInt32();
+            this.ARM7_ROMOffset = reader.ReadUInt32();
+            this.ARM7_EntryAddress = reader.ReadUInt32();
+            this.ARM7_RAMAddress = reader.ReadUInt32();
+            this.ARM7_Size = reader.ReadUInt32();
+            this.FNT_Offset = reader.ReadUInt32();
+            this.FNT_Size = reader.ReadUInt32();
+            this.FAT_Offset = reader.ReadUInt32();
+            this.FAT_Size = reader.ReadUInt32();
+            this.ARM9_OverlayOffset = reader.ReadUInt32();
+            this.ARM9_OverlaySize = reader.ReadUInt32();
+            this.ARM7_OverlayOffset = reader.ReadUInt32();
+            this.ARM7_OverlaySize = reader.ReadUInt32();
+            this.Port40001A4_NormalCommands = reader.ReadUInt32();
+            this.Port40001A4_KEY1Commands = reader.ReadUInt32();
+            this.IconTitleOffset = reader.ReadUInt32();
+            this.SecureArea_CRC16 = reader.ReadUInt16();
+            this.SecureArea_LoadingTimeout = reader.ReadUInt16();
+            this.ARM9_AutoLoadListRAMAddress = reader.ReadUInt32();
+            this.ARM7_AutoLoadListRAMAddress = reader.ReadUInt32();
+            this.SecureArea_Disable = reader.ReadUInt64();
+            this.TotalUsedROMSize = reader.ReadUInt32();
+            this.ROMHeaderSize = reader.ReadUInt32();
+
+            reader.BaseStream.Seek(0x15C, SeekOrigin.Begin);
+            this.NintendoLogoCRC16 = reader.ReadUInt16();
+            this.HeaderCRC16 = reader.ReadUInt16();
+            this.Debug_ROMOffset = reader.ReadUInt32();
+            this.Debug_Size = reader.ReadUInt32();
+            this.Debug_RAMAddress = reader.ReadUInt32();
         }
     }
 }

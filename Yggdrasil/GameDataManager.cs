@@ -19,6 +19,11 @@ namespace Yggdrasil
 {
     public class GameDataManager
     {
+        static readonly string[] archiveDirs = new string[]
+        {
+            "data\\Data\\Event"
+        };
+
         static readonly string[] messageDirs = new string[]
         {
             "data\\Data\\CharaSel", "data\\Data\\Dungeon", "data\\Data\\Event", "data\\Data\\Opening", "data\\Data\\Param", "data\\Data\\SaveLoad", "data\\Data\\Battle"
@@ -74,6 +79,8 @@ namespace Yggdrasil
         public bool IsInitialized { get; private set; }
 
         public FontRenderer FontRenderer { get; private set; }
+
+        List<ArchiveFile> archives;
 
         public List<TableFile> MessageFiles { get; private set; }
         List<TableFile> changedMessageFiles;
@@ -137,6 +144,8 @@ namespace Yggdrasil
                     MessageFiles = ReadDataTablesByExtension(new string[] { ".mbb", ".tbb" }, messageDirs);
                     dataTableFiles = ReadDataTablesByExtension(new string[] { ".tbb" }, dataDirs);
 
+                    archives = ReadArchiveFiles(archiveDirs);
+
                     EnsureMessageTableIntegrity();
                     GenerateDictionariesLists();
 
@@ -179,8 +188,7 @@ namespace Yggdrasil
                 }
 
                 loadWaitDialog.Details = message;
-                Program.Logger.LogMessage(message);
-                Program.MainForm.StatusText = message;
+                Program.Logger.LogMessage(true, message);
             });
             loadWaitWorker.RunWorkerCompleted += ((s, e) =>
             {
@@ -198,7 +206,7 @@ namespace Yggdrasil
         {
             if (ParsedData == null || changedParsedData == null) return 0;
 
-            List<TableFile> changedFiles = new List<TableFile>();
+            List<BaseFile> changedFiles = new List<BaseFile>();
 
             foreach (BaseParser data in changedParsedData)
             {
@@ -208,14 +216,11 @@ namespace Yggdrasil
 
             changedFiles.AddRange(changedMessageFiles);
 
-            foreach (TableFile file in changedFiles)
-            {
-                file.Save();
+            List<ArchiveFile> distinctArchives = changedFiles.Where(x => x.ArchiveFile != null).Select(y => y.ArchiveFile).Distinct().ToList();
+            changedFiles.RemoveAll(x => x.ArchiveFile != null);
+            changedFiles.AddRange(distinctArchives);
 
-                BinaryWriter writer = new BinaryWriter(File.Open(file.Filename, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite));
-                writer.Write(file.Data);
-                writer.Close();
-            }
+            foreach (BaseFile file in changedFiles) file.Save();
 
             changedParsedData.Clear();
             changedMessageFiles.Clear();
@@ -408,6 +413,38 @@ namespace Yggdrasil
             BinaryWriter arm9Writer = new BinaryWriter(File.Open(Path.Combine(DataPath, "arm9.bin"), FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite));
             arm9Writer.Write(arm9Data);
             arm9Writer.Close();
+        }
+
+        private List<ArchiveFile> ReadArchiveFiles(string[] directories)
+        {
+            if (directories == null) throw new ArgumentNullException("Directories is null");
+
+            archives = new List<ArchiveFile>();
+
+            foreach (string directory in directories)
+            {
+                string localDataPath = Path.Combine(DataPath, directory);
+                if (!Directory.Exists(localDataPath)) continue;
+
+                List<string> filePaths = Directory.EnumerateFiles(localDataPath, "*.bin", SearchOption.AllDirectories).ToList();
+                foreach (string filePath in filePaths)
+                {
+                    ArchiveFile archive = new ArchiveFile(this, filePath);
+                    archives.Add(archive);
+
+                    loadWaitWorker.ReportProgress(-1, string.Format("Reading {0}...", Path.GetFileName(filePath)));
+                }
+            }
+
+            foreach (ArchiveFile archive in archives)
+            {
+                foreach (TableFile tableFile in archive.TableFiles)
+                {
+                    if (tableFile.Tables.Any(x => x is MessageTable)) MessageFiles.Add(tableFile);
+                }
+            }
+
+            return archives.OrderBy(x => x.Filename).ToList();
         }
 
         private List<TableFile> ReadDataTablesByExtension(string[] extensions, string[] directories)

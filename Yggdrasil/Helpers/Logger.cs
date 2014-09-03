@@ -19,8 +19,14 @@ namespace Yggdrasil.Helpers
 
         public void LogMessage(string message, params object[] parameters)
         {
+            LogMessage(false, message, parameters);
+        }
+
+        public void LogMessage(bool sendToMain, string message, params object[] parameters)
+        {
             string formatted = string.Format(System.Globalization.CultureInfo.InvariantCulture, message, parameters);
             logEntries.Add(new Tuple<DateTime, string>(DateTime.Now, formatted));
+            if (sendToMain) Program.MainForm.StatusText = formatted;
         }
 
         public DialogResult ShowDialog()

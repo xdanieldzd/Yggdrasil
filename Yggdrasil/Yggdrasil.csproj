@@ -25,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -35,6 +36,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -84,7 +86,10 @@
     <Compile Include="Controls\TableEntryEditor.Designer.cs">
       <DependentUpon>TableEntryEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataCompression\LZ77Stream.cs" />
     <Compile Include="Exceptions\GameDataManagerException.cs" />
+    <Compile Include="Exceptions\LZ77StreamException.cs" />
+    <Compile Include="FileHandling\ArchiveFile.cs" />
     <Compile Include="Forms\ModernForm.cs">
       <SubType>Form</SubType>
     </Compile>

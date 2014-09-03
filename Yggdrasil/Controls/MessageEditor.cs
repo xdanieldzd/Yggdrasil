@@ -54,42 +54,73 @@ namespace Yggdrasil.Controls
                     tvMessageFiles.Invoke(new Action(() => { tvMessageFiles.Nodes.Clear(); }));
                     foreach (TableFile messageFile in this.gameDataManager.MessageFiles.OrderBy(x => Path.GetFileName(x.Filename)))
                     {
-                        TreeNode fileNode = new TreeNode(Path.GetFileNameWithoutExtension(messageFile.Filename)) { Tag = messageFile };
-
-                        Program.Logger.LogMessage("Generating tree nodes for {0}...", fileNode.Text);
-
-                        for (int i = 0; i < messageFile.Tables.Length; i++)
+                        if (messageFile.InArchive)
                         {
-                            MessageTable messageTable = (messageFile.Tables[i] as MessageTable);
+                            Program.Logger.LogMessage(true, "Generating tree nodes for {0}, file #{1}...", Path.GetFileName(messageFile.Filename), messageFile.FileNumber);
 
-                            if (messageTable == null) continue;
+                            TreeNode prevNode = null;
+                            tvMessageFiles.Invoke(new Action(() => { prevNode = tvMessageFiles.FindNodeByTag(messageFile.ArchiveFile); }));
 
-                            TreeNode tableNode = new TreeNode(string.Format("Table #{0}", i)) { Tag = messageTable };
-                            fileNode.Nodes.Add(tableNode);
-
-                            for (int j = 0; j < messageTable.NumMessages; j++)
+                            if (prevNode == null)
                             {
-                                if (messageTable.MessageOffsets[j] == 0) continue;
-
-                                int truncatePosition = messageTable.Messages[j].ConvertedString.IndexOf(Environment.NewLine);
-                                if (truncatePosition == -1) truncatePosition = (gameDataManager.Version == GameDataManager.Versions.Japanese ? 12 : 24);
-                                TreeNode messageNode = new TreeNode(messageTable.Messages[j].ConvertedString.Truncate(truncatePosition)) { Tag = messageTable.Messages[j] };
-                                tableNode.Nodes.Add(messageNode);
+                                prevNode = new TreeNode(Path.GetFileName(messageFile.ArchiveFile.Filename)) { Tag = messageFile.ArchiveFile };
+                                tvMessageFiles.Invoke(new Action(() => { tvMessageFiles.Nodes.Add(prevNode); }));
                             }
+
+                            TreeNode fileNode = new TreeNode(string.Format("File #{0}", messageFile.FileNumber)) { Tag = messageFile };
+                            fileNode.Nodes.AddRange(GenerateNodes(messageFile).ToArray());
+
+                            tvMessageFiles.Invoke(new Action(() => { prevNode.Nodes.Add(fileNode); }));
                         }
-                        tvMessageFiles.Invoke(new Action(() => { tvMessageFiles.Nodes.Add(fileNode); }));
+                        else
+                        {
+                            Program.Logger.LogMessage(true, "Generating tree nodes for {0}...", Path.GetFileName(messageFile.Filename));
+                            TreeNode fileNode = new TreeNode(Path.GetFileName(messageFile.Filename)) { Tag = messageFile };
+
+                            fileNode.Nodes.AddRange(GenerateNodes(messageFile).ToArray());
+                            tvMessageFiles.Invoke(new Action(() => { tvMessageFiles.Nodes.Add(fileNode); }));
+                        }
                     }
-                    tvMessageFiles.Invoke(new Action(() => { tvMessageFiles.Invalidate(); }));
                 });
 
                 treeViewWorker.RunWorkerCompleted += ((s, e) =>
                 {
+                    tvMessageFiles.Invalidate();
+
+                    Program.MainForm.StatusText = "Ready";
                     stopwatch.Stop();
                     Program.Logger.LogMessage("Nodes rebuilt in {0:0.000} sec...", stopwatch.Elapsed.TotalSeconds);
                 });
 
                 treeViewWorker.RunWorkerAsync();
             }
+        }
+
+        private List<TreeNode> GenerateNodes(TableFile messageFile)
+        {
+            List<TreeNode> nodes = new List<TreeNode>();
+
+            for (int i = 0; i < messageFile.Tables.Length; i++)
+            {
+                MessageTable messageTable = (messageFile.Tables[i] as MessageTable);
+
+                if (messageTable == null) continue;
+
+                TreeNode tableNode = new TreeNode(string.Format("Table #{0}", i)) { Tag = messageTable };
+                nodes.Add(tableNode);
+
+                for (int j = 0; j < messageTable.NumMessages; j++)
+                {
+                    if (messageTable.MessageOffsets[j] == 0) continue;
+
+                    int truncatePosition = messageTable.Messages[j].ConvertedString.IndexOf(Environment.NewLine);
+                    if (truncatePosition == -1) truncatePosition = (gameDataManager.Version == GameDataManager.Versions.Japanese ? 12 : 24);
+                    TreeNode messageNode = new TreeNode(messageTable.Messages[j].ConvertedString.Truncate(truncatePosition)) { Tag = messageTable.Messages[j] };
+                    tableNode.Nodes.Add(messageNode);
+                }
+            }
+
+            return nodes;
         }
 
         public void Terminate()

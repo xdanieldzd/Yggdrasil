@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 using Yggdrasil.Attributes;
 
@@ -22,9 +23,12 @@ namespace Yggdrasil.FileHandling.TableHandling
 
         protected override void Parse()
         {
-            Unknown = BitConverter.ToUInt32(TableFile.Data, (int)Offset + 4);
-            DataSize = BitConverter.ToUInt32(TableFile.Data, (int)Offset + 8);
-            EntrySize = BitConverter.ToUInt32(TableFile.Data, (int)Offset + 12);
+            BinaryReader reader = new BinaryReader(TableFile.Stream);
+
+            reader.BaseStream.Seek(Offset + 4, SeekOrigin.Begin);
+            Unknown = reader.ReadUInt32();
+            DataSize = reader.ReadUInt32();
+            EntrySize = reader.ReadUInt32();
 
             numEntries = (int)(DataSize / EntrySize);
             DataOffsets = new int[numEntries];
@@ -33,9 +37,10 @@ namespace Yggdrasil.FileHandling.TableHandling
             for (int i = 0; i < numEntries; i++)
             {
                 DataOffsets[i] = (int)(Offset + 16 + (i * EntrySize));
-
                 Data[i] = new byte[EntrySize];
-                Buffer.BlockCopy(TableFile.Data, DataOffsets[i], Data[i], 0, (int)EntrySize);
+
+                reader.BaseStream.Seek(DataOffsets[i], SeekOrigin.Begin);
+                Data[i] = reader.ReadBytes((int)EntrySize);
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 using Yggdrasil.Attributes;
 using Yggdrasil.TextHandling;
@@ -23,13 +24,22 @@ namespace Yggdrasil.FileHandling.TableHandling
 
         protected override void Parse()
         {
-            Unknown = BitConverter.ToUInt32(TableFile.Data, (int)Offset + 4);
-            Size = BitConverter.ToUInt32(TableFile.Data, (int)Offset + 8);
-            NumMessages = BitConverter.ToUInt32(TableFile.Data, (int)Offset + 12);
-            Unknown2 = BitConverter.ToUInt32(TableFile.Data, (int)Offset + 16);
+            BinaryReader reader = new BinaryReader(TableFile.Stream);
+
+            reader.BaseStream.Seek(Offset + 4, SeekOrigin.Begin);
+            Unknown = reader.ReadUInt32();
+            Size = reader.ReadUInt32();
+            NumMessages = reader.ReadUInt32();
+            Unknown2 = reader.ReadUInt32();
 
             MessageOffsets = new uint[NumMessages];
-            for (int i = 0; i < NumMessages; i++) MessageOffsets[i] = BitConverter.ToUInt32(TableFile.Data, (int)Offset + 20 + (i * sizeof(uint)));
+            for (int i = 0; i < NumMessages; i++)
+            {
+                reader.BaseStream.Seek(Offset + 20 + (i * sizeof(uint)), SeekOrigin.Begin);
+                MessageOffsets[i] = reader.ReadUInt32();
+            }
+
+            byte[] fileData = TableFile.Stream.ToArray();
 
             Messages = new EtrianString[NumMessages];
             for (int i = 0; i < NumMessages; i++)
@@ -37,7 +47,7 @@ namespace Yggdrasil.FileHandling.TableHandling
                 if (MessageOffsets[i] == 0)
                     Messages[i] = string.Empty;
                 else
-                    Messages[i] = new EtrianString(TableFile.Data, (int)(Offset + 0x10 + MessageOffsets[i]));
+                    Messages[i] = new EtrianString(fileData, (int)(Offset + 0x10 + MessageOffsets[i]));
             }
         }
 
