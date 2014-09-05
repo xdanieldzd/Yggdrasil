@@ -6,6 +6,8 @@ using System.IO;
 
 using Nini.Config;
 
+using Yggdrasil.Helpers;
+
 namespace Yggdrasil
 {
     /* Based on http://stackoverflow.com/a/15869868 */
@@ -37,6 +39,12 @@ namespace Yggdrasil
         {
             get { return ((GameDataManager.Languages)Enum.Parse(typeof(GameDataManager.Languages), (source.Configs[ConfigName].GetString("Language", "English")))); }
             set { source.Configs[ConfigName].Set("Language", value); }
+        }
+
+        public static Logger.Level LogLevel
+        {
+            get { return ((Logger.Level)Enum.Parse(typeof(Logger.Level), (source.Configs[ConfigName].GetString("LogLevel", "Info")))); }
+            set { source.Configs[ConfigName].Set("LogLevel", value); }
         }
 
         static Configuration()

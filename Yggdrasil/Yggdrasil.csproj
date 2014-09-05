@@ -86,7 +86,9 @@
     <Compile Include="Controls\TableEntryEditor.Designer.cs">
       <DependentUpon>TableEntryEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataCompression\CompressedStream.cs" />
     <Compile Include="DataCompression\LZ77Stream.cs" />
+    <Compile Include="DataCompression\RLEStream.cs" />
     <Compile Include="Exceptions\GameDataManagerException.cs" />
     <Compile Include="Exceptions\LZ77StreamException.cs" />
     <Compile Include="FileHandling\ArchiveFile.cs" />

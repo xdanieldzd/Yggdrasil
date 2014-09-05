@@ -29,7 +29,7 @@ namespace Yggdrasil.FileHandling
             using (FileStream fileStream = File.OpenRead(Filename))
             {
                 if (Path.GetExtension(Filename) == ".cmp" && fileStream.ReadByte() == 0x10)
-                    Stream = new LZ77Stream(LZ77Stream.CompressionMode.Decompress);
+                    Stream = new LZ77Stream(CompressionMode.Decompress);
                 else
                     Stream = new MemoryStream();
 

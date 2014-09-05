@@ -6,6 +6,7 @@ using System.IO;
 
 using Yggdrasil.Attributes;
 using Yggdrasil.DataCompression;
+using Yggdrasil.Helpers;
 
 namespace Yggdrasil.FileHandling
 {
@@ -43,19 +44,32 @@ namespace Yggdrasil.FileHandling
             for (int i = 0; i < NumBlocks; i++)
             {
                 MemoryStream blockStream = null;
-                byte checkByte = (byte)Stream.ReadByte();
+                CompressionType checkByte = (CompressionType)Stream.ReadByte();
                 Stream.Seek(-1, SeekOrigin.Current);
 
-                switch (checkByte)
+                try
                 {
-                    case 0x10:
-                        blockStream = new LZ77Stream(LZ77Stream.CompressionMode.Decompress);
-                        blockStream.Write(Stream.ToArray(), (int)Stream.Position, (int)BlockLengths[i]);
-                        break;
+                    switch (checkByte)
+                    {
+                        case CompressionType.LZ77:
+                            blockStream = new LZ77Stream(CompressionMode.Decompress);
+                            blockStream.Write(Stream.ToArray(), (int)Stream.Position, (int)BlockLengths[i]);
+                            break;
 
-                    default:
+                        case CompressionType.RLE:
+                            blockStream = new RLEStream(CompressionMode.Decompress);
+                            blockStream.Write(Stream.ToArray(), (int)Stream.Position, (int)BlockLengths[i]);
+                            break;
+                    }
+                }
+                catch
+                {
+                    Program.Logger.LogMessage(Logger.Level.Warning, "Assumed compressed data type {0}, failed to decompress.", checkByte);
+                }
+                finally
+                {
+                    if (blockStream == null || blockStream.Length == 0)
                         blockStream = new MemoryStream(Stream.ToArray(), (int)Stream.Position, (int)BlockLengths[i]);
-                        break;
                 }
 
                 Stream.Seek(BlockLengths[i], SeekOrigin.Current);
@@ -81,7 +95,11 @@ namespace Yggdrasil.FileHandling
             {
                 Blocks[i].Save();
 
-                LZ77Stream stream = new LZ77Stream(LZ77Stream.CompressionMode.Compress);
+                CompressedStream stream = (CompressedStream)
+                    (Blocks[i].Stream is CompressedStream ?
+                    Activator.CreateInstance(Blocks[i].Stream.GetType(), new object[] { CompressionMode.Compress }) :
+                    new MemoryStream());
+
                 Blocks[i].Stream.CopyTo(stream);
 
                 blocks.AddRange(stream.ToArray());

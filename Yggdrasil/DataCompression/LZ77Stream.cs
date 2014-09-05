@@ -8,7 +8,7 @@ using Yggdrasil.Exceptions;
 
 namespace Yggdrasil.DataCompression
 {
-    public class LZ77Stream : MemoryStream
+    public class LZ77Stream : CompressedStream
     {
         // Compression code based on https://code.google.com/p/dsdecmp/
 
@@ -32,35 +32,9 @@ namespace Yggdrasil.DataCompression
         //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
         //THE SOFTWARE.
 
-        public enum CompressionMode { Decompress, Compress };
+        public LZ77Stream(CompressionMode compressionMode) : base(compressionMode) { }
 
-        CompressionMode compressionMode;
-        MemoryStream originalStream;
-
-        public LZ77Stream(CompressionMode compressionMode)
-        {
-            this.compressionMode = compressionMode;
-        }
-
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            if (compressionMode == CompressionMode.Decompress)
-            {
-                originalStream = new MemoryStream(buffer, offset, count);
-
-                byte[] decompressed = Decompress(buffer, offset);
-                base.Write(decompressed, 0, decompressed.Length);
-            }
-            else if (compressionMode == CompressionMode.Compress)
-            {
-                originalStream = new MemoryStream(buffer, offset, count);
-
-                byte[] compressed = Compress(buffer, offset, count);
-                base.Write(compressed, 0, compressed.Length);
-            }
-        }
-
-        private byte[] Decompress(byte[] buffer, int sOffset)
+        public override byte[] Decompress(byte[] buffer, int sOffset)
         {
             int dataLen = (BitConverter.ToInt32(buffer, sOffset + 1) & 0xFFFFFF);
             byte[] decData = new byte[dataLen];
@@ -115,7 +89,7 @@ namespace Yggdrasil.DataCompression
             return decData;
         }
 
-        private unsafe byte[] Compress(byte[] buffer, int offset, int count)
+        public override unsafe byte[] Compress(byte[] buffer, int offset, int count)
         {
             if (count > 0xFFFFFF) throw new LZ77StreamException("Input data too large");
 
