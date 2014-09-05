@@ -438,7 +438,7 @@ namespace Yggdrasil
 
             foreach (ArchiveFile archive in archives)
             {
-                foreach (TableFile tableFile in archive.TableFiles)
+                foreach (TableFile tableFile in archive.Blocks.Where(x => x is TableFile))
                 {
                     if (tableFile.Tables.Any(x => x is MessageTable)) MessageFiles.Add(tableFile);
                 }

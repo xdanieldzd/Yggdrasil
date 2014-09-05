@@ -19,7 +19,7 @@ namespace Yggdrasil.FileHandling
         public uint DataOffset { get; private set; }
         public uint[] BlockLengths { get; private set; }
 
-        public TableFile[] TableFiles { get; private set; }
+        public BaseFile[] Blocks { get; private set; }
 
         public override void Parse()
         {
@@ -39,18 +39,30 @@ namespace Yggdrasil.FileHandling
 
             Stream.Seek(DataOffset, SeekOrigin.Begin);
 
-            TableFiles = new TableFile[NumBlocks];
+            Blocks = new BaseFile[NumBlocks];
             for (int i = 0; i < NumBlocks; i++)
             {
+                MemoryStream blockStream = null;
                 byte checkByte = (byte)Stream.ReadByte();
-                if (checkByte != 0x10) throw new Exceptions.GameDataManagerException(string.Format("Compression type 0x{0:X2} in FBIN unhandled.", checkByte));
                 Stream.Seek(-1, SeekOrigin.Current);
 
-                LZ77Stream blockStream = new LZ77Stream(LZ77Stream.CompressionMode.Decompress);
-                blockStream.Write(Stream.ToArray(), (int)Stream.Position, (int)BlockLengths[i]);
+                switch (checkByte)
+                {
+                    case 0x10:
+                        blockStream = new LZ77Stream(LZ77Stream.CompressionMode.Decompress);
+                        blockStream.Write(Stream.ToArray(), (int)Stream.Position, (int)BlockLengths[i]);
+                        break;
+
+                    default:
+                        blockStream = new MemoryStream(Stream.ToArray(), (int)Stream.Position, (int)BlockLengths[i]);
+                        break;
+                }
+
                 Stream.Seek(BlockLengths[i], SeekOrigin.Current);
 
-                TableFiles[i] = new TableFile(GameDataManager, blockStream, this, i);
+                string fileSignature = Encoding.ASCII.GetString(blockStream.ToArray(), 0, 4);
+                Type fileType = System.Reflection.Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.GetAttribute<MagicNumber>() != null && x.GetAttribute<MagicNumber>().Magic == fileSignature);
+                if (fileType != null) Blocks[i] = (BaseFile)Activator.CreateInstance(fileType, new object[] { GameDataManager, blockStream, this, i });
             }
         }
 
@@ -67,10 +79,10 @@ namespace Yggdrasil.FileHandling
 
             for (int i = 0; i < NumBlocks; i++)
             {
-                TableFiles[i].Save();
+                Blocks[i].Save();
 
                 LZ77Stream stream = new LZ77Stream(LZ77Stream.CompressionMode.Compress);
-                TableFiles[i].Stream.CopyTo(stream);
+                Blocks[i].Stream.CopyTo(stream);
 
                 blocks.AddRange(stream.ToArray());
 

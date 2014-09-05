@@ -41,6 +41,8 @@ namespace Yggdrasil.FileHandling
 
         public BaseFile(GameDataManager gameDataManager, MemoryStream memoryStream, ArchiveFile archiveFile, int fileNumber)
         {
+            if (memoryStream == null) throw new ArgumentException("MemoryStream cannot be null.");
+
             GameDataManager = gameDataManager;
             Filename = archiveFile.Filename;
             InArchive = true;
