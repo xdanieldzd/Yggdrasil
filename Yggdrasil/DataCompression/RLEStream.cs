@@ -83,46 +83,54 @@ namespace Yggdrasil.DataCompression
             outStream.WriteByte((byte)((count >> 8) & 0xFF));
             outStream.WriteByte((byte)((count >> 16) & 0xFF));
 
-            List<byte> current = new List<byte>();
-
-            int inOffset = 0, runLength = 0;
+            int inOffset = 0;
+            byte runLength = 0, rawDataLength = 0;
+            bool compFlag = false;
 
             while (inOffset < count)
             {
-                if (inOffset + runLength + 1 >= count) break;
-
-                if (runLength < MaxRunLength + 3 && buffer[inOffset + runLength] == buffer[inOffset + runLength + 1])
+                for (int i = 0; i <= MaxRunLength; i++)
                 {
-                    runLength++;
-                }
-                else if (runLength > 3)
-                {
-                    if (current.Count > 0)
+                    if (inOffset + rawDataLength + 2 >= count)
                     {
-                        current.Add(buffer[inOffset++]);
-                        outStream.WriteByte((byte)(current.Count - 1));
-                        outStream.Write(current.ToArray(), 0, current.Count);
-                        current.Clear();
+                        rawDataLength = (byte)(count - inOffset);
+                        break;
+                    }
+
+                    if (buffer[inOffset + i] == buffer[inOffset + i + 1] && buffer[inOffset + i] == buffer[inOffset + i + 2])
+                    {
+                        compFlag = true;
+                        break;
+                    }
+                    rawDataLength++;
+                }
+
+                if (rawDataLength > 0)
+                {
+                    outStream.WriteByte((byte)(rawDataLength - 1));
+                    for (int i = 0; i < rawDataLength; i++) outStream.WriteByte(buffer[inOffset++]);
+                    rawDataLength = 0;
+                }
+
+                if (compFlag)
+                {
+                    runLength = 3;
+                    for (int i = 3; i < MaxRunLength + 3; i++)
+                    {
+                        if (inOffset + runLength >= count)
+                        {
+                            runLength = (byte)(count - inOffset);
+                            break;
+                        }
+
+                        if (buffer[inOffset] != buffer[inOffset + runLength]) break;
+                        runLength++;
                     }
 
                     outStream.WriteByte((byte)(CompressionFlag | runLength - 3));
                     outStream.WriteByte(buffer[inOffset]);
                     inOffset += runLength;
-                    runLength = 0;
-                }
-                else
-                {
-                    runLength = 0;
-                    if (current.Count < MaxRunLength)
-                    {
-                        current.Add(buffer[inOffset++]);
-                    }
-                    else
-                    {
-                        outStream.WriteByte((byte)(current.Count - 1));
-                        outStream.Write(current.ToArray(), 0, current.Count);
-                        current.Clear();
-                    }
+                    compFlag = false;
                 }
             }
 
