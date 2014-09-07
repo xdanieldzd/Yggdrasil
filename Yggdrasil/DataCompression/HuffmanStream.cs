@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Yggdrasil.DataCompression
 {
-    public static partial class Decompressor
+    public class HuffmanStream : CompressedStream
     {
         // https://code.google.com/p/dsdecmp/
 
@@ -30,9 +30,11 @@ namespace Yggdrasil.DataCompression
         //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
         //THE SOFTWARE.
 
-        public static byte[] ProcessHuffman(byte[] compData, int compOffset)
+        public HuffmanStream(CompressionMode compressionMode) : base(compressionMode) { }
+
+        public override byte[] Decompress(byte[] buffer, int offset)
         {
-            BinaryReader br = new BinaryReader(new MemoryStream(compData, compOffset, compData.Length - compOffset));
+            BinaryReader br = new BinaryReader(new MemoryStream(buffer, offset, buffer.Length - offset));
 
             byte firstByte = br.ReadByte();
             int dataSize = firstByte & 0x0F;

@@ -342,16 +342,12 @@ namespace Yggdrasil
 
                     string newPath = Path.Combine(Path.GetDirectoryName(filePath), filePath.Replace(dirExt.Item2, dirExt.Item3));
 
-                    bool isCompressed;
-                    byte[] fileData = DataCompression.Decompressor.Decompress(filePath, out isCompressed);
-                    if (isCompressed)
-                    {
-                        BinaryWriter writer = new BinaryWriter(File.Create(newPath));
-                        writer.Write(fileData);
-                        writer.Close();
+                    MemoryStream decompressed = DataCompression.StreamHelper.Decompress(new MemoryStream(File.ReadAllBytes(filePath)));
+                    BinaryWriter writer = new BinaryWriter(File.Create(newPath));
+                    writer.Write(decompressed.ToArray());
+                    writer.Close();
 
-                        File.Delete(filePath);
-                    }
+                    File.Delete(filePath);
                 }
             }
 

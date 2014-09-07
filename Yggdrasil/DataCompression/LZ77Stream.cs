@@ -34,72 +34,46 @@ namespace Yggdrasil.DataCompression
 
         public LZ77Stream(CompressionMode compressionMode) : base(compressionMode) { }
 
-        public override bool Decompress(byte[] buffer, int offset, out byte[] output)
+        public override byte[] Decompress(byte[] buffer, int offset)
         {
-            int dataLen = (BitConverter.ToInt32(buffer, offset + 1) & 0xFFFFFF);
-            output = new byte[dataLen];
+            int count = (BitConverter.ToInt32(buffer, offset + 1) & 0xFFFFFF);
+            byte[] output = new byte[count];
 
-            int i, j, inOffset, outOffset;
-            inOffset = offset + 4;
-            outOffset = 0;
-            int length, windowOffset, data;
-            byte d;
+            uint inOffset = (uint)(offset + 4), outOffset = 0;
+            ushort windowOffset;
+            byte length, compFlags;
 
-            while (dataLen > 0)
+            while (outOffset < count)
             {
-                if (inOffset >= buffer.Length) return false;
-
-                d = buffer[inOffset++];
-                if (d != 0)
+                compFlags = buffer[inOffset++];
+                for (int i = 0; i < 8; i++)
                 {
-                    for (i = 0; i < 8; i++)
+                    if ((compFlags & 0x80) != 0)
                     {
-                        if ((d & 0x80) != 0)
-                        {
-                            data = ((buffer[inOffset] << 8) | buffer[inOffset + 1]);
-                            inOffset += 2;
-                            if (inOffset >= buffer.Length) return true;
+                        ushort data = (ushort)((buffer[inOffset] << 8) | buffer[inOffset + 1]);
+                        inOffset += 2;
 
-                            length = (data >> 12) + 3;
-                            windowOffset = outOffset - (data & 0xFFF) - 1;
+                        length = (byte)((data >> 12) + 3);
+                        windowOffset = (ushort)((data & 0xFFF) + 1);
+                        compFlags <<= 1;
 
-                            for (j = 0; j < length; j++)
-                            {
-                                if (windowOffset < 0 || outOffset >= output.Length || windowOffset >= output.Length) return false;
-
-                                output[outOffset++] = output[windowOffset++];
-                                dataLen--;
-                                if (dataLen == 0) return true;
-                            }
-                        }
-                        else
-                        {
-                            if (outOffset >= output.Length || inOffset >= buffer.Length) return false;
-
-                            output[outOffset++] = buffer[inOffset++];
-                            dataLen--;
-                            if (dataLen == 0) return true;
-                        }
-                        d <<= 1;
+                        uint startOffset = outOffset - windowOffset;
+                        if (outOffset + length > output.Length || startOffset + length > output.Length) throw new IndexOutOfRangeException();
+                        for (int j = 0; j < length; j++) output[outOffset++] = output[startOffset + j];
                     }
-                }
-                else
-                {
-                    for (i = 0; i < 8; i++)
+                    else
                     {
-                        if (outOffset >= output.Length || inOffset >= buffer.Length) return false;
-
+                        if (outOffset >= output.Length || inOffset >= buffer.Length) return output;
                         output[outOffset++] = buffer[inOffset++];
-                        dataLen--;
-                        if (dataLen == 0) return true;
+                        compFlags <<= 1;
                     }
                 }
             }
 
-            return true;
+            return output;
         }
 
-        public override unsafe bool Compress(byte[] buffer, int offset, int count, out byte[] output)
+        public override unsafe byte[] Compress(byte[] buffer, int offset, int count)
         {
             if (count > 0xFFFFFF) throw new CompressedStreamException("Input data too large");
 
@@ -160,9 +134,7 @@ namespace Yggdrasil.DataCompression
                 }
             }
 
-            output = outStream.ToArray();
-
-            return true;
+            return outStream.ToArray();
         }
 
         public unsafe int GetOccurrenceLength(byte* newPtr, int newLength, byte* oldPtr, int oldLength, out int disp, int minDisp = 1)
@@ -190,6 +162,27 @@ namespace Yggdrasil.DataCompression
                 }
             }
             return maxLength;
+        }
+
+        public static void Test()
+        {
+            Yggdrasil.DataCompression.LZ77Stream lz77 = new DataCompression.LZ77Stream(DataCompression.CompressionMode.Decompress);
+            byte[] data = System.IO.File.ReadAllBytes(@"E:\Translations\NDS Etrian Odyssey Hacking\Compression Testing\EventMessageDungeonGimmic_EN_File1.lz");
+            lz77.Write(data, 0, data.Length);
+
+            Yggdrasil.DataCompression.LZ77Stream lz77comp = new DataCompression.LZ77Stream(DataCompression.CompressionMode.Compress);
+            lz77comp.Write(lz77.ToArray(), 0, (int)lz77.Length);
+            System.IO.FileStream outstream = System.IO.File.Open(@"E:\Translations\NDS Etrian Odyssey Hacking\Compression Testing\EventMessageDungeonGimmic_EN_File1.lz.lz", System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, System.IO.FileShare.ReadWrite);
+            outstream.Write(lz77comp.ToArray(), 0, (int)lz77comp.Length);
+            outstream.Close();
+
+            Yggdrasil.DataCompression.LZ77Stream lz77check = new DataCompression.LZ77Stream(DataCompression.CompressionMode.Decompress);
+            byte[] datacheck = System.IO.File.ReadAllBytes(@"E:\Translations\NDS Etrian Odyssey Hacking\Compression Testing\EventMessageDungeonGimmic_EN_File1.lz.lz");
+            lz77check.Write(datacheck, 0, datacheck.Length);
+
+            outstream = System.IO.File.Open(@"E:\Translations\NDS Etrian Odyssey Hacking\Compression Testing\EventMessageDungeonGimmic_EN_File1.lz.lz.dec", System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, System.IO.FileShare.ReadWrite);
+            outstream.Write(lz77check.ToArray(), 0, (int)lz77check.Length);
+            outstream.Close();
         }
     }
 }

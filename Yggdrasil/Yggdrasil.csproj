@@ -87,6 +87,7 @@
       <DependentUpon>TableEntryEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="DataCompression\CompressedStream.cs" />
+    <Compile Include="DataCompression\HuffmanStream.cs" />
     <Compile Include="DataCompression\LZ77Stream.cs" />
     <Compile Include="DataCompression\RLEStream.cs" />
     <Compile Include="Exceptions\GameDataManagerException.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="Forms\ModernForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DataCompression\StreamHelper.cs" />
     <Compile Include="Helpers\ParsedDataDumper.cs" />
     <Compile Include="Helpers\ProgressDialog.cs" />
     <Compile Include="Helpers\WinAPI.cs" />
@@ -132,11 +134,7 @@
       <DependentUpon>LogForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GameDataManager.cs" />
-    <Compile Include="DataCompression\Decompressor.cs" />
-    <Compile Include="DataCompression\Decompressor.Huffman.cs" />
-    <Compile Include="DataCompression\Decompressor.RLE.cs" />
     <Compile Include="TextHandling\EtrianString.cs" />
-    <Compile Include="DataCompression\Decompressor.LZ77.cs" />
     <Compile Include="Helpers\FontRenderer.cs" />
     <Compile Include="Helpers\GUIHelpers.cs" />
     <Compile Include="Helpers\Logger.cs" />

@@ -44,34 +44,7 @@ namespace Yggdrasil.FileHandling
             Blocks = new BaseFile[NumBlocks];
             for (int i = 0; i < NumBlocks; i++)
             {
-                MemoryStream blockStream = null;
-                CompressionType checkByte = (CompressionType)Stream.ReadByte();
-                Stream.Seek(-1, SeekOrigin.Current);
-
-                try
-                {
-                    switch (checkByte)
-                    {
-                        case CompressionType.LZ77:
-                            blockStream = new LZ77Stream(CompressionMode.Decompress);
-                            blockStream.Write(Stream.ToArray(), (int)Stream.Position, (int)BlockLengths[i]);
-                            break;
-
-                        case CompressionType.RLE:
-                            blockStream = new RLEStream(CompressionMode.Decompress);
-                            blockStream.Write(Stream.ToArray(), (int)Stream.Position, (int)BlockLengths[i]);
-                            break;
-                    }
-                }
-                catch (CompressedStreamException csex)
-                {
-                    Program.Logger.LogMessage(Logger.Level.Warning, csex.Message);
-                }
-                finally
-                {
-                    if (blockStream == null || blockStream.Length == 0)
-                        blockStream = new MemoryStream(Stream.ToArray(), (int)Stream.Position, (int)BlockLengths[i]);
-                }
+                MemoryStream blockStream = StreamHelper.Decompress(Stream, (int)BlockLengths[i]);
 
                 Stream.Seek(BlockLengths[i], SeekOrigin.Current);
 
