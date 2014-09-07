@@ -7,6 +7,7 @@ using System.IO;
 using Yggdrasil.Attributes;
 using Yggdrasil.DataCompression;
 using Yggdrasil.Helpers;
+using Yggdrasil.Exceptions;
 
 namespace Yggdrasil.FileHandling
 {
@@ -62,9 +63,9 @@ namespace Yggdrasil.FileHandling
                             break;
                     }
                 }
-                catch
+                catch (CompressedStreamException csex)
                 {
-                    Program.Logger.LogMessage(Logger.Level.Warning, "Assumed compressed data type {0}, failed to decompress.", checkByte);
+                    Program.Logger.LogMessage(Logger.Level.Warning, csex.Message);
                 }
                 finally
                 {

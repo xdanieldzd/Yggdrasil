@@ -34,43 +34,51 @@ namespace Yggdrasil.DataCompression
 
         public LZ77Stream(CompressionMode compressionMode) : base(compressionMode) { }
 
-        public override byte[] Decompress(byte[] buffer, int sOffset)
+        public override bool Decompress(byte[] buffer, int offset, out byte[] output)
         {
-            int dataLen = (BitConverter.ToInt32(buffer, sOffset + 1) & 0xFFFFFF);
-            byte[] decData = new byte[dataLen];
+            int dataLen = (BitConverter.ToInt32(buffer, offset + 1) & 0xFFFFFF);
+            output = new byte[dataLen];
 
-            int i, j, xIn, xOut;
-            xIn = sOffset + 4;
-            xOut = 0;
-            int length, offset, windowOffset, data;
+            int i, j, inOffset, outOffset;
+            inOffset = offset + 4;
+            outOffset = 0;
+            int length, windowOffset, data;
             byte d;
 
             while (dataLen > 0)
             {
-                d = buffer[xIn++];
+                if (inOffset >= buffer.Length) return false;
+
+                d = buffer[inOffset++];
                 if (d != 0)
                 {
                     for (i = 0; i < 8; i++)
                     {
                         if ((d & 0x80) != 0)
                         {
-                            data = ((buffer[xIn] << 8) | buffer[xIn + 1]);
-                            xIn += 2;
+                            data = ((buffer[inOffset] << 8) | buffer[inOffset + 1]);
+                            inOffset += 2;
+                            if (inOffset >= buffer.Length) return true;
+
                             length = (data >> 12) + 3;
-                            offset = data & 0xFFF;
-                            windowOffset = xOut - offset - 1;
+                            windowOffset = outOffset - (data & 0xFFF) - 1;
+
                             for (j = 0; j < length; j++)
                             {
-                                decData[xOut++] = decData[windowOffset++];
+                                if (windowOffset < 0 || outOffset >= output.Length || windowOffset >= output.Length) return false;
+
+                                output[outOffset++] = output[windowOffset++];
                                 dataLen--;
-                                if (dataLen == 0) return decData;
+                                if (dataLen == 0) return true;
                             }
                         }
                         else
                         {
-                            decData[xOut++] = buffer[xIn++];
+                            if (outOffset >= output.Length || inOffset >= buffer.Length) return false;
+
+                            output[outOffset++] = buffer[inOffset++];
                             dataLen--;
-                            if (dataLen == 0) return decData;
+                            if (dataLen == 0) return true;
                         }
                         d <<= 1;
                     }
@@ -79,26 +87,28 @@ namespace Yggdrasil.DataCompression
                 {
                     for (i = 0; i < 8; i++)
                     {
-                        decData[xOut++] = buffer[xIn++];
+                        if (outOffset >= output.Length || inOffset >= buffer.Length) return false;
+
+                        output[outOffset++] = buffer[inOffset++];
                         dataLen--;
-                        if (dataLen == 0) return decData;
+                        if (dataLen == 0) return true;
                     }
                 }
             }
 
-            return decData;
+            return true;
         }
 
-        public override unsafe byte[] Compress(byte[] buffer, int offset, int count)
+        public override unsafe bool Compress(byte[] buffer, int offset, int count, out byte[] output)
         {
-            if (count > 0xFFFFFF) throw new LZ77StreamException("Input data too large");
+            if (count > 0xFFFFFF) throw new CompressedStreamException("Input data too large");
 
-            MemoryStream outstream = new MemoryStream();
+            MemoryStream outStream = new MemoryStream();
 
-            outstream.WriteByte(0x10);
-            outstream.WriteByte((byte)(count & 0xFF));
-            outstream.WriteByte((byte)((count >> 8) & 0xFF));
-            outstream.WriteByte((byte)((count >> 16) & 0xFF));
+            outStream.WriteByte((byte)CompressionType.LZ77);
+            outStream.WriteByte((byte)(count & 0xFF));
+            outStream.WriteByte((byte)((count >> 8) & 0xFF));
+            outStream.WriteByte((byte)((count >> 16) & 0xFF));
 
             int compressedLength = 4;
 
@@ -112,7 +122,7 @@ namespace Yggdrasil.DataCompression
                 {
                     if (bufferedBlocks == 8)
                     {
-                        outstream.Write(outbuffer, 0, bufferlength);
+                        outStream.Write(outbuffer, 0, bufferlength);
                         compressedLength += bufferlength;
 
                         outbuffer[0] = 0;
@@ -145,12 +155,14 @@ namespace Yggdrasil.DataCompression
 
                 if (bufferedBlocks > 0)
                 {
-                    outstream.Write(outbuffer, 0, bufferlength);
+                    outStream.Write(outbuffer, 0, bufferlength);
                     compressedLength += bufferlength;
                 }
             }
 
-            return outstream.ToArray();
+            output = outStream.ToArray();
+
+            return true;
         }
 
         public unsafe int GetOccurrenceLength(byte* newPtr, int newLength, byte* oldPtr, int oldLength, out int disp, int minDisp = 1)

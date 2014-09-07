@@ -21,6 +21,8 @@ namespace Yggdrasil
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            //Yggdrasil.DataCompression.RLEStream.Test();
+
             // temporary stupid "file where I ident kanji -> file with C#-dictionary-like text" converter
             /*using (System.IO.StreamReader sr = System.IO.File.OpenText(@"C:\Users\Daniel\Desktop\eo-jpn.txt"))
             {

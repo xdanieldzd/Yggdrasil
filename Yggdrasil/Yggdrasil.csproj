@@ -90,7 +90,7 @@
     <Compile Include="DataCompression\LZ77Stream.cs" />
     <Compile Include="DataCompression\RLEStream.cs" />
     <Compile Include="Exceptions\GameDataManagerException.cs" />
-    <Compile Include="Exceptions\LZ77StreamException.cs" />
+    <Compile Include="Exceptions\CompressedStreamException.cs" />
     <Compile Include="FileHandling\ArchiveFile.cs" />
     <Compile Include="Forms\ModernForm.cs">
       <SubType>Form</SubType>

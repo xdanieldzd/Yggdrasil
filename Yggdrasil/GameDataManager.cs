@@ -429,10 +429,10 @@ namespace Yggdrasil
                 List<string> filePaths = Directory.EnumerateFiles(localDataPath, "*.bin", SearchOption.AllDirectories).ToList();
                 foreach (string filePath in filePaths)
                 {
+                    loadWaitWorker.ReportProgress(-1, string.Format("Reading {0}...", Path.GetFileName(filePath)));
+
                     ArchiveFile archive = new ArchiveFile(this, filePath);
                     archives.Add(archive);
-
-                    loadWaitWorker.ReportProgress(-1, string.Format("Reading {0}...", Path.GetFileName(filePath)));
                 }
             }
 

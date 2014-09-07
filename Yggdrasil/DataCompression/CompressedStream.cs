@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
+using Yggdrasil.Exceptions;
+
 namespace Yggdrasil.DataCompression
 {
     public enum CompressionMode { Decompress, Compress };
@@ -25,24 +27,30 @@ namespace Yggdrasil.DataCompression
             {
                 OriginalStream = new MemoryStream(buffer, offset, count);
 
-                byte[] decompressed = Decompress(buffer, offset);
+                byte[] decompressed;
+                if (!Decompress(buffer, offset, out decompressed))
+                    throw new CompressedStreamException(string.Format("{0} decompression failed.", this.GetType().Name));
+
                 base.Write(decompressed, 0, decompressed.Length);
             }
             else if (CompressionMode == CompressionMode.Compress)
             {
                 OriginalStream = new MemoryStream(buffer, offset, count);
 
-                byte[] compressed = Compress(buffer, offset, count);
+                byte[] compressed;
+                if (!Compress(buffer, offset, count, out compressed))
+                    throw new CompressedStreamException(string.Format("{0} compression failed.", this.GetType().Name));
+
                 base.Write(compressed, 0, compressed.Length);
             }
         }
 
-        public virtual byte[] Decompress(byte[] buffer, int sOffset)
+        public virtual bool Decompress(byte[] buffer, int sOffset, out byte[] output)
         {
             throw new NotImplementedException(string.Format("Decompression not implemented for compression type {0}", this.GetType().FullName));
         }
 
-        public virtual byte[] Compress(byte[] buffer, int offset, int count)
+        public virtual bool Compress(byte[] buffer, int offset, int count, out byte[] output)
         {
             throw new NotImplementedException(string.Format("Compression not implemented for compression type {0}", this.GetType().FullName));
         }
