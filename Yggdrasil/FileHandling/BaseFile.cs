@@ -18,6 +18,7 @@ namespace Yggdrasil.FileHandling
         public ArchiveFile ArchiveFile { get; private set; }
         public int FileNumber { get; private set; }
         public MemoryStream Stream { get; set; }
+        public Type OriginalStreamType { get; private set; }
 
         public BaseFile(GameDataManager gameDataManager, string path)
         {
@@ -32,6 +33,8 @@ namespace Yggdrasil.FileHandling
                     Stream = new LZ77Stream(CompressionMode.Decompress);
                 else
                     Stream = new MemoryStream();
+
+                OriginalStreamType = Stream.GetType();
 
                 fileStream.CopyTo(Stream);
 
@@ -49,6 +52,8 @@ namespace Yggdrasil.FileHandling
             ArchiveFile = archiveFile;
             FileNumber = fileNumber;
             Stream = memoryStream;
+
+            OriginalStreamType = Stream.GetType();
 
             Parse();
         }

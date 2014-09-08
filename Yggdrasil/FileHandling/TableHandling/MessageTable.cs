@@ -21,6 +21,9 @@ namespace Yggdrasil.FileHandling.TableHandling
         public uint[] MessageOffsets { get; private set; }
 
         public EtrianString[] Messages { get; private set; }
+        EtrianString[] originalMessages;
+
+        public bool HasChanges { get { return !originalMessages.CompareElements(Messages, (IEqualityComparer<EtrianString>)new EtrianString.EtrianStringComparer()); } }
 
         protected override void Parse()
         {
@@ -42,12 +45,16 @@ namespace Yggdrasil.FileHandling.TableHandling
             byte[] fileData = TableFile.Stream.ToArray();
 
             Messages = new EtrianString[NumMessages];
+            originalMessages = new EtrianString[NumMessages];
+
             for (int i = 0; i < NumMessages; i++)
             {
                 if (MessageOffsets[i] == 0)
-                    Messages[i] = string.Empty;
+                    Messages[i] = new EtrianString(string.Empty);
                 else
-                    Messages[i] = new EtrianString(fileData, (int)(Offset + 0x10 + MessageOffsets[i]));
+                    Messages[i] = new EtrianString(fileData, (int)(Offset + 0x10 + MessageOffsets[i]), GameDataManager.ItemDataPropertyChanged);
+
+                originalMessages[i] = new EtrianString(Messages[i].RawData);
             }
         }
 
@@ -69,8 +76,10 @@ namespace Yggdrasil.FileHandling.TableHandling
             int offset = messageDataLocation;
             for (int i = 0; i < NumMessages; i++)
             {
-                if (Messages[i] != string.Empty)
+                if (Messages[i].ConvertedString != string.Empty)
                 {
+                    originalMessages[i] = new EtrianString(Messages[i].RawData);
+
                     foreach (ushort val in Messages[i].RawData) messageData.AddRange(BitConverter.GetBytes(val));
                     messageData.AddRange(new byte[2]);
 

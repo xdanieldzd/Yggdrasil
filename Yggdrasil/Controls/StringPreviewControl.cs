@@ -8,12 +8,16 @@ using System.Text;
 using System.Windows.Forms;
 
 using Yggdrasil.TextHandling;
+using Yggdrasil.FileHandling.TableHandling;
 
 namespace Yggdrasil.Controls
 {
     public partial class StringPreviewControl : UserControl
     {
         GameDataManager gameDataManager;
+        MessageTable messageTable;
+        int messageNo;
+
         EtrianString etrianString;
 
         bool isInitializing;
@@ -28,10 +32,13 @@ namespace Yggdrasil.Controls
             this.txtString.TextChanged += new EventHandler(txtString_TextChanged);
         }
 
-        public void Initialize(GameDataManager game, EtrianString etrianString)
+        public void Initialize(GameDataManager gameDataManager, MessageTable messageTable, int messageNo)
         {
-            this.gameDataManager = game;
-            this.etrianString = etrianString;
+            this.gameDataManager = gameDataManager;
+            this.messageTable = messageTable;
+            this.messageNo = messageNo;
+
+            this.etrianString = this.messageTable.Messages[this.messageNo];
 
             isInitializing = true;
             UpdateString();
@@ -61,9 +68,9 @@ namespace Yggdrasil.Controls
 
         private void txtString_TextChanged(object sender, EventArgs e)
         {
-            if (isInitializing) return;
+            if (isInitializing || this.etrianString == null) return;
 
-            this.etrianString = txtString.Text;
+            this.gameDataManager.SetMessageString(messageTable, messageNo, txtString.Text);
             UpdateString();
         }
     }

@@ -24,7 +24,7 @@ namespace Yggdrasil
             get { return tsslStatus.Text; }
             set
             {
-                if (InvokeRequired) Invoke(new Action(() => { tsslStatus.Text = value; }));
+                if (InvokeRequired) BeginInvoke(new Action(() => { tsslStatus.Text = value; }));
                 else tsslStatus.Text = value;
             }
         }
@@ -59,7 +59,7 @@ namespace Yggdrasil
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            e.Cancel = (gameDataManager.DataHasChanged &&
+            e.Cancel = ((gameDataManager.DataHasChanged || gameDataManager.MessageFileHasChanged) &&
                 MessageBox.Show("Data has been changed. Discard changes and quit without saving?", "Unsaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No);
         }
 
@@ -110,9 +110,10 @@ namespace Yggdrasil
 
         private void gameDataManager_ItemDataPropertyChangedEvent(object sender, PropertyChangedEventArgs e)
         {
-            if (gameDataManager.DataHasChanged)
+            if (gameDataManager.DataHasChanged || gameDataManager.MessageFileHasChanged)
             {
-                StatusText = string.Format("Ready; {0} {1} changed", gameDataManager.ChangedDataCount, (gameDataManager.ChangedDataCount != 1 ? "entries" : "entry"));
+                int changeCount = (gameDataManager.ChangedDataCount + gameDataManager.ChangedMessageFileCount);
+                StatusText = string.Format("Ready; {0} {1} changed", changeCount, (changeCount != 1 ? "entries" : "entry"));
                 saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = true;
             }
             else
@@ -153,7 +154,7 @@ namespace Yggdrasil
 
         private void CommandSave()
         {
-            if (gameDataManager.DataHasChanged)
+            if (gameDataManager.DataHasChanged || gameDataManager.MessageFileHasChanged)
             {
                 int changedFiles = gameDataManager.SaveAllChanges();
 

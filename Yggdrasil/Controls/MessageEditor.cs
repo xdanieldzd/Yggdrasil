@@ -115,7 +115,7 @@ namespace Yggdrasil.Controls
 
                     int truncatePosition = messageTable.Messages[j].ConvertedString.IndexOf(Environment.NewLine);
                     if (truncatePosition == -1) truncatePosition = (gameDataManager.Version == GameDataManager.Versions.Japanese ? 12 : 24);
-                    TreeNode messageNode = new TreeNode(messageTable.Messages[j].ConvertedString.Truncate(truncatePosition)) { Tag = messageTable.Messages[j] };
+                    TreeNode messageNode = new TreeNode(messageTable.Messages[j].ConvertedString.Truncate(truncatePosition)) { Tag = new Tuple<MessageTable, int>(messageTable, j) };
                     tableNode.Nodes.Add(messageNode);
                 }
             }
@@ -134,8 +134,11 @@ namespace Yggdrasil.Controls
 
         private void tvMessageFiles_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Tag is EtrianString)
-                stringPreviewControl.Initialize(gameDataManager, e.Node.Tag as EtrianString);
+            if (e.Node.Tag is Tuple<MessageTable, int>)
+            {
+                Tuple<MessageTable, int> data = (e.Node.Tag as Tuple<MessageTable, int>);
+                stringPreviewControl.Initialize(gameDataManager, data.Item1, data.Item2);
+            }
             else
                 stringPreviewControl.Terminate();
         }

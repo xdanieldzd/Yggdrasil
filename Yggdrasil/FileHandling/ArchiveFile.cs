@@ -69,9 +69,9 @@ namespace Yggdrasil.FileHandling
             {
                 Blocks[i].Save();
 
-                CompressedStream stream = (CompressedStream)
-                    (Blocks[i].Stream is CompressedStream ?
-                    Activator.CreateInstance(Blocks[i].Stream.GetType(), new object[] { CompressionMode.Compress }) :
+                MemoryStream stream = (MemoryStream)
+                    (Blocks[i].OriginalStreamType.BaseType == typeof(CompressedStream) ?
+                    Activator.CreateInstance(Blocks[i].OriginalStreamType, new object[] { CompressionMode.Compress }) :
                     new MemoryStream());
 
                 Blocks[i].Stream.CopyTo(stream);

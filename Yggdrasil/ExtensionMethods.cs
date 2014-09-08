@@ -126,5 +126,21 @@ namespace Yggdrasil
         {
             return coll.Cast<TreeNode>().Concat(coll.Cast<TreeNode>().SelectMany(x => FlattenTree(x.Nodes)));
         }
+
+        public static bool CompareElements<T>(this T[] array1, T[] array2, IEqualityComparer<T> comparer = null)
+        {
+            if (ReferenceEquals(array1, array2)) return true;
+            if (array1 == null || array2 == null) return false;
+            if (array1.Length != array2.Length) return false;
+
+            if (comparer == null) comparer = EqualityComparer<T>.Default;
+
+            for (int i = 0; i < array1.Length; i++)
+            {
+                if (!comparer.Equals(array1[i], array2[i])) return false;
+            }
+
+            return true;
+        }
     }
 }

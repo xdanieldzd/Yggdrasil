@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
+using System.ComponentModel;
 
 namespace Yggdrasil.TextHandling
 {
-    public class EtrianString
+    public class EtrianString : INotifyPropertyChanged
     {
         #region European/American character map
 
@@ -1920,8 +1921,11 @@ namespace Yggdrasil.TextHandling
 
         #endregion
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public static Dictionary<ushort, char> CharacterMap { get; private set; }
 
+        ushort[] originalData;
         public ushort[] RawData { get; private set; }
         public string ConvertedString { get; private set; }
 
@@ -1938,7 +1942,45 @@ namespace Yggdrasil.TextHandling
             }
         }
 
-        public EtrianString(string textString)
+        public bool HasChanged { get { return !originalData.CompareElements(RawData); } }
+
+        public EtrianString(string textString, PropertyChangedEventHandler propertyChanged = null)
+        {
+            Update(textString);
+
+            originalData = new ushort[RawData.Length];
+            Buffer.BlockCopy(RawData, 0, originalData, 0, originalData.Length);
+
+            PropertyChanged = propertyChanged;
+        }
+
+        public EtrianString(byte[] data, int offset, PropertyChangedEventHandler propertyChanged = null)
+        {
+            int stringLength = -1;
+            for (int i = 2; i < 0x2000; i += 2)
+            {
+                if (BitConverter.ToUInt16(data, offset + i) == 0x0000 &&
+                    BitConverter.ToUInt16(data, offset + i - 2) != 0x8004)
+                {
+                    stringLength = i / 2;
+                    break;
+                }
+            }
+
+            originalData = new ushort[stringLength];
+            Buffer.BlockCopy(data, offset, originalData, 0, originalData.Length * 2);
+            Update(originalData);
+
+            PropertyChanged = propertyChanged;
+        }
+
+        public EtrianString(ushort[] data)
+        {
+            originalData = data;
+            Update(originalData);
+        }
+
+        public void Update(string textString)
         {
             ConvertedString = textString;
 
@@ -1976,32 +2018,12 @@ namespace Yggdrasil.TextHandling
             }
 
             RawData = newRaw.ToArray();
+
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs("RawData"));
         }
 
-        public EtrianString(ushort[] data)
-        {
-            ParseString(data);
-        }
-
-        public EtrianString(byte[] data, int offset)
-        {
-            int stringLength = -1;
-            for (int i = 2; i < 0x2000; i += 2)
-            {
-                if (BitConverter.ToUInt16(data, offset + i) == 0x0000 &&
-                    BitConverter.ToUInt16(data, offset + i - 2) != 0x8004)
-                {
-                    stringLength = i / 2;
-                    break;
-                }
-            }
-
-            ushort[] strData = new ushort[stringLength];
-            Buffer.BlockCopy(data, offset, strData, 0, strData.Length * 2);
-            ParseString(strData);
-        }
-
-        private void ParseString(ushort[] data)
+        public void Update(ushort[] data)
         {
             RawData = data;
 
@@ -2030,32 +2052,27 @@ namespace Yggdrasil.TextHandling
             }
             else
                 ConvertedString = string.Empty;
-        }
 
-        public static implicit operator EtrianString(string textString)
-        {
-            if (textString == null) return null;
-
-            return new EtrianString(textString);
-        }
-
-        public static implicit operator EtrianString(ushort[] data)
-        {
-            if (data == null) return null;
-
-            return new EtrianString(data);
-        }
-
-        public static implicit operator string(EtrianString etrianString)
-        {
-            if (etrianString == null) return null;
-
-            return etrianString.ConvertedString;
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs("ConvertedString"));
         }
 
         public override string ToString()
         {
             return ConvertedString;
+        }
+
+        public class EtrianStringComparer : IEqualityComparer<EtrianString>
+        {
+            public bool Equals(EtrianString x, EtrianString y)
+            {
+                return x.RawData.CompareElements(y.RawData);
+            }
+
+            public int GetHashCode(EtrianString codeh)
+            {
+                return codeh.RawData.GetHashCode();
+            }
         }
     }
 }

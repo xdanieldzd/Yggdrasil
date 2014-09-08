@@ -547,7 +547,7 @@ namespace Yggdrasil
             TableFile messageFile = GetMessageFile(filename);
             MessageTable messageTable = (messageFile.Tables[tableNo] as MessageTable);
 
-            for (ushort number = 1; number <= messageTable.NumMessages; number++) dict.Add(number, messageTable.Messages[number - 1]);
+            for (ushort number = 1; number <= messageTable.NumMessages; number++) dict.Add(number, messageTable.Messages[number - 1].ConvertedString);
 
             return dict;
         }
@@ -586,9 +586,10 @@ namespace Yggdrasil
             foreach (MiscItemParser parser in ParsedData.Where(x => (x is MiscItemParser))) GeneralItemNames.Add(parser.ItemNumber, parser.Name);
         }
 
-        private void ItemDataPropertyChanged(object sender, PropertyChangedEventArgs e)
+        public void ItemDataPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             changedParsedData = ParsedData.Where(x => x.HasChanged).ToList();
+            changedMessageFiles = MessageFiles.Where(x => x.Tables.Any(y => (y is MessageTable) && (y as MessageTable).HasChanges)).ToList();
 
             if (sender is EncounterParser) GenerateOtherDictionaries();
 
@@ -642,11 +643,15 @@ namespace Yggdrasil
             return messageFile;
         }
 
-        public void SetMessageString(string filename, int tableNo, int messageNo, EtrianString message)
+        public void SetMessageString(string filename, int tableNo, int messageNo, string message)
         {
             TableFile messageFile = GetMessageFile(filename);
-            (messageFile.Tables[tableNo] as MessageTable).Messages[messageNo] = message;
-            if (!changedMessageFiles.Contains(messageFile)) changedMessageFiles.Add(messageFile);
+            SetMessageString((messageFile.Tables[tableNo] as MessageTable), messageNo, message);
+        }
+
+        public void SetMessageString(MessageTable table, int messageNo, string message)
+        {
+            table.Messages[messageNo].Update(message);
         }
 
         public List<TreeNode> GenerateTreeNodes(Type parserType, Action<TreeNode, List<BaseParser>> customChildCreator = null)
