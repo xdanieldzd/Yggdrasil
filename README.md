@@ -3,7 +3,8 @@ Yggdrasil
 
 A work-in-progress editor for Etrian Odyssey, written in C#.
 
-![Yggdrasil](http://i.imgur.com/gA0CNMP.png)
+![Yggdrasil](http://i.imgur.com/L1MJmH7.png)
+![Yggdrasil](http://i.imgur.com/4j2M2QW.png)
 
 Requirements
 ============
