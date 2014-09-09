@@ -63,7 +63,11 @@ namespace Yggdrasil
         }
         public event EventHandler SelectedLanguageChangedEvent;
 
-        string mainFontFilename, smallFontFilename;
+        public string MainFontFilename { get; private set; }
+        public string SmallFontFilename { get; private set; }
+        public int MainFontInfoOffset { get; private set; }
+        public int SmallFontInfoOffset { get; private set; }
+
         Dictionary<Languages, string> langSuffixes = new Dictionary<Languages, string>()
         {
             { Languages.German, "_DE" },
@@ -78,7 +82,8 @@ namespace Yggdrasil
 
         public bool IsInitialized { get; private set; }
 
-        public FontRenderer FontRenderer { get; private set; }
+        public FontRenderer MainFontRenderer { get; private set; }
+        public FontRenderer SmallFontRenderer { get; private set; }
 
         List<ArchiveFile> archives;
 
@@ -138,8 +143,10 @@ namespace Yggdrasil
                     loadWaitWorker.ReportProgress(-1, "Generating character map...");
                     EtrianString.GameVersion = Version;
 
-                    loadWaitWorker.ReportProgress(-1, "Initializing font renderer...");
-                    FontRenderer = new FontRenderer(this, Path.Combine(path, mainFontFilename + ".ntft"));
+                    loadWaitWorker.ReportProgress(-1, "Initializing font renderers...");
+                    ushort characterCount = (ushort)((SmallFontInfoOffset - MainFontInfoOffset) / 2);
+                    MainFontRenderer = new FontRenderer(this, Path.Combine(path, MainFontFilename + ".ntft"), MainFontInfoOffset, characterCount);
+                    SmallFontRenderer = new FontRenderer(this, Path.Combine(path, SmallFontFilename + ".ntft"), SmallFontInfoOffset, characterCount);
 
                     MessageFiles = ReadDataTablesByExtension(new string[] { ".mbb", ".tbb" }, messageDirs);
                     dataTableFiles = ReadDataTablesByExtension(new string[] { ".tbb" }, dataDirs);
@@ -239,20 +246,25 @@ namespace Yggdrasil
             {
                 case "AKYP":
                     Version = Versions.European;
-                    mainFontFilename = "data\\Data\\Tex\\Font\\Font14x11_00";
-                    smallFontFilename = "data\\Data\\Tex\\Font\\Font10x9_00";
+                    MainFontFilename = "data\\Data\\Tex\\Font\\Font14x11_00";
+                    SmallFontFilename = "data\\Data\\Tex\\Font\\Font10x9_00";
+                    MainFontInfoOffset = 0xB79B4;
+                    SmallFontInfoOffset = MainFontInfoOffset + 0x180;
                     break;
 
                 case "AKYE":
                     Version = Versions.American;
-                    mainFontFilename = "data\\Data\\Tex\\Font\\Font10x5_00";
-                    smallFontFilename = "data\\Data\\Tex\\Font\\Font8x4_00";
+                    MainFontFilename = "data\\Data\\Tex\\Font\\Font10x5_00";
+                    SmallFontFilename = "data\\Data\\Tex\\Font\\Font8x4_00";
+                    MainFontInfoOffset = 0xD5C04;
+                    SmallFontInfoOffset = MainFontInfoOffset + 0xC0;
                     break;
 
                 case "AKYJ":
                     Version = Versions.Japanese;
-                    mainFontFilename = "data\\Data\\Tex\\Font\\Font10x10_00";
-                    smallFontFilename = "data\\Data\\Tex\\Font\\Font8x8_00";
+                    MainFontFilename = "data\\Data\\Tex\\Font\\Font10x10_00";
+                    SmallFontFilename = "data\\Data\\Tex\\Font\\Font8x8_00";
+                    MainFontInfoOffset = SmallFontInfoOffset = -1;
                     break;
 
                 default: throw new Exceptions.GameDataManagerException("Unsupported game data.");
@@ -293,8 +305,8 @@ namespace Yggdrasil
                     
                     new Tuple<string, string, string, bool, bool>("data\\Data\\Battle", "BtlMess.cmp", "BtlMess.mbb", true, true),
 
-                    new Tuple<string, string, string, bool, bool>("data\\Data\\Tex\\Font", Path.GetFileName(mainFontFilename) + ".cmp", Path.GetFileName(mainFontFilename) + ".ntft", false, false),
-                    new Tuple<string, string, string, bool, bool>("data\\Data\\Tex\\Font", Path.GetFileName(smallFontFilename) + ".cmp", Path.GetFileName(smallFontFilename) + ".ntft", false, false),
+                    new Tuple<string, string, string, bool, bool>("data\\Data\\Tex\\Font", Path.GetFileName(MainFontFilename) + ".cmp", Path.GetFileName(MainFontFilename) + ".ntft", false, false),
+                    new Tuple<string, string, string, bool, bool>("data\\Data\\Tex\\Font", Path.GetFileName(SmallFontFilename) + ".cmp", Path.GetFileName(SmallFontFilename) + ".ntft", false, false),
                 };
 
             List<Tuple<string, string, string, bool, bool>> dirExtTuplesLocalized = new List<Tuple<string, string, string, bool, bool>>();

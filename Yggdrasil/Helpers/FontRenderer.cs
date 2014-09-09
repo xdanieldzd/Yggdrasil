@@ -16,18 +16,19 @@ namespace Yggdrasil.Helpers
         public GameDataManager GameDataManager { get; private set; }
         public string Filename { get; private set; }
 
-        byte[] fontRaw, paletteRaw;
+        byte[] fontRaw, paletteRaw, lrOffsetRaw;
         List<Color> palette;
         Bitmap fontImage;
 
         public Bitmap FontImage { get { return fontImage; } }
         public Size CharacterSize { get; private set; }
+        public List<Tuple<byte, byte>> CharacterLROffsets { get; private set; }
         public List<Character> Characters { get; private set; }
 
-        public FontRenderer(GameDataManager gameDataManager, string path)
+        public FontRenderer(GameDataManager gameDataManager, string fontPath, int arm9LROffset, ushort characterCount)
         {
             this.GameDataManager = gameDataManager;
-            Filename = path;
+            Filename = fontPath;
             fontRaw = File.ReadAllBytes(Filename);
 
             paletteRaw = File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(Filename), Path.GetFileNameWithoutExtension(Filename) + ".ntfp"));
@@ -78,54 +79,40 @@ namespace Yggdrasil.Helpers
             }
 
             Characters = new List<Character>();
-            ushort id = 1;
+            ushort id = 0;
             int height = (fontOrgHeight / CharacterSize.Height);
             int width = (fontOrgWidth / CharacterSize.Width);
+
+            if (arm9LROffset != -1)
+            {
+                lrOffsetRaw = new byte[characterCount * 2];
+                byte[] arm9data = File.ReadAllBytes(Path.Combine(gameDataManager.DataPath, "arm9.bin"));
+                Buffer.BlockCopy(arm9data, arm9LROffset, lrOffsetRaw, 0, lrOffsetRaw.Length);
+
+                CharacterLROffsets = new List<Tuple<byte, byte>>();
+                for (int i = 0; i < lrOffsetRaw.Length; i += 2)
+                {
+                    CharacterLROffsets.Add(new Tuple<byte, byte>(lrOffsetRaw[i], lrOffsetRaw[i + 1]));
+                }
+            }
+
             for (int y = 0; y < height * CharacterSize.Height; y += CharacterSize.Height)
             {
                 for (int x = 0; x < width * CharacterSize.Width; x += CharacterSize.Width)
                 {
-                    int charWidth = -1, offset = 0;
-                    Bitmap chrBmp = new Bitmap(CharacterSize.Width, CharacterSize.Height);
+                    byte chrLeftOffset = (byte)(CharacterLROffsets != null ? CharacterLROffsets[id].Item1 : 0);
+                    byte chrRightOffset = (byte)(CharacterLROffsets != null ? CharacterLROffsets[id].Item2 : 0);
+                    Bitmap chrBmp = new Bitmap(CharacterSize.Width - (chrLeftOffset + chrRightOffset) + 1, CharacterSize.Height);
 
                     using (Graphics g = Graphics.FromImage(chrBmp))
                     {
-                        for (int xx = 0; xx < CharacterSize.Width; xx++)
-                        {
-                            int filled = 0;
-                            for (int yy = 0; yy < CharacterSize.Height; yy++)
-                            {
-                                if (fontImage.GetPixel(x + xx, y + yy).A != 0) filled++;
-                            }
-
-                            if (filled > 0)
-                            {
-                                offset = xx;
-                                break;
-                            }
-                        }
-
-                        for (int xx = offset; xx < CharacterSize.Width; xx++)
-                        {
-                            int filled = 0;
-                            for (int yy = 0; yy < CharacterSize.Height; yy++)
-                            {
-                                if (fontImage.GetPixel(x + xx, y + yy).A != 0) filled++;
-                            }
-
-                            if (filled > 0 && charWidth < (xx - offset))
-                            {
-                                charWidth = (xx - offset);
-                            }
-                        }
-                        if (charWidth == -1) charWidth = 1;
-                        charWidth += 2;
-
                         g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                        g.DrawImage(fontImage, new Rectangle(0, 0, charWidth, chrBmp.Height), new Rectangle(x + offset, y, charWidth, CharacterSize.Height), GraphicsUnit.Pixel);
+                        g.DrawImage(fontImage, new Rectangle(0, 0, chrBmp.Width - 1, chrBmp.Height), new Rectangle(x + chrLeftOffset, y, chrBmp.Width - 1, chrBmp.Height), GraphicsUnit.Pixel);
                     }
 
-                    Characters.Add(new Character(id++, chrBmp, charWidth));
+                    Characters.Add(new Character(id++, chrBmp, chrLeftOffset, chrRightOffset));
+
+                    if (characterCount != 0 && id >= characterCount) return;
                 }
             }
         }
@@ -168,7 +155,18 @@ namespace Yggdrasil.Helpers
 
         public Bitmap RenderString(EtrianString str, int width = 256, int spacingModifier = 0)
         {
-            int newLines = str.RawData.Count(xx => (xx == 0x8001 || xx == 0x8002)) + 1;
+            int newLines = 1;
+            for (int i = 0; i < str.RawData.Length; i++)
+            {
+                if (i + 1 < str.RawData.Length && (str.RawData[i] == 0x8001 && str.RawData[i + 1] == 0x8002))
+                {
+                    newLines++;
+                    i++;
+                }
+                else if (str.RawData[i] == 0x8001 || str.RawData[i] == 0x8002)
+                    newLines++;
+            }
+
             int yIncrease = (CharacterSize.Height + (GameDataManager.Version == Yggdrasil.GameDataManager.Versions.Japanese ? 2 : 0) - 1);
 
             Bitmap rendered = new Bitmap(width, Math.Max(newLines, 1) * yIncrease);
@@ -221,11 +219,11 @@ namespace Yggdrasil.Helpers
                     }
                     else
                     {
-                        Character chrData = Characters.FirstOrDefault(xx => xx.ID == str.RawData[i]);
+                        Character chrData = Characters.FirstOrDefault(xx => xx.ID == (ushort)((str.RawData[i] & 0xFF00) | (str.RawData[i] & 0xFF) - 1));
                         if (chrData != null)
                         {
                             g.DrawImage(chrData.Image, new Rectangle(x, y, chrData.Image.Width, chrData.Image.Height), 0, 0, chrData.Image.Width, chrData.Image.Height, GraphicsUnit.Pixel, imageAttrib);
-                            x += chrData.Width + spacingModifier;
+                            x += (chrData.Image.Width + spacingModifier);
                         }
                     }
                 }
@@ -247,13 +245,15 @@ namespace Yggdrasil.Helpers
         {
             public ushort ID { get; private set; }
             public Bitmap Image { get; private set; }
-            public int Width { get; private set; }
+            public byte LeftOffset { get; private set; }
+            public byte RightOffset { get; private set; }
 
-            public Character(ushort id, Bitmap image, int width)
+            public Character(ushort id, Bitmap image, byte leftOffset, byte rightOffset)
             {
                 ID = id;
                 Image = image;
-                Width = width;
+                LeftOffset = leftOffset;
+                RightOffset = rightOffset;
             }
         }
     }

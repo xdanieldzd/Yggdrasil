@@ -211,7 +211,7 @@
             this.tpMessages.Location = new System.Drawing.Point(4, 22);
             this.tpMessages.Name = "tpMessages";
             this.tpMessages.Padding = new System.Windows.Forms.Padding(3);
-            this.tpMessages.Size = new System.Drawing.Size(696, 485);
+            this.tpMessages.Size = new System.Drawing.Size(696, 480);
             this.tpMessages.TabIndex = 1;
             this.tpMessages.Text = "Messages";
             this.tpMessages.UseVisualStyleBackColor = true;
@@ -222,7 +222,7 @@
             this.messageEditor.Enabled = false;
             this.messageEditor.Location = new System.Drawing.Point(3, 3);
             this.messageEditor.Name = "messageEditor";
-            this.messageEditor.Size = new System.Drawing.Size(690, 479);
+            this.messageEditor.Size = new System.Drawing.Size(690, 474);
             this.messageEditor.TabIndex = 0;
             // 
             // toolStrip1
