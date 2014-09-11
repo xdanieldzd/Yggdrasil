@@ -67,7 +67,7 @@ namespace Yggdrasil.Controls
 
             renderedString =
                 (chkSmallFont.Checked ? this.gameDataManager.SmallFontRenderer : this.gameDataManager.MainFontRenderer)
-                .RenderString(this.etrianString, 256, (chkSpacing.Checked ? 1 : 0));
+                .RenderString(this.etrianString, 256, (chkSpacing.Checked ? 1 : 0), (chkZoom.Checked ? 2 : 1));
 
             pbPreview.Image = renderedString;
         }
@@ -86,6 +86,11 @@ namespace Yggdrasil.Controls
         }
 
         private void chkSmallFont_CheckedChanged(object sender, EventArgs e)
+        {
+            RenderString();
+        }
+
+        private void chkZoom_CheckedChanged(object sender, EventArgs e)
         {
             RenderString();
         }

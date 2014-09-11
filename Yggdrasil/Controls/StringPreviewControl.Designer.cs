@@ -33,6 +33,7 @@
             this.chkSpacing = new System.Windows.Forms.CheckBox();
             this.pnlPreview = new System.Windows.Forms.Panel();
             this.chkSmallFont = new System.Windows.Forms.CheckBox();
+            this.chkZoom = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbPreview)).BeginInit();
             this.pnlPreview.SuspendLayout();
             this.SuspendLayout();
@@ -88,21 +89,38 @@
             // 
             // chkSmallFont
             // 
-            this.chkSmallFont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkSmallFont.AutoSize = true;
-            this.chkSmallFont.Location = new System.Drawing.Point(303, 240);
+            this.chkSmallFont.Location = new System.Drawing.Point(132, 240);
             this.chkSmallFont.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.chkSmallFont.Name = "chkSmallFont";
-            this.chkSmallFont.Size = new System.Drawing.Size(97, 17);
+            this.chkSmallFont.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
+            this.chkSmallFont.Size = new System.Drawing.Size(103, 17);
             this.chkSmallFont.TabIndex = 3;
             this.chkSmallFont.Text = "Use Small Font";
             this.chkSmallFont.UseVisualStyleBackColor = true;
             this.chkSmallFont.CheckedChanged += new System.EventHandler(this.chkSmallFont_CheckedChanged);
             // 
+            // chkZoom
+            // 
+            this.chkZoom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkZoom.AutoSize = true;
+            this.chkZoom.Checked = true;
+            this.chkZoom.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkZoom.Location = new System.Drawing.Point(335, 240);
+            this.chkZoom.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.chkZoom.Name = "chkZoom";
+            this.chkZoom.Padding = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.chkZoom.Size = new System.Drawing.Size(65, 17);
+            this.chkZoom.TabIndex = 4;
+            this.chkZoom.Text = "Zoom";
+            this.chkZoom.UseVisualStyleBackColor = true;
+            this.chkZoom.CheckedChanged += new System.EventHandler(this.chkZoom_CheckedChanged);
+            // 
             // StringPreviewControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.chkZoom);
             this.Controls.Add(this.chkSmallFont);
             this.Controls.Add(this.pnlPreview);
             this.Controls.Add(this.txtString);
@@ -125,5 +143,6 @@
         private System.Windows.Forms.CheckBox chkSpacing;
         private System.Windows.Forms.Panel pnlPreview;
         private System.Windows.Forms.CheckBox chkSmallFont;
+        private System.Windows.Forms.CheckBox chkZoom;
     }
 }

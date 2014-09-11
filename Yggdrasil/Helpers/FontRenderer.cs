@@ -49,12 +49,13 @@ namespace Yggdrasil.Helpers
             var matches = Regex.Matches(Path.GetFileName(Filename), "([0-9]{2})|([0-9])");
             if (matches.Count < 2) throw new Exception("Cannot extract font size from filename");
 
+            CharacterSize = new Size(int.Parse(matches[1].Value), int.Parse(matches[0].Value));
+
             int fontOrgWidth = 0, fontOrgHeight = 0;
 
             switch (gameDataManager.Version)
             {
                 case GameDataManager.Versions.European:
-                    CharacterSize = new Size(int.Parse(matches[1].Value), int.Parse(matches[0].Value));
                     fontImage = new Bitmap(256, 128);
                     fontOrgWidth = fontImage.Width;
                     fontOrgHeight = fontImage.Height;
@@ -62,15 +63,14 @@ namespace Yggdrasil.Helpers
                     break;
 
                 case GameDataManager.Versions.American:
-                    CharacterSize = new Size(int.Parse(matches[1].Value) + 1, int.Parse(matches[0].Value));
+                    CharacterSize = new Size(CharacterSize.Width + 2, CharacterSize.Height);
                     fontImage = new Bitmap(128, 64);
                     fontOrgWidth = CharacterSize.Width * 16;
-                    fontOrgHeight = fontImage.Height;
+                    fontOrgHeight = CharacterSize.Height * 16;
                     Convert4bpp(ref fontImage, fontRaw, palette);
                     break;
 
                 case GameDataManager.Versions.Japanese:
-                    CharacterSize = new Size(int.Parse(matches[1].Value), int.Parse(matches[0].Value));
                     fontImage = new Bitmap(512, 512);
                     fontOrgWidth = fontImage.Width;
                     fontOrgHeight = fontImage.Height;
@@ -80,8 +80,8 @@ namespace Yggdrasil.Helpers
 
             Characters = new List<Character>();
             ushort id = 0;
-            int height = (fontOrgHeight / CharacterSize.Height);
-            int width = (fontOrgWidth / CharacterSize.Width);
+            int height = (fontOrgHeight / CharacterSize.Height) * CharacterSize.Height;
+            int width = (fontOrgWidth / CharacterSize.Width) * CharacterSize.Width;
 
             if (arm9LROffset != -1)
             {
@@ -96,9 +96,9 @@ namespace Yggdrasil.Helpers
                 }
             }
 
-            for (int y = 0; y < height * CharacterSize.Height; y += CharacterSize.Height)
+            for (int y = 0; y < height; y += CharacterSize.Height)
             {
-                for (int x = 0; x < width * CharacterSize.Width; x += CharacterSize.Width)
+                for (int x = 0; x < width; x += CharacterSize.Width)
                 {
                     byte chrLeftOffset = (byte)(CharacterLROffsets != null ? CharacterLROffsets[id].Item1 : 0);
                     byte chrRightOffset = (byte)(CharacterLROffsets != null ? CharacterLROffsets[id].Item2 : 0);
@@ -153,8 +153,10 @@ namespace Yggdrasil.Helpers
             }
         }
 
-        public Bitmap RenderString(EtrianString str, int width = 256, int spacingModifier = 0)
+        public Bitmap RenderString(EtrianString str, int width = 256, int spacingModifier = 0, int zoom = 1)
         {
+            if (str == null) return null;
+
             int newLines = 1;
             for (int i = 0; i < str.RawData.Length; i++)
             {
@@ -222,6 +224,7 @@ namespace Yggdrasil.Helpers
                         Character chrData = Characters.FirstOrDefault(xx => xx.ID == (ushort)((str.RawData[i] & 0xFF00) | (str.RawData[i] & 0xFF) - 1));
                         if (chrData != null)
                         {
+
                             g.DrawImage(chrData.Image, new Rectangle(x, y, chrData.Image.Width, chrData.Image.Height), 0, 0, chrData.Image.Width, chrData.Image.Height, GraphicsUnit.Pixel, imageAttrib);
                             x += (chrData.Image.Width + spacingModifier);
                         }
@@ -229,7 +232,20 @@ namespace Yggdrasil.Helpers
                 }
             }
 
-            return rendered;
+            if (zoom == 1)
+                return rendered;
+            else
+            {
+                Bitmap scaledRendered = new Bitmap(rendered.Width * zoom, rendered.Height * zoom);
+                using (Graphics g = Graphics.FromImage(scaledRendered))
+                {
+                    g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                    g.DrawImage(rendered, 0.0f, 0.0f, scaledRendered.Width, scaledRendered.Height);
+                }
+
+                return scaledRendered;
+            }
         }
 
         public Color ConvertRGBA5551(ushort val)
