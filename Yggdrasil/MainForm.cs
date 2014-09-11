@@ -172,15 +172,14 @@ namespace Yggdrasil
         {
             string description = System.Reflection.Assembly.GetExecutingAssembly().GetAttribute<System.Reflection.AssemblyDescriptionAttribute>().Description;
 
-            MessageBox.Show(string.Format("{0} {1} - {2}\n\nWritten 2014 by xdaniel - https://github.com/xdanieldzd/",
-                Application.ProductName, VersionManagement.CreateVersionString(Application.ProductVersion), description),
+            MessageBox.Show(string.Format("{0} - {1}\n\nWritten 2014 by xdaniel - https://github.com/xdanieldzd/", Program.TitleString, description),
                 "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void SetFormTitle()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendFormat("{0} {1}", Application.ProductName, VersionManagement.CreateVersionString(Application.ProductVersion));
+            stringBuilder.AppendFormat(Program.TitleString);
             if (gameDataManager != null && gameDataManager.IsInitialized) stringBuilder.AppendFormat(" - [{0}]", gameDataManager.Header.GameTitle);
             this.Text = stringBuilder.ToString();
         }
@@ -205,6 +204,8 @@ namespace Yggdrasil
                 InitializeTabPage(tabControl.SelectedTab);
 
                 StatusText = "Data loaded";
+                if (gameDataManager.Version != GameDataManager.Versions.Japanese)
+                    dumpMainFontToolStripMenuItem.Enabled = dumpSmallFontToolStripMenuItem.Enabled = true;
             }
         }
 
@@ -215,6 +216,34 @@ namespace Yggdrasil
                 IEditorControl editorControl = (IEditorControl)tabPage.Controls.OfType<Control>().FirstOrDefault(x => x is IEditorControl);
                 if (editorControl != null && !editorControl.IsInitialized()) editorControl.Initialize(gameDataManager);
                 tabPage.Tag = gameDataManager;
+            }
+        }
+
+        private void dumpMainFontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fontName = System.IO.Path.GetFileNameWithoutExtension(gameDataManager.MainFontFilename);
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Dump main font";
+            sfd.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
+            sfd.FileName = fontName + ".txt";
+            if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                gameDataManager.MainFontRenderer.DumpMkwinfont(sfd.FileName, fontName);
+                StatusText = "Main font dumped";
+            }
+        }
+
+        private void dumpSmallFontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fontName = System.IO.Path.GetFileNameWithoutExtension(gameDataManager.SmallFontFilename);
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Dump small font";
+            sfd.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
+            sfd.FileName = fontName + ".txt";
+            if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                gameDataManager.SmallFontRenderer.DumpMkwinfont(sfd.FileName, fontName);
+                StatusText = "Small font dumped";
             }
         }
     }

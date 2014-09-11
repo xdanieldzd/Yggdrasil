@@ -62,9 +62,9 @@ namespace Yggdrasil.Helpers
                     break;
 
                 case GameDataManager.Versions.American:
-                    CharacterSize = new Size(int.Parse(matches[1].Value).Round(8) - 1, int.Parse(matches[0].Value));
+                    CharacterSize = new Size(int.Parse(matches[1].Value) + 1, int.Parse(matches[0].Value));
                     fontImage = new Bitmap(128, 64);
-                    fontOrgWidth = fontImage.Width - 16;
+                    fontOrgWidth = CharacterSize.Width * 16;
                     fontOrgHeight = fontImage.Height;
                     Convert4bpp(ref fontImage, fontRaw, palette);
                     break;
@@ -259,10 +259,10 @@ namespace Yggdrasil.Helpers
 
         public void DumpMkwinfont(string path, string name)
         {
-            using (StreamWriter sw = new StreamWriter(new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)))
+            using (StreamWriter sw = new StreamWriter(new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite)))
             {
                 sw.WriteLine("facename {0}", name);
-                sw.WriteLine("copyright (C)");
+                sw.WriteLine("copyright (C) ATLUS; font dumped via {0}", Program.TitleString);
                 sw.WriteLine();
                 sw.WriteLine("height {0}", CharacterSize.Height);
                 sw.WriteLine("ascent {0}", CharacterSize.Height - 1);
@@ -282,7 +282,13 @@ namespace Yggdrasil.Helpers
                     else
                     {
                         Character character = Characters.FirstOrDefault(x => x.ID == chEntry.Key - 1);
-                        if (character == null) continue;
+                        if (character == null)
+                        {
+                            sw.WriteLine("char {0}", i);
+                            sw.WriteLine("width 0");
+                            sw.WriteLine();
+                            continue;
+                        }
 
                         sw.WriteLine("char {0}", (int)chEntry.Value);
                         sw.WriteLine("width {0}", character.Image.Width);

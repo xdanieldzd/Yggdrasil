@@ -9,6 +9,8 @@ namespace Yggdrasil
 {
     static class Program
     {
+        public static string TitleString = string.Format("{0} {1}", Application.ProductName, VersionManagement.CreateVersionString(Application.ProductVersion));
+
         public static MainForm MainForm = null;
         public static Logger Logger = null;
 
@@ -16,7 +18,7 @@ namespace Yggdrasil
         static void Main()
         {
             Logger = new Logger();
-            Logger.LogMessage("{0} {1} starting up...", Application.ProductName, VersionManagement.CreateVersionString(Application.ProductVersion));
+            Logger.LogMessage("{0} starting up...", TitleString);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

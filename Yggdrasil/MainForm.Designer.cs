@@ -53,6 +53,9 @@
             this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.dumpMainFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dumpSmallFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -116,6 +119,9 @@
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.dumpMainFontToolStripMenuItem,
+            this.dumpSmallFontToolStripMenuItem,
+            this.toolStripMenuItem2,
             this.showMessageLogToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
@@ -274,6 +280,27 @@
             this.aboutToolStripButton.Text = "&About";
             this.aboutToolStripButton.Click += new System.EventHandler(this.aboutToolStripButton_Click);
             // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(181, 6);
+            // 
+            // dumpMainFontToolStripMenuItem
+            // 
+            this.dumpMainFontToolStripMenuItem.Enabled = false;
+            this.dumpMainFontToolStripMenuItem.Name = "dumpMainFontToolStripMenuItem";
+            this.dumpMainFontToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.dumpMainFontToolStripMenuItem.Text = "Dump &Main Font...";
+            this.dumpMainFontToolStripMenuItem.Click += new System.EventHandler(this.dumpMainFontToolStripMenuItem_Click);
+            // 
+            // dumpSmallFontToolStripMenuItem
+            // 
+            this.dumpSmallFontToolStripMenuItem.Enabled = false;
+            this.dumpSmallFontToolStripMenuItem.Name = "dumpSmallFontToolStripMenuItem";
+            this.dumpSmallFontToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.dumpSmallFontToolStripMenuItem.Text = "Dump &Small Font...";
+            this.dumpSmallFontToolStripMenuItem.Click += new System.EventHandler(this.dumpSmallFontToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -328,5 +355,8 @@
         private System.Windows.Forms.ToolStripButton saveToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton aboutToolStripButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem dumpMainFontToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dumpSmallFontToolStripMenuItem;
     }
 }
