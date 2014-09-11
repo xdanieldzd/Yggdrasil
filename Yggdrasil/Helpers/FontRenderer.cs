@@ -256,5 +256,50 @@ namespace Yggdrasil.Helpers
                 RightOffset = rightOffset;
             }
         }
+
+        public void DumpMkwinfont(string path, string name)
+        {
+            using (StreamWriter sw = new StreamWriter(new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)))
+            {
+                sw.WriteLine("facename {0}", name);
+                sw.WriteLine("copyright (C)");
+                sw.WriteLine();
+                sw.WriteLine("height {0}", CharacterSize.Height);
+                sw.WriteLine("ascent {0}", CharacterSize.Height - 1);
+                sw.WriteLine("pointsize {0}", CharacterSize.Height - 1);
+                sw.WriteLine();
+
+                for (int i = 0; i < 256; i++)
+                {
+                    KeyValuePair<ushort, char> chEntry = EtrianString.CharacterMap.FirstOrDefault(x => x.Value == i);
+
+                    if (chEntry.Value == '\0')
+                    {
+                        sw.WriteLine("char {0}", i);
+                        sw.WriteLine("width 0");
+                        sw.WriteLine();
+                    }
+                    else
+                    {
+                        Character character = Characters.FirstOrDefault(x => x.ID == chEntry.Key - 1);
+                        if (character == null) continue;
+
+                        sw.WriteLine("char {0}", (int)chEntry.Value);
+                        sw.WriteLine("width {0}", character.Image.Width);
+                        for (int y = 0; y < character.Image.Height; y++)
+                        {
+                            for (int x = 0; x < character.Image.Width; x++)
+                            {
+                                Color pixel = character.Image.GetPixel(x, y);
+                                if (pixel.A == 0) sw.Write("0");
+                                else sw.Write("1");
+                            }
+                            sw.WriteLine();
+                        }
+                        sw.WriteLine();
+                    }
+                }
+            }
+        }
     }
 }

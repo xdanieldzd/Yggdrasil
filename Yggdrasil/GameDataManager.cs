@@ -148,6 +148,10 @@ namespace Yggdrasil
                     MainFontRenderer = new FontRenderer(this, Path.Combine(path, MainFontFilename + ".ntft"), MainFontInfoOffset, characterCount);
                     SmallFontRenderer = new FontRenderer(this, Path.Combine(path, SmallFontFilename + ".ntft"), SmallFontInfoOffset, characterCount);
 
+                    /*string tmp = @"E:\[SSD User Data]\Documents";
+                    MainFontRenderer.DumpMkwinfont(Path.Combine(tmp, "EO1EU-Main.txt"), "EO1EU-Main");
+                    SmallFontRenderer.DumpMkwinfont(Path.Combine(tmp, "EO1EU-Small.txt"), "EO1EU-Small");
+                    */
                     MessageFiles = ReadDataTablesByExtension(new string[] { ".mbb", ".tbb" }, messageDirs);
                     dataTableFiles = ReadDataTablesByExtension(new string[] { ".tbb" }, dataDirs);
 
