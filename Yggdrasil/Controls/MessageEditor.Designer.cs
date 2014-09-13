@@ -28,13 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.stringPreviewControl = new Yggdrasil.Controls.StringPreviewControl();
             this.tvMessageFiles = new Yggdrasil.Controls.TreeViewEx();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.cmsTreeView = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.createHTMLDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.cmsTreeView.SuspendLayout();
             this.SuspendLayout();
             // 
             // stringPreviewControl
@@ -54,6 +58,7 @@
             this.tvMessageFiles.Size = new System.Drawing.Size(200, 400);
             this.tvMessageFiles.TabIndex = 0;
             this.tvMessageFiles.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvMessageFiles_AfterSelect);
+            this.tvMessageFiles.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tvMessageFiles_MouseUp);
             // 
             // splitContainer1
             // 
@@ -73,6 +78,20 @@
             this.splitContainer1.SplitterDistance = 200;
             this.splitContainer1.TabIndex = 0;
             // 
+            // cmsTreeView
+            // 
+            this.cmsTreeView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createHTMLDumpToolStripMenuItem});
+            this.cmsTreeView.Name = "cmsTreeView";
+            this.cmsTreeView.Size = new System.Drawing.Size(190, 26);
+            // 
+            // createHTMLDumpToolStripMenuItem
+            // 
+            this.createHTMLDumpToolStripMenuItem.Name = "createHTMLDumpToolStripMenuItem";
+            this.createHTMLDumpToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.createHTMLDumpToolStripMenuItem.Text = "&Create HTML Dump...";
+            this.createHTMLDumpToolStripMenuItem.Click += new System.EventHandler(this.createHTMLDumpToolStripMenuItem_Click);
+            // 
             // MessageEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -84,6 +103,7 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.cmsTreeView.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -93,5 +113,7 @@
         private TreeViewEx tvMessageFiles;
         private StringPreviewControl stringPreviewControl;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.ContextMenuStrip cmsTreeView;
+        private System.Windows.Forms.ToolStripMenuItem createHTMLDumpToolStripMenuItem;
     }
 }

@@ -104,8 +104,6 @@
             // 
             this.chkZoom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkZoom.AutoSize = true;
-            this.chkZoom.Checked = true;
-            this.chkZoom.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkZoom.Location = new System.Drawing.Point(335, 240);
             this.chkZoom.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.chkZoom.Name = "chkZoom";

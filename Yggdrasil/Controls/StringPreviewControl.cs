@@ -28,7 +28,7 @@ namespace Yggdrasil.Controls
         {
             InitializeComponent();
 
-            Application.Idle += ((s, e) => { pbPreview.Invalidate(); });
+            if (LicenseManager.UsageMode == LicenseUsageMode.Runtime) Application.Idle += ((s, e) => { pbPreview.Invalidate(); });
 
             this.txtString.TextChanged += new EventHandler(txtString_TextChanged);
         }

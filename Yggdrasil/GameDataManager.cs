@@ -68,7 +68,7 @@ namespace Yggdrasil
         public int MainFontInfoOffset { get; private set; }
         public int SmallFontInfoOffset { get; private set; }
 
-        Dictionary<Languages, string> langSuffixes = new Dictionary<Languages, string>()
+        public Dictionary<Languages, string> LanguageSuffixes = new Dictionary<Languages, string>()
         {
             { Languages.German, "_DE" },
             { Languages.English, "_EN" },
@@ -325,7 +325,7 @@ namespace Yggdrasil
                     string destFileName = dirExt.Item3.Substring(0, sourcePeriodIdx);
                     string destFileExt = dirExt.Item3.Substring(sourcePeriodIdx);
 
-                    foreach (KeyValuePair<Languages, string> langSuffix in langSuffixes)
+                    foreach (KeyValuePair<Languages, string> langSuffix in LanguageSuffixes)
                     {
                         dirExtTuplesLocalized.Add(new Tuple<string, string, string, bool, bool>(
                             dirExt.Item1,
@@ -648,7 +648,7 @@ namespace Yggdrasil
 
         public TableFile GetMessageFile(string filename)
         {
-            filename = (Version == Versions.European ? string.Format("{0}{1}", filename, langSuffixes[Language]) : filename);
+            filename = (Version == Versions.European ? string.Format("{0}{1}", filename, LanguageSuffixes[Language]) : filename);
             TableFile messageFile = MessageFiles.FirstOrDefault(x => x.Filename != null && Path.GetFileName(x.Filename).StartsWith(filename));
 
             if (messageFile == null) throw new ArgumentException("Message file could not be found");

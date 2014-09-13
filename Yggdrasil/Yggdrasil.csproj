@@ -97,7 +97,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="DataCompression\StreamHelper.cs" />
-    <Compile Include="Helpers\ParsedDataDumper.cs" />
+    <Compile Include="Helpers\DataDumpers.cs" />
     <Compile Include="Helpers\ProgressDialog.cs" />
     <Compile Include="Helpers\WinAPI.cs" />
     <Compile Include="TableParsing\GatherItemParser.cs" />

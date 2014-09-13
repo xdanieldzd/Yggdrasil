@@ -11,6 +11,7 @@ using System.IO;
 using Yggdrasil.FileHandling;
 using Yggdrasil.FileHandling.TableHandling;
 using Yggdrasil.TextHandling;
+using Yggdrasil.Helpers;
 
 namespace Yggdrasil.Controls
 {
@@ -141,6 +142,48 @@ namespace Yggdrasil.Controls
             }
             else
                 stringPreviewControl.Terminate();
+        }
+
+        private void tvMessageFiles_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                TreeView treeView = (sender as TreeView);
+                treeView.SelectedNode = treeView.GetNodeAt(e.X, e.Y);
+
+                if (treeView.SelectedNode != null)
+                {
+                    createHTMLDumpToolStripMenuItem.Enabled = (treeView.SelectedNode.Tag is TableFile);
+                    cmsTreeView.Show(treeView, e.Location);
+                }
+            }
+        }
+
+        private void createHTMLDumpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TableFile file = (tvMessageFiles.SelectedNode.Tag as TableFile);
+
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.InitialDirectory = Configuration.LastDataPath;
+            sfd.Title = "Save HTML dump";
+            sfd.Filter = "HTML Files (*.htm;*.html)|*.htm;*.html";
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                List<TableFile> files = new List<TableFile>();
+                files.Add(file);
+
+                if (gameDataManager.Version == GameDataManager.Versions.European &&
+                    MessageBox.Show("Fetch every language version of this file to dump?", "Language Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    string strippedName = Path.GetFileNameWithoutExtension(file.Filename);
+                    foreach (KeyValuePair<GameDataManager.Languages, string> pair in gameDataManager.LanguageSuffixes) strippedName = strippedName.Replace(pair.Value, "");
+
+                    files.AddRange(gameDataManager.MessageFiles
+                        .Where(x => Path.GetFileNameWithoutExtension(x.Filename).StartsWith(strippedName) && x.Filename != file.Filename && x.FileNumber == file.FileNumber));
+                }
+
+                DataDumpers.DumpMessages(gameDataManager, files, sfd.FileName);
+            }
         }
     }
 }

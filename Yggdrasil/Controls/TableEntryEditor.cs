@@ -241,7 +241,7 @@ namespace Yggdrasil.Controls
             sfd.Filter = "HTML Files (*.htm;*.html)|*.htm;*.html";
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                ParsedDataDumper.Dump(gameDataManager, (tvParsers.SelectedNode.Tag as List<BaseParser>).FirstOrDefault().GetType(), sfd.FileName);
+                DataDumpers.DumpParsers(gameDataManager, (tvParsers.SelectedNode.Tag as List<BaseParser>).FirstOrDefault().GetType(), sfd.FileName);
             }
         }
     }
