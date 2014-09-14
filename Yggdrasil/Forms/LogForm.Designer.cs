@@ -63,6 +63,7 @@
             // 
             // cmbLogLevel
             // 
+            this.cmbLogLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cmbLogLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbLogLevel.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.cmbLogLevel.FormattingEnabled = true;

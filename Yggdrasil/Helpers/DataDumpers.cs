@@ -38,6 +38,33 @@ namespace Yggdrasil.Helpers
             "span.tooltip span { display:none; padding:2px 3px; margin-left:8px; max-width:30em; }" +
             "span.tooltip:hover span { display:inline; position:absolute; background-color:white; border:1px solid #cccccc; color:#6c6c6c; }";
 
+        private static void WriteHeader(WebUI.HtmlTextWriter html, string title)
+        {
+            html.RenderBeginTag(WebUI.HtmlTextWriterTag.Head);
+            {
+                html.RenderBeginTag(WebUI.HtmlTextWriterTag.Title);
+                {
+                    html.Write(title);
+                }
+                html.RenderEndTag();
+
+                html.AddAttribute(WebUI.HtmlTextWriterAttribute.Type, "text/javascript");
+                html.RenderBeginTag(WebUI.HtmlTextWriterTag.Script);
+                {
+                    html.Write(jsToggleFunction);
+                }
+                html.RenderEndTag();
+
+                html.AddAttribute(WebUI.HtmlTextWriterAttribute.Type, "text/css");
+                html.RenderBeginTag(WebUI.HtmlTextWriterTag.Style);
+                {
+                    html.Write(css);
+                }
+                html.RenderEndTag();
+            }
+            html.RenderEndTag();
+        }
+
         public static void DumpMessages(GameDataManager gameDataManager, List<TableFile> tableFiles, string outputFilename)
         {
             string strippedName = Path.GetFileNameWithoutExtension(tableFiles.FirstOrDefault().Filename);
@@ -49,121 +76,99 @@ namespace Yggdrasil.Helpers
             int numTables = (int)tableFiles.FirstOrDefault().NumTables;
             if (!tableFiles.All(x => x.NumTables == numTables)) throw new Exception("Num tables mismatch!");
 
-            TextWriter tw = File.CreateText(outputFilename);
-            using (WebUI.HtmlTextWriter h = new WebUI.HtmlTextWriter(tw))
+            TextWriter writer = File.CreateText(outputFilename);
+            using (WebUI.HtmlTextWriter html = new WebUI.HtmlTextWriter(writer))
             {
-                h.WriteLine("<!DOCTYPE html>");
-                h.RenderBeginTag(WebUI.HtmlTextWriterTag.Html);
+                html.WriteLine("<!DOCTYPE html>");
+                html.RenderBeginTag(WebUI.HtmlTextWriterTag.Html);
                 {
-                    h.RenderBeginTag(WebUI.HtmlTextWriterTag.Head);
+                    WriteHeader(html, string.Format("{0} Message Dump for {1}", System.Windows.Forms.Application.ProductName, strippedName));
+
+                    html.RenderBeginTag(WebUI.HtmlTextWriterTag.Body);
                     {
-                        h.RenderBeginTag(WebUI.HtmlTextWriterTag.Title);
+                        html.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "container");
+                        html.RenderBeginTag(WebUI.HtmlTextWriterTag.Div);
                         {
-                            h.Write("{0} Message Dump for {1}", System.Windows.Forms.Application.ProductName, strippedName);
-                        }
-                        h.RenderEndTag();
-
-                        h.AddAttribute(WebUI.HtmlTextWriterAttribute.Type, "text/javascript");
-                        h.RenderBeginTag(WebUI.HtmlTextWriterTag.Script);
-                        {
-                            h.Write(jsToggleFunction);
-                        }
-                        h.RenderEndTag();
-
-                        h.AddAttribute(WebUI.HtmlTextWriterAttribute.Type, "text/css");
-                        h.RenderBeginTag(WebUI.HtmlTextWriterTag.Style);
-                        {
-                            h.Write(css);
-                        }
-                        h.RenderEndTag();
-                    }
-                    h.RenderEndTag();
-
-                    h.RenderBeginTag(WebUI.HtmlTextWriterTag.Body);
-                    {
-                        h.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "container");
-                        h.RenderBeginTag(WebUI.HtmlTextWriterTag.Div);
-                        {
-                            h.WriteEncodedText(string.Format("Message dump created by {0} {1}; dumping {2}, {3} tables...",
+                            html.WriteEncodedText(string.Format("Message dump created by {0} {1}; dumping {2}, {3} tables...",
                                 System.Windows.Forms.Application.ProductName,
                                 VersionManagement.CreateVersionString(System.Windows.Forms.Application.ProductVersion),
                                 (tableFiles.FirstOrDefault().FileNumber != -1 ? string.Format("{0}, file #{1}", strippedName, tableFiles.FirstOrDefault().FileNumber) : strippedName),
                                 numTables));
-                            h.WriteBreak();
-                            h.WriteBreak();
+                            html.WriteBreak();
+                            html.WriteBreak();
                         }
-                        h.RenderEndTag();
+                        html.RenderEndTag();
 
                         for (int i = 0; i < numTables; i++)
                         {
                             string tableId = string.Format("table-{0:D4}", i);
 
-                            h.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "header");
-                            h.RenderBeginTag(WebUI.HtmlTextWriterTag.Div);
+                            html.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "header");
+                            html.RenderBeginTag(WebUI.HtmlTextWriterTag.Div);
                             {
-                                h.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "header-text");
-                                h.RenderBeginTag(WebUI.HtmlTextWriterTag.Span);
+                                html.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "header-text");
+                                html.RenderBeginTag(WebUI.HtmlTextWriterTag.Span);
                                 {
-                                    h.Write("Table {0}", i + 1);
+                                    html.Write("Table {0}", i + 1);
                                 }
-                                h.RenderEndTag();
+                                html.RenderEndTag();
 
-                                h.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "header-toggle");
-                                h.RenderBeginTag(WebUI.HtmlTextWriterTag.Span);
+                                html.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "header-toggle");
+                                html.RenderBeginTag(WebUI.HtmlTextWriterTag.Span);
                                 {
-                                    h.AddAttribute(WebUI.HtmlTextWriterAttribute.Href, string.Format("javascript:toggle('{0}');", tableId), false);
-                                    h.RenderBeginTag(WebUI.HtmlTextWriterTag.A);
+                                    html.AddAttribute(WebUI.HtmlTextWriterAttribute.Href, string.Format("javascript:toggle('{0}');", tableId), false);
+                                    html.RenderBeginTag(WebUI.HtmlTextWriterTag.A);
                                     {
-                                        h.Write("+/-");
+                                        html.Write("+/-");
                                     }
-                                    h.RenderEndTag();
+                                    html.RenderEndTag();
                                 }
-                                h.RenderEndTag();
+                                html.RenderEndTag();
                             }
-                            h.RenderEndTag();
+                            html.RenderEndTag();
 
-                            h.AddAttribute(WebUI.HtmlTextWriterAttribute.Id, tableId);
-                            h.AddStyleAttribute(WebUI.HtmlTextWriterStyle.Display, "table");
-                            h.RenderBeginTag(WebUI.HtmlTextWriterTag.Table);
+                            html.AddAttribute(WebUI.HtmlTextWriterAttribute.Id, tableId);
+                            html.AddStyleAttribute(WebUI.HtmlTextWriterStyle.Display, "table");
+                            html.RenderBeginTag(WebUI.HtmlTextWriterTag.Table);
                             {
-                                h.RenderBeginTag(WebUI.HtmlTextWriterTag.Tr);
+                                html.RenderBeginTag(WebUI.HtmlTextWriterTag.Tr);
                                 {
-                                    h.RenderBeginTag(WebUI.HtmlTextWriterTag.Th);
+                                    html.RenderBeginTag(WebUI.HtmlTextWriterTag.Th);
                                     {
-                                        h.Write("ID");
+                                        html.Write("ID");
                                     }
-                                    h.RenderEndTag();
+                                    html.RenderEndTag();
 
                                     foreach (TableFile file in tableFiles)
                                     {
-                                        h.RenderBeginTag(WebUI.HtmlTextWriterTag.Th);
+                                        html.RenderBeginTag(WebUI.HtmlTextWriterTag.Th);
                                         {
                                             string language = Path.GetFileNameWithoutExtension(file.Filename);
                                             language = gameDataManager.LanguageSuffixes.FirstOrDefault(x => x.Value == language.Substring(language.LastIndexOf('_'), 3)).Key.ToString();
-                                            h.Write(language);
+                                            html.Write(language);
                                         }
-                                        h.RenderEndTag();
+                                        html.RenderEndTag();
                                     }
                                 }
-                                h.RenderEndTag();
+                                html.RenderEndTag();
 
                                 int numMessages = (int)(tableFiles.FirstOrDefault().Tables[i] as MessageTable).NumMessages;
                                 for (int j = 0; j < numMessages; j++)
                                 {
                                     if ((tableFiles.FirstOrDefault().Tables[i] as MessageTable).Messages[j].RawData.Length == 0) continue;
 
-                                    h.RenderBeginTag(WebUI.HtmlTextWriterTag.Tr);
+                                    html.RenderBeginTag(WebUI.HtmlTextWriterTag.Tr);
                                     {
-                                        h.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "desc-column-mesg");
-                                        h.RenderBeginTag(WebUI.HtmlTextWriterTag.Th);
+                                        html.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "desc-column-mesg");
+                                        html.RenderBeginTag(WebUI.HtmlTextWriterTag.Th);
                                         {
-                                            h.Write("#{0}", j);
+                                            html.Write("#{0}", j);
                                         }
-                                        h.RenderEndTag();
+                                        html.RenderEndTag();
 
                                         for (int k = 0; k < tableFiles.Count; k++)
                                         {
-                                            h.RenderBeginTag(WebUI.HtmlTextWriterTag.Td);
+                                            html.RenderBeginTag(WebUI.HtmlTextWriterTag.Td);
                                             {
                                                 string message = (tableFiles[k].Tables[i] as MessageTable).Messages[j].ConvertedString;
                                                 message = message.Replace("<!pg>", "");
@@ -171,23 +176,23 @@ namespace Yggdrasil.Helpers
                                                 message = message.Replace("<", "&lt;");
                                                 message = message.Replace(">", "&gt;");
                                                 message = message.Replace(Environment.NewLine, "<br />");
-                                                h.Write(message);
+                                                html.Write(message);
                                             }
-                                            h.RenderEndTag();
+                                            html.RenderEndTag();
                                         }
                                     }
-                                    h.RenderEndTag();
+                                    html.RenderEndTag();
                                 }
                             }
-                            h.RenderEndTag();
-                            h.WriteBreak();
+                            html.RenderEndTag();
+                            html.WriteBreak();
                         }
                     }
-                    h.RenderEndTag();
+                    html.RenderEndTag();
                 }
-                h.RenderEndTag();
+                html.RenderEndTag();
             }
-            tw.Close();
+            writer.Close();
         }
 
         public static void DumpParsers(GameDataManager gameDataManager, Type parserType, string outputFilename)
@@ -198,84 +203,62 @@ namespace Yggdrasil.Helpers
                 .OrderBy(x => x.GetAttribute<Yggdrasil.Attributes.PrioritizedCategory>().Category)
                 .ToArray();
 
-            TextWriter tw = File.CreateText(outputFilename);
-            using (WebUI.HtmlTextWriter h = new WebUI.HtmlTextWriter(tw))
+            TextWriter writer = File.CreateText(outputFilename);
+            using (WebUI.HtmlTextWriter html = new WebUI.HtmlTextWriter(writer))
             {
-                h.WriteLine("<!DOCTYPE html>");
-                h.RenderBeginTag(WebUI.HtmlTextWriterTag.Html);
+                html.WriteLine("<!DOCTYPE html>");
+                html.RenderBeginTag(WebUI.HtmlTextWriterTag.Html);
                 {
-                    h.RenderBeginTag(WebUI.HtmlTextWriterTag.Head);
+                    WriteHeader(html, string.Format("{0} Data Dump for {1}", System.Windows.Forms.Application.ProductName, parserType.GetAttribute<Yggdrasil.Attributes.ParserDescriptor>().Description));
+
+                    html.RenderBeginTag(WebUI.HtmlTextWriterTag.Body);
                     {
-                        h.RenderBeginTag(WebUI.HtmlTextWriterTag.Title);
+                        html.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "container");
+                        html.RenderBeginTag(WebUI.HtmlTextWriterTag.Div);
                         {
-                            h.Write("{0} Data Dump for {1}", System.Windows.Forms.Application.ProductName, parserType.GetAttribute<Yggdrasil.Attributes.ParserDescriptor>().Description);
-                        }
-                        h.RenderEndTag();
-
-                        h.AddAttribute(WebUI.HtmlTextWriterAttribute.Type, "text/javascript");
-                        h.RenderBeginTag(WebUI.HtmlTextWriterTag.Script);
-                        {
-                            h.Write(jsToggleFunction);
-                        }
-                        h.RenderEndTag();
-
-                        h.AddAttribute(WebUI.HtmlTextWriterAttribute.Type, "text/css");
-                        h.RenderBeginTag(WebUI.HtmlTextWriterTag.Style);
-                        {
-                            h.Write(css);
-                        }
-                        h.RenderEndTag();
-                    }
-                    h.RenderEndTag();
-
-                    h.RenderBeginTag(WebUI.HtmlTextWriterTag.Body);
-                    {
-                        h.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "container");
-                        h.RenderBeginTag(WebUI.HtmlTextWriterTag.Div);
-                        {
-                            h.WriteEncodedText(string.Format("Data dump created by {0} {1}; dumping {2} entries of type '{3}'...",
+                            html.WriteEncodedText(string.Format("Data dump created by {0} {1}; dumping {2} entries of type '{3}'...",
                                 System.Windows.Forms.Application.ProductName,
                                 VersionManagement.CreateVersionString(System.Windows.Forms.Application.ProductVersion),
                                 parsedToDump.Count,
                                 parserType.GetAttribute<Yggdrasil.Attributes.ParserDescriptor>().Description));
-                            h.WriteBreak();
-                            h.WriteBreak();
+                            html.WriteBreak();
+                            html.WriteBreak();
                         }
-                        h.RenderEndTag();
+                        html.RenderEndTag();
 
                         foreach (BaseParser parser in parsedToDump)
                         {
                             string parserId = string.Format("table-{0:D4}", parser.EntryNumber);
 
-                            h.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "container");
-                            h.RenderBeginTag(WebUI.HtmlTextWriterTag.Div);
+                            html.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "container");
+                            html.RenderBeginTag(WebUI.HtmlTextWriterTag.Div);
                             {
-                                h.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "header");
-                                h.RenderBeginTag(WebUI.HtmlTextWriterTag.Div);
+                                html.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "header");
+                                html.RenderBeginTag(WebUI.HtmlTextWriterTag.Div);
                                 {
-                                    h.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "header-text");
-                                    h.RenderBeginTag(WebUI.HtmlTextWriterTag.Span);
+                                    html.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "header-text");
+                                    html.RenderBeginTag(WebUI.HtmlTextWriterTag.Span);
                                     {
-                                        h.WriteEncodedText(string.Format("Entry {0:D4}: {1}", parser.EntryNumber, parser.EntryDescription));
+                                        html.WriteEncodedText(string.Format("Entry {0:D4}: {1}", parser.EntryNumber, parser.EntryDescription));
                                     }
-                                    h.RenderEndTag();
+                                    html.RenderEndTag();
 
-                                    h.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "header-toggle");
-                                    h.RenderBeginTag(WebUI.HtmlTextWriterTag.Span);
+                                    html.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "header-toggle");
+                                    html.RenderBeginTag(WebUI.HtmlTextWriterTag.Span);
                                     {
-                                        h.AddAttribute(WebUI.HtmlTextWriterAttribute.Href, string.Format("javascript:toggle('{0}');", parserId), false);
-                                        h.RenderBeginTag(WebUI.HtmlTextWriterTag.A);
+                                        html.AddAttribute(WebUI.HtmlTextWriterAttribute.Href, string.Format("javascript:toggle('{0}');", parserId), false);
+                                        html.RenderBeginTag(WebUI.HtmlTextWriterTag.A);
                                         {
-                                            h.Write("+/-");
+                                            html.Write("+/-");
                                         }
-                                        h.RenderEndTag();
+                                        html.RenderEndTag();
                                     }
-                                    h.RenderEndTag();
+                                    html.RenderEndTag();
                                 }
-                                h.RenderEndTag();
+                                html.RenderEndTag();
 
-                                h.AddAttribute(WebUI.HtmlTextWriterAttribute.Id, parserId);
-                                h.RenderBeginTag(WebUI.HtmlTextWriterTag.Table);
+                                html.AddAttribute(WebUI.HtmlTextWriterAttribute.Id, parserId);
+                                html.RenderBeginTag(WebUI.HtmlTextWriterTag.Table);
                                 {
                                     string lastCategory = string.Empty;
                                     foreach (PropertyInfo property in properties)
@@ -284,44 +267,44 @@ namespace Yggdrasil.Helpers
                                         if (propCategory != lastCategory)
                                         {
                                             lastCategory = propCategory;
-                                            h.RenderBeginTag(WebUI.HtmlTextWriterTag.Tr);
+                                            html.RenderBeginTag(WebUI.HtmlTextWriterTag.Tr);
                                             {
-                                                h.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "header");
-                                                h.AddAttribute(WebUI.HtmlTextWriterAttribute.Colspan, "2");
-                                                h.RenderBeginTag(WebUI.HtmlTextWriterTag.Td);
+                                                html.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "header");
+                                                html.AddAttribute(WebUI.HtmlTextWriterAttribute.Colspan, "2");
+                                                html.RenderBeginTag(WebUI.HtmlTextWriterTag.Td);
                                                 {
-                                                    h.Write(propCategory);
+                                                    html.Write(propCategory);
                                                 }
-                                                h.RenderEndTag();
+                                                html.RenderEndTag();
                                             }
-                                            h.RenderEndTag();
+                                            html.RenderEndTag();
                                         }
-                                        h.RenderBeginTag(WebUI.HtmlTextWriterTag.Tr);
+                                        html.RenderBeginTag(WebUI.HtmlTextWriterTag.Tr);
                                         {
-                                            h.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "desc-column");
-                                            h.RenderBeginTag(WebUI.HtmlTextWriterTag.Td);
+                                            html.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "desc-column");
+                                            html.RenderBeginTag(WebUI.HtmlTextWriterTag.Td);
                                             {
                                                 DisplayNameAttribute displayName = property.GetAttribute<DisplayNameAttribute>();
                                                 DescriptionAttribute description = property.GetAttribute<DescriptionAttribute>();
 
-                                                h.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "tooltip");
-                                                h.RenderBeginTag(WebUI.HtmlTextWriterTag.Span);
+                                                html.AddAttribute(WebUI.HtmlTextWriterAttribute.Class, "tooltip");
+                                                html.RenderBeginTag(WebUI.HtmlTextWriterTag.Span);
                                                 {
-                                                    h.WriteEncodedText(displayName.DisplayName);
+                                                    html.WriteEncodedText(displayName.DisplayName);
                                                     if (description != null)
                                                     {
-                                                        h.RenderBeginTag(WebUI.HtmlTextWriterTag.Span);
+                                                        html.RenderBeginTag(WebUI.HtmlTextWriterTag.Span);
                                                         {
-                                                            h.WriteEncodedText(description.Description);
+                                                            html.WriteEncodedText(description.Description);
                                                         }
-                                                        h.RenderEndTag();
+                                                        html.RenderEndTag();
                                                     }
                                                 }
-                                                h.RenderEndTag();
+                                                html.RenderEndTag();
                                             }
-                                            h.RenderEndTag();
+                                            html.RenderEndTag();
 
-                                            h.RenderBeginTag(WebUI.HtmlTextWriterTag.Td);
+                                            html.RenderBeginTag(WebUI.HtmlTextWriterTag.Td);
                                             {
                                                 object v = property.GetValue(parser, null);
                                                 TypeConverterAttribute ca = (TypeConverterAttribute)property.GetCustomAttributes(typeof(TypeConverterAttribute), false).FirstOrDefault();
@@ -335,23 +318,23 @@ namespace Yggdrasil.Helpers
                                                         c = (TypeConverter)Activator.CreateInstance(ct);
                                                 }
                                                 var tmp = c.ConvertTo(v, typeof(string));
-                                                h.WriteEncodedText(tmp as string);
+                                                html.WriteEncodedText(tmp as string);
                                             }
-                                            h.RenderEndTag();
+                                            html.RenderEndTag();
                                         }
-                                        h.RenderEndTag();
+                                        html.RenderEndTag();
                                     }
                                 }
-                                h.RenderEndTag();
+                                html.RenderEndTag();
                             }
-                            h.RenderEndTag();
+                            html.RenderEndTag();
                         }
                     }
-                    h.RenderEndTag();
+                    html.RenderEndTag();
                 }
-                h.RenderEndTag();
+                html.RenderEndTag();
             }
-            tw.Close();
+            writer.Close();
         }
     }
 }
