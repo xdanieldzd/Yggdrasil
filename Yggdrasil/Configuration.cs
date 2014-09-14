@@ -35,6 +35,12 @@ namespace Yggdrasil
             set { source.Configs[ConfigName].Set("LastDataPath", value); }
         }
 
+        public static string LastROMPath
+        {
+            get { return (source.Configs[ConfigName].GetString("LastROMPath", string.Empty)); }
+            set { source.Configs[ConfigName].Set("LastROMPath", value); }
+        }
+
         public static GameDataManager.Languages Language
         {
             get { return ((GameDataManager.Languages)Enum.Parse(typeof(GameDataManager.Languages), (source.Configs[ConfigName].GetString("Language", "English")))); }

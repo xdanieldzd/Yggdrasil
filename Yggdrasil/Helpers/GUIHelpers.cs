@@ -81,5 +81,34 @@ namespace Yggdrasil.Helpers
                     MessageBox.Show(message, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        public static DialogResult ShowFolderBrowser(string title, string description, string initialPath, out string selectedPath)
+        {
+            if (CommonOpenFileDialog.IsPlatformSupported)
+            {
+                CommonOpenFileDialog ofd = new CommonOpenFileDialog();
+                ofd.IsFolderPicker = true;
+                ofd.InitialDirectory = initialPath;
+                ofd.Title = title;
+                if (ofd.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    selectedPath = ofd.FileName;
+                    return DialogResult.OK;
+                }
+                else
+                {
+                    selectedPath = string.Empty;
+                    return DialogResult.Cancel;
+                }
+            }
+            else
+            {
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                fbd.Description = description;
+                fbd.SelectedPath = initialPath;
+                selectedPath = fbd.SelectedPath;
+                return fbd.ShowDialog();
+            }
+        }
     }
 }

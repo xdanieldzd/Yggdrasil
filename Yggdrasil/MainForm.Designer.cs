@@ -34,8 +34,14 @@
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.unpackROMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.repackROMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dumpMainFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dumpSmallFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.showMessageLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gameLanguageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,9 +59,9 @@
             this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.dumpMainFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.dumpSmallFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.unpackROMToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.repackROMToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -82,6 +88,9 @@
             this.openFolderToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.toolStripMenuItem1,
+            this.unpackROMToolStripMenuItem,
+            this.repackROMToolStripMenuItem,
+            this.toolStripMenuItem3,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -91,7 +100,7 @@
             // 
             this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
             this.openFolderToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.openFolderToolStripMenuItem.Text = "&Open Folder...";
             this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
             // 
@@ -100,19 +109,40 @@
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.saveToolStripMenuItem.Text = "&Save...";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(190, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(194, 6);
+            // 
+            // unpackROMToolStripMenuItem
+            // 
+            this.unpackROMToolStripMenuItem.Name = "unpackROMToolStripMenuItem";
+            this.unpackROMToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
+            this.unpackROMToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.unpackROMToolStripMenuItem.Text = "&Unpack ROM...";
+            this.unpackROMToolStripMenuItem.Click += new System.EventHandler(this.unpackROMToolStripMenuItem_Click);
+            // 
+            // repackROMToolStripMenuItem
+            // 
+            this.repackROMToolStripMenuItem.Name = "repackROMToolStripMenuItem";
+            this.repackROMToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
+            this.repackROMToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.repackROMToolStripMenuItem.Text = "&Repack ROM";
+            this.repackROMToolStripMenuItem.Click += new System.EventHandler(this.repackROMToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(194, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -126,6 +156,27 @@
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
+            // 
+            // dumpMainFontToolStripMenuItem
+            // 
+            this.dumpMainFontToolStripMenuItem.Enabled = false;
+            this.dumpMainFontToolStripMenuItem.Name = "dumpMainFontToolStripMenuItem";
+            this.dumpMainFontToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.dumpMainFontToolStripMenuItem.Text = "Dump &Main Font...";
+            this.dumpMainFontToolStripMenuItem.Click += new System.EventHandler(this.dumpMainFontToolStripMenuItem_Click);
+            // 
+            // dumpSmallFontToolStripMenuItem
+            // 
+            this.dumpSmallFontToolStripMenuItem.Enabled = false;
+            this.dumpSmallFontToolStripMenuItem.Name = "dumpSmallFontToolStripMenuItem";
+            this.dumpSmallFontToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.dumpSmallFontToolStripMenuItem.Text = "Dump &Small Font...";
+            this.dumpSmallFontToolStripMenuItem.Click += new System.EventHandler(this.dumpSmallFontToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(181, 6);
             // 
             // showMessageLogToolStripMenuItem
             // 
@@ -237,6 +288,9 @@
             this.openFolderToolStripButton,
             this.saveToolStripButton,
             this.toolStripSeparator1,
+            this.unpackROMToolStripButton,
+            this.repackROMToolStripButton,
+            this.toolStripSeparator2,
             this.aboutToolStripButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
@@ -280,26 +334,30 @@
             this.aboutToolStripButton.Text = "&About";
             this.aboutToolStripButton.Click += new System.EventHandler(this.aboutToolStripButton_Click);
             // 
-            // toolStripMenuItem2
+            // unpackROMToolStripButton
             // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(181, 6);
+            this.unpackROMToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.unpackROMToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("unpackROMToolStripButton.Image")));
+            this.unpackROMToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.unpackROMToolStripButton.Name = "unpackROMToolStripButton";
+            this.unpackROMToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.unpackROMToolStripButton.Text = "&Unpack ROM";
+            this.unpackROMToolStripButton.Click += new System.EventHandler(this.unpackROMToolStripButton_Click);
             // 
-            // dumpMainFontToolStripMenuItem
+            // repackROMToolStripButton
             // 
-            this.dumpMainFontToolStripMenuItem.Enabled = false;
-            this.dumpMainFontToolStripMenuItem.Name = "dumpMainFontToolStripMenuItem";
-            this.dumpMainFontToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
-            this.dumpMainFontToolStripMenuItem.Text = "Dump &Main Font...";
-            this.dumpMainFontToolStripMenuItem.Click += new System.EventHandler(this.dumpMainFontToolStripMenuItem_Click);
+            this.repackROMToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.repackROMToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("repackROMToolStripButton.Image")));
+            this.repackROMToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.repackROMToolStripButton.Name = "repackROMToolStripButton";
+            this.repackROMToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.repackROMToolStripButton.Text = "&Repack ROM";
+            this.repackROMToolStripButton.Click += new System.EventHandler(this.repackROMToolStripButton_Click);
             // 
-            // dumpSmallFontToolStripMenuItem
+            // toolStripSeparator2
             // 
-            this.dumpSmallFontToolStripMenuItem.Enabled = false;
-            this.dumpSmallFontToolStripMenuItem.Name = "dumpSmallFontToolStripMenuItem";
-            this.dumpSmallFontToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
-            this.dumpSmallFontToolStripMenuItem.Text = "Dump &Small Font...";
-            this.dumpSmallFontToolStripMenuItem.Click += new System.EventHandler(this.dumpSmallFontToolStripMenuItem_Click);
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // MainForm
             // 
@@ -358,5 +416,11 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem dumpMainFontToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem dumpSmallFontToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem unpackROMToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem repackROMToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripButton unpackROMToolStripButton;
+        private System.Windows.Forms.ToolStripButton repackROMToolStripButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
     }
 }
