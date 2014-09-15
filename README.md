@@ -6,7 +6,7 @@ A work-in-progress editor for Etrian Odyssey, written in C#.
 Requirements
 ============
 
-Detailed requirements can be found [on the wiki](wiki/Compiling).
+Detailed requirements can be found [on the wiki](https://github.com/xdanieldzd/Yggdrasil/wiki/Compiling).
 
 Acknowledgements
 ================
