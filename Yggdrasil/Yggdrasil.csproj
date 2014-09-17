@@ -93,6 +93,9 @@
     <Compile Include="Exceptions\GameDataManagerException.cs" />
     <Compile Include="Exceptions\CompressedStreamException.cs" />
     <Compile Include="FileHandling\ArchiveFile.cs" />
+    <Compile Include="FileHandling\PaletteFile.cs" />
+    <Compile Include="FileHandling\TileDataFile.cs" />
+    <Compile Include="FileHandling\TilePalettePair.cs" />
     <Compile Include="Forms\ModernForm.cs">
       <SubType>Form</SubType>
     </Compile>

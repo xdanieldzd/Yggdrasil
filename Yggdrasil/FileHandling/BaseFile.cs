@@ -27,19 +27,10 @@ namespace Yggdrasil.FileHandling
             InArchive = false;
             FileNumber = -1;
 
-            using (FileStream fileStream = File.OpenRead(Filename))
-            {
-                if (Path.GetExtension(Filename) == ".cmp" && fileStream.ReadByte() == 0x10)
-                    Stream = new LZ77Stream(CompressionMode.Decompress);
-                else
-                    Stream = new MemoryStream();
+            Stream = DataCompression.StreamHelper.Decompress(new MemoryStream(File.ReadAllBytes(Filename)));
+            OriginalStreamType = Stream.GetType();
 
-                OriginalStreamType = Stream.GetType();
-
-                fileStream.CopyTo(Stream);
-
-                Parse();
-            }
+            Parse();
         }
 
         public BaseFile(GameDataManager gameDataManager, MemoryStream memoryStream, ArchiveFile archiveFile, int fileNumber)

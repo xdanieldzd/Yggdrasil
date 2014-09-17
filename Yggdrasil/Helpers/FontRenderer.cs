@@ -248,15 +248,6 @@ namespace Yggdrasil.Helpers
             }
         }
 
-        public Color ConvertRGBA5551(ushort val)
-        {
-            return Color.FromArgb(
-                (byte)((val & 0x0100) != 0 ? 0xFF : 0),
-                (byte)((val & 0x00F8) >> 8),
-                (byte)(((val & 0xC007) << 5) >> 8),
-                (byte)(((val & 0x3E00) << 18) >> 16));
-        }
-
         public class Character
         {
             public ushort ID { get; private set; }

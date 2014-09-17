@@ -143,6 +143,10 @@ namespace Yggdrasil
                     loadWaitWorker.ReportProgress(-1, "Generating character map...");
                     EtrianString.GameVersion = Version;
 
+                    //TEMP
+                    //TilePalettePair f = new TilePalettePair(this, Path.Combine(path, @"data\Data\Tex\top2"), 256, 64);
+                    //TEMP
+
                     loadWaitWorker.ReportProgress(-1, "Initializing font renderers...");
                     ushort characterCount = (ushort)((SmallFontInfoOffset - MainFontInfoOffset) / 2);
                     MainFontRenderer = new FontRenderer(this, Path.Combine(path, MainFontFilename + ".ntft"), MainFontInfoOffset, characterCount);
