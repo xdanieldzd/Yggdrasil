@@ -9,6 +9,7 @@ namespace Yggdrasil.FileHandling
     public class TileDataFile : BaseFile
     {
         public TileDataFile(GameDataManager gameDataManager, string path) : base(gameDataManager, path) { }
+        public TileDataFile(GameDataManager gameDataManager, MemoryStream memoryStream, ArchiveFile archiveFile, int fileNumber) : base(gameDataManager, memoryStream, archiveFile, fileNumber) { }
 
         public byte[] Data { get; private set; }
 

@@ -144,7 +144,7 @@ namespace Yggdrasil
                     EtrianString.GameVersion = Version;
 
                     //TEMP
-                    //TilePalettePair f = new TilePalettePair(this, Path.Combine(path, @"data\Data\Tex\top2"), 256, 64);
+                    //TilePalettePair f = new TilePalettePair(this, Path.Combine(path, @"data\Data\Tex\top2"), TilePalettePair.Formats.Auto, 256, 64);
                     //TEMP
 
                     loadWaitWorker.ReportProgress(-1, "Initializing font renderers...");

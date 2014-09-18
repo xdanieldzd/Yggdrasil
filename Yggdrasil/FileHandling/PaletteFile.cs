@@ -10,6 +10,7 @@ namespace Yggdrasil.FileHandling
     public class PaletteFile : BaseFile
     {
         public PaletteFile(GameDataManager gameDataManager, string path) : base(gameDataManager, path) { }
+        public PaletteFile(GameDataManager gameDataManager, MemoryStream memoryStream, ArchiveFile archiveFile, int fileNumber) : base(gameDataManager, memoryStream, archiveFile, fileNumber) { }
 
         public List<Color> Colors { get; private set; }
 
@@ -22,18 +23,6 @@ namespace Yggdrasil.FileHandling
             {
                 ushort color = (ushort)(this.Stream.ReadByte() | (this.Stream.ReadByte() << 8));
                 Colors.Add(ConvertBGR565(color));
-            }
-
-            if (Colors.Count < 256)
-            {
-                if (Colors.Count < 16)
-                {
-                    while (Colors.Count < 16) Colors.Add(Color.Gray);
-                }
-                else if (Colors.Count > 16)
-                {
-                    while (Colors.Count < 256) Colors.Add(Color.Gray);
-                }
             }
         }
 

@@ -9,15 +9,35 @@ namespace Yggdrasil.FileHandling
 {
     public class TilePalettePair
     {
-        public GameDataManager GameDataManager { get; private set; }
-        public TileDataFile TileData { get; private set; }
-        public PaletteFile Palette { get; private set; }
+        public enum Formats { Auto, _2bpp, _4bpp, _8bpp };
+        public Dictionary<Formats, int> modifiers = new Dictionary<Formats, int>()
+        {
+            { Formats._2bpp, 4 },
+            { Formats._4bpp, 2 },
+            { Formats._8bpp, 1 }
+        };
 
+        public GameDataManager GameDataManager { get; private set; }
+
+        TileDataFile tileData;
+        PaletteFile palette;
+        public TileDataFile TileData
+        {
+            get { return tileData; }
+            set { tileData = value; Convert(); }
+        }
+        public PaletteFile Palette
+        {
+            get { return palette; }
+            set { palette = value; Convert(); }
+        }
+
+        public Formats Format { get; private set; }
         public Bitmap Image { get; private set; }
 
-        public TilePalettePair(GameDataManager gameDataManager, string path) : this(gameDataManager, path, -1, -1) { }
-
-        public TilePalettePair(GameDataManager gameDataManager, string path, int width, int height)
+        public TilePalettePair(GameDataManager gameDataManager, string path) : this(gameDataManager, path, Formats.Auto, -1, -1) { }
+        public TilePalettePair(GameDataManager gameDataManager, string path, Formats format) : this(gameDataManager, path, format, -1, -1) { }
+        public TilePalettePair(GameDataManager gameDataManager, string path, Formats format, int width, int height)
         {
             string tilePath = (path + ".ntft");
             if (!File.Exists(tilePath) && !File.Exists(tilePath = (path + ".cmp"))) throw new Exception("Tile data file not found");
@@ -25,17 +45,26 @@ namespace Yggdrasil.FileHandling
             string palettePath = (path + ".ntfp");
             if (!File.Exists(palettePath) && !File.Exists(palettePath = (path + ".cmp"))) throw new Exception("Palette data file not found");
 
-            Load(gameDataManager, tilePath, palettePath, width, height);
+            Load(gameDataManager, tilePath, palettePath, format, width, height);
         }
+        public TilePalettePair(GameDataManager gameDataManager, string tilePath, string palettePath) { Load(gameDataManager, tilePath, palettePath, Formats.Auto, -1, -1); }
+        public TilePalettePair(GameDataManager gameDataManager, string tilePath, string palettePath, Formats format) { Load(gameDataManager, tilePath, palettePath, format, -1, -1); }
+        public TilePalettePair(GameDataManager gameDataManager, string tilePath, string palettePath, Formats format, int width, int height) { Load(gameDataManager, tilePath, palettePath, format, width, height); }
 
-        public TilePalettePair(GameDataManager gameDataManager, string tilePath, string palettePath) { Load(gameDataManager, tilePath, palettePath, -1, -1); }
-        public TilePalettePair(GameDataManager gameDataManager, string tilePath, string palettePath, int width, int height) { Load(gameDataManager, tilePath, palettePath, width, height); }
-
-        private void Load(GameDataManager gameDataManager, string tilePath, string palettePath, int width, int height)
+        private void Load(GameDataManager gameDataManager, string tilePath, string palettePath, Formats format, int width, int height)
         {
             this.GameDataManager = gameDataManager;
-            this.Palette = new PaletteFile(gameDataManager, palettePath);
-            this.TileData = new TileDataFile(gameDataManager, tilePath);
+            this.palette = new PaletteFile(gameDataManager, palettePath);
+            this.tileData = new TileDataFile(gameDataManager, tilePath);
+
+            if (format == Formats.Auto)
+            {
+                if (this.Palette.Colors.Count <= 2) format = Formats._2bpp;
+                else if (this.Palette.Colors.Count <= 16) format = Formats._4bpp;
+                else if (this.Palette.Colors.Count <= 256) format = Formats._8bpp;
+            }
+
+            this.Format = format;
 
             if (width == -1 || height == -1)
             {
@@ -45,30 +74,56 @@ namespace Yggdrasil.FileHandling
 
                 height = (this.TileData.Data.Length / width);
                 if (height == 0) height = 1;
-                if (this.Palette.Colors.Count == 16) height *= 2;
+                height *= modifiers[this.Format];
             }
 
             this.Image = new Bitmap(width, height);
+            Convert();
+        }
+
+        public void Convert()
+        {
             for (int y = 0; y < this.Image.Height; y++)
             {
-                if (this.Palette.Colors.Count == 16)
+                byte idx;
+                switch (this.Format)
                 {
-                    for (int x = 0, xa = 0; x < this.Image.Width; x += 2, xa++)
-                    {
-                        this.Image.SetPixel(x, y, this.Palette.Colors[this.TileData.Data[(y * width / 2) + xa] & 0xF]);
-                        this.Image.SetPixel(x + 1, y, this.Palette.Colors[this.TileData.Data[(y * width / 2) + xa] >> 4]);
-                    }
-                }
-                else if (this.Palette.Colors.Count == 256)
-                {
-                    for (int x = 0; x < this.Image.Width; x++)
-                    {
-                        this.Image.SetPixel(x, y, this.Palette.Colors[this.TileData.Data[(y * width) + x]]);
-                    }
+                    case Formats._2bpp:
+                        for (int x = 0, xa = 0; x < this.Image.Width; x += modifiers[this.Format], xa++)
+                        {
+                            for (int i = 3; i >= 0; i--)
+                            {
+                                idx = (byte)((this.TileData.Data[(y * (this.Image.Width / modifiers[this.Format])) + xa] >> (i << 1)) & 0x03);
+                                if (idx >= this.Palette.Colors.Count) this.Image.SetPixel(x + i, y, Color.Gray);
+                                else this.Image.SetPixel(x + i, y, this.Palette.Colors[idx]);
+                            }
+                        }
+                        break;
+
+                    case Formats._4bpp:
+                        for (int x = 0, xa = 0; x < this.Image.Width; x += modifiers[this.Format], xa++)
+                        {
+                            for (int i = 1; i >= 0; i--)
+                            {
+                                idx = (byte)((this.TileData.Data[(y * (this.Image.Width / modifiers[this.Format])) + xa] >> (i << 2)) & 0x0F);
+                                if (idx >= this.Palette.Colors.Count) this.Image.SetPixel(x + i, y, Color.Gray);
+                                else this.Image.SetPixel(x + i, y, this.Palette.Colors[idx]);
+                            }
+                        }
+                        break;
+
+                    case Formats._8bpp:
+                        for (int x = 0; x < this.Image.Width; x++)
+                        {
+                            idx = this.TileData.Data[(y * this.Image.Width) + x];
+                            if (idx >= this.Palette.Colors.Count) this.Image.SetPixel(x, y, Color.Gray);
+                            else this.Image.SetPixel(x, y, this.Palette.Colors[idx]);
+                        }
+                        break;
                 }
             }
 
-            //this.Image.Save(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(tilePath), System.IO.Path.GetFileNameWithoutExtension(tilePath) + ".png"));
+            //this.Image.Save(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.TileData.Filename), System.IO.Path.GetFileNameWithoutExtension(this.TileData.Filename) + ".png"));
         }
     }
 }

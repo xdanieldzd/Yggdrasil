@@ -13,14 +13,18 @@ namespace Yggdrasil.Helpers
 {
     public class FontRenderer
     {
+        static byte[] paletteRaw = new byte[]
+        {
+            0xE0, 0x7F, 0xFF, 0x7F, 0x21, 0x04, 0x3F, 0x04, 0x21, 0x6C, 0x1F, 0x7C, 0xFF, 0x03, 0xFB, 0x33, 
+            0x7B, 0x6F, 0x58, 0x6F, 0x7B, 0x6F, 0x7B, 0x6F, 0x7B, 0x6F, 0x7B, 0x6F, 0x7B, 0x6F, 0x7B, 0x6F 
+        };
+
         public GameDataManager GameDataManager { get; private set; }
         public string Filename { get; private set; }
 
-        byte[] fontRaw, paletteRaw, lrOffsetRaw;
-        List<Color> palette;
-        Bitmap fontImage;
+        byte[] lrOffsetRaw;
+        FileHandling.TilePalettePair font;
 
-        public Bitmap FontImage { get { return fontImage; } }
         public Size CharacterSize { get; private set; }
         public List<Tuple<byte, byte>> CharacterLROffsets { get; private set; }
         public List<Character> Characters { get; private set; }
@@ -29,23 +33,7 @@ namespace Yggdrasil.Helpers
         {
             this.GameDataManager = gameDataManager;
             Filename = fontPath;
-            fontRaw = File.ReadAllBytes(Filename);
 
-            paletteRaw = File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(Filename), Path.GetFileNameWithoutExtension(Filename) + ".ntfp"));
-            palette = new List<Color>()
-            {
-                Color.FromArgb(0, Color.Pink),
-                Color.White,
-                Color.LightGray,
-                Color.DarkGray
-            };
-            /*palette = new List<Color>();
-            for (int i = 0; i < paletteRaw.Length; i += 2)
-            {
-                palette.Add(ConvertRGBA5551(BitConverter.ToUInt16(paletteRaw, i)));
-            }
-            palette[0] = Color.FromArgb(0, palette[0]);
-            */
             var matches = Regex.Matches(Path.GetFileName(Filename), "([0-9]{2})|([0-9])");
             if (matches.Count < 2) throw new Exception("Cannot extract font size from filename");
 
@@ -56,25 +44,22 @@ namespace Yggdrasil.Helpers
             switch (gameDataManager.Version)
             {
                 case GameDataManager.Versions.European:
-                    fontImage = new Bitmap(256, 128);
-                    fontOrgWidth = fontImage.Width;
-                    fontOrgHeight = fontImage.Height;
-                    Convert2bpp(ref fontImage, fontRaw, palette);
+                    font = new FileHandling.TilePalettePair(gameDataManager, Path.Combine(Path.GetDirectoryName(Filename), Path.GetFileNameWithoutExtension(Filename)),
+                        FileHandling.TilePalettePair.Formats.Auto, fontOrgWidth = 256, fontOrgHeight = 128);
+                    font.Palette = new FileHandling.PaletteFile(gameDataManager, new MemoryStream(paletteRaw), null, -1);
                     break;
 
                 case GameDataManager.Versions.American:
                     CharacterSize = new Size(CharacterSize.Width + 2, CharacterSize.Height);
-                    fontImage = new Bitmap(128, 64);
+                    font = new FileHandling.TilePalettePair(gameDataManager, Path.Combine(Path.GetDirectoryName(Filename), Path.GetFileNameWithoutExtension(Filename)),
+                        FileHandling.TilePalettePair.Formats.Auto, fontOrgWidth = 128, fontOrgHeight = 64);
                     fontOrgWidth = CharacterSize.Width * 16;
-                    fontOrgHeight = CharacterSize.Height * 16;
-                    Convert4bpp(ref fontImage, fontRaw, palette);
+                    fontOrgHeight = CharacterSize.Height * 6;
                     break;
 
                 case GameDataManager.Versions.Japanese:
-                    fontImage = new Bitmap(512, 512);
-                    fontOrgWidth = fontImage.Width;
-                    fontOrgHeight = fontImage.Height;
-                    Convert4bpp(ref fontImage, fontRaw, palette);
+                    font = new FileHandling.TilePalettePair(gameDataManager, Path.Combine(Path.GetDirectoryName(Filename), Path.GetFileNameWithoutExtension(Filename)),
+                        FileHandling.TilePalettePair.Formats.Auto, fontOrgWidth = 512, fontOrgHeight = 512);
                     break;
             }
 
@@ -107,8 +92,9 @@ namespace Yggdrasil.Helpers
                     using (Graphics g = Graphics.FromImage(chrBmp))
                     {
                         g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                        g.DrawImage(fontImage, new Rectangle(0, 0, chrBmp.Width - 1, chrBmp.Height), new Rectangle(x + chrLeftOffset, y, chrBmp.Width - 1, chrBmp.Height), GraphicsUnit.Pixel);
+                        g.DrawImage(font.Image, new Rectangle(0, 0, chrBmp.Width - 1, chrBmp.Height), new Rectangle(x + chrLeftOffset, y, chrBmp.Width - 1, chrBmp.Height), GraphicsUnit.Pixel);
                     }
+                    for (int y2 = 0; y2 < chrBmp.Height; y2++) for (int x2 = 0; x2 < chrBmp.Width; x2++) if (chrBmp.GetPixel(x2, y2) == font.Palette.Colors[0]) chrBmp.SetPixel(x2, y2, Color.Transparent);
 
                     Characters.Add(new Character(id++, chrBmp, chrLeftOffset, chrRightOffset));
 
@@ -117,63 +103,17 @@ namespace Yggdrasil.Helpers
             }
         }
 
-        private void Convert2bpp(ref Bitmap image, byte[] data, List<Color> palette)
-        {
-            for (int y = 0; y < image.Height; y++)
-            {
-                for (int x = 0, x2 = 0; x < image.Width; x += 4, x2++)
-                {
-                    int ofs = (y * (image.Width / 4)) + x2;
-                    byte read = data[ofs];
-
-                    for (int i = 3; i >= 0; i--)
-                    {
-                        byte idx = (byte)((read >> (i << 1)) & 0x03);
-                        image.SetPixel(x + i, y, palette[idx]);
-                    }
-                }
-            }
-        }
-
-        private void Convert4bpp(ref Bitmap image, byte[] data, List<Color> palette)
-        {
-            for (int y = 0; y < image.Height; y++)
-            {
-                for (int x = 0, x2 = 0; x < image.Width; x += 2, x2++)
-                {
-                    int ofs = (y * (image.Width / 2)) + x2;
-                    byte read = data[ofs];
-
-                    for (int i = 1; i >= 0; i--)
-                    {
-                        byte idx = (byte)((read >> (i << 2)) & 0x0F);
-                        image.SetPixel(x + i, y, palette[idx]);
-                    }
-                }
-            }
-        }
-
         public Bitmap RenderString(EtrianString str, int width = 256, int spacingModifier = 0, int zoom = 1)
         {
             if (str == null) return null;
 
-            int newLines = 1;
-            for (int i = 0; i < str.RawData.Length; i++)
-            {
-                if (i + 1 < str.RawData.Length && (str.RawData[i] == 0x8001 && str.RawData[i + 1] == 0x8002))
-                {
-                    newLines++;
-                    i++;
-                }
-                else if (str.RawData[i] == 0x8001 || str.RawData[i] == 0x8002)
-                    newLines++;
-            }
-
-            int yIncrease = (CharacterSize.Height + (GameDataManager.Version == Yggdrasil.GameDataManager.Versions.Japanese ? 2 : 0) - 1);
+            int newLines = str.ConvertedString.Count(xx => xx == '\n') + 1;
+            int yIncrease = CharacterSize.Height;
+            if (GameDataManager.Version != Yggdrasil.GameDataManager.Versions.European) yIncrease += 4;
 
             Bitmap rendered = new Bitmap(width, Math.Max(newLines, 1) * yIncrease);
 
-            ColorMap[] colorMap = new ColorMap[1] { new ColorMap() { OldColor = palette[1], NewColor = palette[1] } };
+            ColorMap[] colorMap = new ColorMap[1] { new ColorMap() { OldColor = font.Palette.Colors[1], NewColor = font.Palette.Colors[1] } };
             ImageAttributes imageAttrib = new ImageAttributes();
 
             int x = 0, y = 0;
@@ -190,7 +130,7 @@ namespace Yggdrasil.Helpers
                                 // Color
                                 ushort color = str.RawData[i + 1];
                                 if (color == 0) colorMap[0].NewColor = colorMap[0].OldColor;
-                                else if (color == 4) colorMap[0].NewColor = palette[1];
+                                else if (color == 4) colorMap[0].NewColor = font.Palette.Colors[1];
                                 else if (color == 6) colorMap[0].NewColor = Color.FromArgb(0xF8, 0x70, 0x48);
                                 else if (color == 7) colorMap[0].NewColor = Color.FromArgb(0x4A, 0xBD, 0xA5);
                                 else if (color == 9) colorMap[0].NewColor = Color.FromArgb(0xEF, 0xF7, 0xAD);
@@ -211,7 +151,6 @@ namespace Yggdrasil.Helpers
                         {
                             g.DrawLine(pen, new Point(0, y + 1), new Point(rendered.Width, y + 1));
                         }
-                        y++;
                         x = 0;
                     }
                     else if (str.RawData[i] == 0x8001)
@@ -224,7 +163,6 @@ namespace Yggdrasil.Helpers
                         Character chrData = Characters.FirstOrDefault(xx => xx.ID == (ushort)((str.RawData[i] & 0xFF00) | (str.RawData[i] & 0xFF) - 1));
                         if (chrData != null)
                         {
-
                             g.DrawImage(chrData.Image, new Rectangle(x, y, chrData.Image.Width, chrData.Image.Height), 0, 0, chrData.Image.Width, chrData.Image.Height, GraphicsUnit.Pixel, imageAttrib);
                             x += (chrData.Image.Width + spacingModifier);
                         }

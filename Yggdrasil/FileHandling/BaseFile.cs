@@ -25,6 +25,7 @@ namespace Yggdrasil.FileHandling
             GameDataManager = gameDataManager;
             Filename = path;
             InArchive = false;
+            ArchiveFile = null;
             FileNumber = -1;
 
             Stream = DataCompression.StreamHelper.Decompress(new MemoryStream(File.ReadAllBytes(Filename)));
@@ -38,7 +39,7 @@ namespace Yggdrasil.FileHandling
             if (memoryStream == null) throw new ArgumentException("MemoryStream cannot be null.");
 
             GameDataManager = gameDataManager;
-            Filename = archiveFile.Filename;
+            Filename = (archiveFile != null ? archiveFile.Filename : string.Empty);
             InArchive = true;
             ArchiveFile = archiveFile;
             FileNumber = fileNumber;
