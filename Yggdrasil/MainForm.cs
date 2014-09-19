@@ -296,10 +296,12 @@ namespace Yggdrasil
         private void CommandAbout()
         {
             string description = System.Reflection.Assembly.GetExecutingAssembly().GetAttribute<System.Reflection.AssemblyDescriptionAttribute>().Description;
+            string copyright = System.Reflection.Assembly.GetExecutingAssembly().GetAttribute<System.Reflection.AssemblyCopyrightAttribute>().Copyright;
 
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat("{0} - {1}\n\n", Program.TitleString, description);
-            builder.Append("Written 2014 by xdaniel - https://github.com/xdanieldzd/\n\n");
+            builder.AppendFormat("{0} - {1}\n", Program.TitleString, description);
+            builder.AppendLine(copyright);
+            builder.AppendLine();
             builder.Append("Contains ndstool 1.31 by Rafael Vuijk (DarkFader)");
             MessageBox.Show(builder.ToString(), "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
