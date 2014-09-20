@@ -31,14 +31,27 @@ namespace Yggdrasil.Controls
 
         public void Rebuild()
         {
-            gridEditControl1.Columns = 35;
-            gridEditControl1.Rows = 30;
+            gridEditControl.Columns = 35;
+            gridEditControl.Rows = 30;
         }
 
         public void Terminate()
         {
             this.gameDataManager = null;
             //
+        }
+
+        private void gridEditControl_TileClick(object sender, TileClickEventArgs e)
+        {
+            if ((e.Button & System.Windows.Forms.MouseButtons.Left) != 0)
+            {
+                MessageBox.Show(string.Format("Clicked {0}", e.Coordinates));
+            }
+        }
+
+        private void gridEditControl_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.DrawIcon(SystemIcons.Question, 16, 16);
         }
     }
 }

@@ -8,8 +8,22 @@ using System.Drawing;
 
 namespace Yggdrasil.Controls
 {
+    class TileClickEventArgs : EventArgs
+    {
+        public MouseButtons Button { get; private set; }
+        public Point Coordinates { get; private set; }
+
+        public TileClickEventArgs(MouseButtons button, Point coords)
+        {
+            this.Button = button;
+            this.Coordinates = coords;
+        }
+    }
+
     class GridEditControl : Panel
     {
+        public event EventHandler<TileClickEventArgs> TileClick;
+
         protected override CreateParams CreateParams
         {
             get
@@ -120,6 +134,9 @@ namespace Yggdrasil.Controls
         protected override void OnMouseDown(MouseEventArgs e)
         {
             selectedTileCoords = new Point((e.X / this.zoomedTileSize.Width), (e.Y / this.zoomedTileSize.Height));
+
+            var handler = TileClick;
+            if (handler != null) handler(this, new TileClickEventArgs(e.Button, selectedTileCoords));
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -145,7 +162,7 @@ namespace Yggdrasil.Controls
 
             e.Graphics.DrawRectangle(Pens.Red, selectionRect);
             e.Graphics.DrawLine(Pens.Red, Point.Empty, selectionRect.Location);
-            e.Graphics.DrawString(selectedTileCoords.ToString(), SystemFonts.MessageBoxFont, Brushes.Yellow, Point.Empty);
+            e.Graphics.DrawString(string.Format("Hover:{0}, Selected:{1}", hoverTileCoords, selectedTileCoords), SystemFonts.MessageBoxFont, Brushes.Yellow, Point.Empty);
         }
 
         protected override void OnPaintBackground(PaintEventArgs e)
