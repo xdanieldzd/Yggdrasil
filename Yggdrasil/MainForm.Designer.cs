@@ -62,12 +62,15 @@
             this.repackROMToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.tpFloorMaps = new System.Windows.Forms.TabPage();
+            this.floorMapEditor = new Yggdrasil.Controls.FloorMapEditor();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tpTableData.SuspendLayout();
             this.tpMessages.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            this.tpFloorMaps.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -233,6 +236,7 @@
             // tabControl
             // 
             this.tabControl.Controls.Add(this.tpTableData);
+            this.tabControl.Controls.Add(this.tpFloorMaps);
             this.tabControl.Controls.Add(this.tpMessages);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Location = new System.Drawing.Point(0, 49);
@@ -359,6 +363,26 @@
             this.aboutToolStripButton.Text = "&About";
             this.aboutToolStripButton.Click += new System.EventHandler(this.aboutToolStripButton_Click);
             // 
+            // tpFloorMaps
+            // 
+            this.tpFloorMaps.Controls.Add(this.floorMapEditor);
+            this.tpFloorMaps.Location = new System.Drawing.Point(4, 22);
+            this.tpFloorMaps.Name = "tpFloorMaps";
+            this.tpFloorMaps.Padding = new System.Windows.Forms.Padding(3);
+            this.tpFloorMaps.Size = new System.Drawing.Size(696, 480);
+            this.tpFloorMaps.TabIndex = 2;
+            this.tpFloorMaps.Text = "Floor Maps";
+            this.tpFloorMaps.UseVisualStyleBackColor = true;
+            // 
+            // floorMapEditor1
+            // 
+            this.floorMapEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.floorMapEditor.Enabled = false;
+            this.floorMapEditor.Location = new System.Drawing.Point(3, 3);
+            this.floorMapEditor.Name = "floorMapEditor1";
+            this.floorMapEditor.Size = new System.Drawing.Size(690, 474);
+            this.floorMapEditor.TabIndex = 0;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -382,6 +406,7 @@
             this.tpMessages.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.tpFloorMaps.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -422,5 +447,7 @@
         private System.Windows.Forms.ToolStripButton unpackROMToolStripButton;
         private System.Windows.Forms.ToolStripButton repackROMToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.TabPage tpFloorMaps;
+        private Controls.FloorMapEditor floorMapEditor;
     }
 }

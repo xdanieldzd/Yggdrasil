@@ -76,6 +76,15 @@
     <Compile Include="Attributes\PrioritizedCategory.cs" />
     <Compile Include="Attributes\TreeNodeCategory.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="Controls\FloorMapEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FloorMapEditor.Designer.cs">
+      <DependentUpon>FloorMapEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GridEditControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\IEditorControl.cs" />
     <Compile Include="Controls\PropertyGridEx.cs">
       <SubType>Component</SubType>
@@ -175,6 +184,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="TableParsing\PlayerSkillReqParser.cs" />
+    <EmbeddedResource Include="Controls\FloorMapEditor.resx">
+      <DependentUpon>FloorMapEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\TableEntryEditor.resx">
       <DependentUpon>TableEntryEditor.cs</DependentUpon>
     </EmbeddedResource>

@@ -325,7 +325,7 @@ namespace Yggdrasil
 
             gameDataManager.ReadGameDirectory(Configuration.LastDataPath = path);
 
-            tableEntryEditor.Enabled = messageEditor.Enabled = (gameDataManager != null && gameDataManager.IsInitialized);
+            tableEntryEditor.Enabled = messageEditor.Enabled = floorMapEditor.Enabled = (gameDataManager != null && gameDataManager.IsInitialized);
             gameLanguageToolStripMenuItem.Enabled = (gameDataManager != null && gameDataManager.Version == GameDataManager.Versions.European);
 
             if (gameDataManager.IsInitialized)
