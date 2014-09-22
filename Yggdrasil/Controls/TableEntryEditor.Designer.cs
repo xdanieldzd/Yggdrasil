@@ -30,12 +30,12 @@
         {
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.tvParsers = new Yggdrasil.Controls.TreeViewEx();
+            this.pgData = new Yggdrasil.Controls.PropertyGridEx();
             this.cmsDataGrid = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.resetPropertyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsTreeView = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.createHTMLDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tvParsers = new Yggdrasil.Controls.TreeViewEx();
-            this.pgData = new Yggdrasil.Controls.PropertyGridEx();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -59,8 +59,32 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pgData);
             this.splitContainer1.Size = new System.Drawing.Size(500, 400);
-            this.splitContainer1.SplitterDistance = 180;
+            this.splitContainer1.SplitterDistance = 200;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // tvParsers
+            // 
+            this.tvParsers.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tvParsers.HideSelection = false;
+            this.tvParsers.Location = new System.Drawing.Point(0, 0);
+            this.tvParsers.Name = "tvParsers";
+            this.tvParsers.Size = new System.Drawing.Size(200, 400);
+            this.tvParsers.TabIndex = 0;
+            this.tvParsers.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvParsers_AfterSelect);
+            this.tvParsers.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tvParsers_MouseUp);
+            // 
+            // pgData
+            // 
+            this.pgData.AutoSizeColumnMargin = 64;
+            this.pgData.AutoSizeColumns = true;
+            this.pgData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pgData.Location = new System.Drawing.Point(0, 0);
+            this.pgData.Name = "pgData";
+            this.pgData.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            this.pgData.Size = new System.Drawing.Size(296, 400);
+            this.pgData.TabIndex = 0;
+            this.pgData.ToolbarVisible = false;
+            this.pgData.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgData_PropertyValueChanged);
             // 
             // cmsDataGrid
             // 
@@ -82,7 +106,7 @@
             this.cmsTreeView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.createHTMLDumpToolStripMenuItem});
             this.cmsTreeView.Name = "cmsTreeView";
-            this.cmsTreeView.Size = new System.Drawing.Size(190, 48);
+            this.cmsTreeView.Size = new System.Drawing.Size(190, 26);
             // 
             // createHTMLDumpToolStripMenuItem
             // 
@@ -90,30 +114,6 @@
             this.createHTMLDumpToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.createHTMLDumpToolStripMenuItem.Text = "&Create HTML Dump...";
             this.createHTMLDumpToolStripMenuItem.Click += new System.EventHandler(this.createHTMLDumpToolStripMenuItem_Click);
-            // 
-            // tvParsers
-            // 
-            this.tvParsers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tvParsers.HideSelection = false;
-            this.tvParsers.Location = new System.Drawing.Point(0, 0);
-            this.tvParsers.Name = "tvParsers";
-            this.tvParsers.Size = new System.Drawing.Size(180, 400);
-            this.tvParsers.TabIndex = 0;
-            this.tvParsers.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvParsers_AfterSelect);
-            this.tvParsers.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tvParsers_MouseUp);
-            // 
-            // pgData
-            // 
-            this.pgData.AutoSizeColumnMargin = 64;
-            this.pgData.AutoSizeColumns = true;
-            this.pgData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pgData.Location = new System.Drawing.Point(0, 0);
-            this.pgData.Name = "pgData";
-            this.pgData.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.pgData.Size = new System.Drawing.Size(316, 400);
-            this.pgData.TabIndex = 0;
-            this.pgData.ToolbarVisible = false;
-            this.pgData.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgData_PropertyValueChanged);
             // 
             // TableEntryEditor
             // 

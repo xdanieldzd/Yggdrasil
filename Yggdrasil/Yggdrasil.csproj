@@ -102,6 +102,9 @@
     <Compile Include="Exceptions\GameDataManagerException.cs" />
     <Compile Include="Exceptions\CompressedStreamException.cs" />
     <Compile Include="FileHandling\ArchiveFile.cs" />
+    <Compile Include="FileHandling\MapDataFile.cs" />
+    <Compile Include="FileHandling\MapDataHandling\BaseTile.cs" />
+    <Compile Include="FileHandling\MapDataHandling\FloorTile.cs" />
     <Compile Include="FileHandling\PaletteFile.cs" />
     <Compile Include="FileHandling\TileDataFile.cs" />
     <Compile Include="FileHandling\TilePalettePair.cs" />

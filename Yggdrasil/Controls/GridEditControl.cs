@@ -84,6 +84,9 @@ namespace Yggdrasil.Controls
         }
 
         Size zoomedTileSize;
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public Size ZoomedTileSize { get { return zoomedTileSize; } }
+
         Point hoverTileCoords, selectedTileCoords;
         Rectangle selectionRect;
 

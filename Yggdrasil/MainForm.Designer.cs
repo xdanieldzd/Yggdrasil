@@ -52,6 +52,8 @@
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tpTableData = new System.Windows.Forms.TabPage();
             this.tableEntryEditor = new Yggdrasil.Controls.TableEntryEditor();
+            this.tpFloorMaps = new System.Windows.Forms.TabPage();
+            this.floorMapEditor = new Yggdrasil.Controls.FloorMapEditor();
             this.tpMessages = new System.Windows.Forms.TabPage();
             this.messageEditor = new Yggdrasil.Controls.MessageEditor();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -62,15 +64,13 @@
             this.repackROMToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.tpFloorMaps = new System.Windows.Forms.TabPage();
-            this.floorMapEditor = new Yggdrasil.Controls.FloorMapEditor();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tpTableData.SuspendLayout();
+            this.tpFloorMaps.SuspendLayout();
             this.tpMessages.SuspendLayout();
             this.toolStrip1.SuspendLayout();
-            this.tpFloorMaps.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -82,7 +82,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(704, 24);
+            this.menuStrip.Size = new System.Drawing.Size(824, 24);
             this.menuStrip.TabIndex = 0;
             // 
             // fileToolStripMenuItem
@@ -221,9 +221,9 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsslStatus});
-            this.statusStrip.Location = new System.Drawing.Point(0, 555);
+            this.statusStrip.Location = new System.Drawing.Point(0, 600);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(704, 22);
+            this.statusStrip.Size = new System.Drawing.Size(824, 22);
             this.statusStrip.TabIndex = 2;
             // 
             // tsslStatus
@@ -242,7 +242,7 @@
             this.tabControl.Location = new System.Drawing.Point(0, 49);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(704, 506);
+            this.tabControl.Size = new System.Drawing.Size(824, 551);
             this.tabControl.TabIndex = 1;
             this.tabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl_Selected);
             // 
@@ -252,7 +252,7 @@
             this.tpTableData.Location = new System.Drawing.Point(4, 22);
             this.tpTableData.Name = "tpTableData";
             this.tpTableData.Padding = new System.Windows.Forms.Padding(3);
-            this.tpTableData.Size = new System.Drawing.Size(696, 480);
+            this.tpTableData.Size = new System.Drawing.Size(816, 525);
             this.tpTableData.TabIndex = 0;
             this.tpTableData.Text = "Data Tables";
             this.tpTableData.UseVisualStyleBackColor = true;
@@ -263,8 +263,28 @@
             this.tableEntryEditor.Enabled = false;
             this.tableEntryEditor.Location = new System.Drawing.Point(3, 3);
             this.tableEntryEditor.Name = "tableEntryEditor";
-            this.tableEntryEditor.Size = new System.Drawing.Size(690, 474);
+            this.tableEntryEditor.Size = new System.Drawing.Size(810, 519);
             this.tableEntryEditor.TabIndex = 0;
+            // 
+            // tpFloorMaps
+            // 
+            this.tpFloorMaps.Controls.Add(this.floorMapEditor);
+            this.tpFloorMaps.Location = new System.Drawing.Point(4, 22);
+            this.tpFloorMaps.Name = "tpFloorMaps";
+            this.tpFloorMaps.Padding = new System.Windows.Forms.Padding(3);
+            this.tpFloorMaps.Size = new System.Drawing.Size(826, 515);
+            this.tpFloorMaps.TabIndex = 2;
+            this.tpFloorMaps.Text = "Floor Maps";
+            this.tpFloorMaps.UseVisualStyleBackColor = true;
+            // 
+            // floorMapEditor
+            // 
+            this.floorMapEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.floorMapEditor.Enabled = false;
+            this.floorMapEditor.Location = new System.Drawing.Point(3, 3);
+            this.floorMapEditor.Name = "floorMapEditor";
+            this.floorMapEditor.Size = new System.Drawing.Size(820, 509);
+            this.floorMapEditor.TabIndex = 0;
             // 
             // tpMessages
             // 
@@ -272,7 +292,7 @@
             this.tpMessages.Location = new System.Drawing.Point(4, 22);
             this.tpMessages.Name = "tpMessages";
             this.tpMessages.Padding = new System.Windows.Forms.Padding(3);
-            this.tpMessages.Size = new System.Drawing.Size(696, 480);
+            this.tpMessages.Size = new System.Drawing.Size(826, 515);
             this.tpMessages.TabIndex = 1;
             this.tpMessages.Text = "Messages";
             this.tpMessages.UseVisualStyleBackColor = true;
@@ -283,7 +303,7 @@
             this.messageEditor.Enabled = false;
             this.messageEditor.Location = new System.Drawing.Point(3, 3);
             this.messageEditor.Name = "messageEditor";
-            this.messageEditor.Size = new System.Drawing.Size(690, 474);
+            this.messageEditor.Size = new System.Drawing.Size(820, 509);
             this.messageEditor.TabIndex = 0;
             // 
             // toolStrip1
@@ -298,7 +318,7 @@
             this.aboutToolStripButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(704, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(824, 25);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -363,31 +383,11 @@
             this.aboutToolStripButton.Text = "&About";
             this.aboutToolStripButton.Click += new System.EventHandler(this.aboutToolStripButton_Click);
             // 
-            // tpFloorMaps
-            // 
-            this.tpFloorMaps.Controls.Add(this.floorMapEditor);
-            this.tpFloorMaps.Location = new System.Drawing.Point(4, 22);
-            this.tpFloorMaps.Name = "tpFloorMaps";
-            this.tpFloorMaps.Padding = new System.Windows.Forms.Padding(3);
-            this.tpFloorMaps.Size = new System.Drawing.Size(696, 480);
-            this.tpFloorMaps.TabIndex = 2;
-            this.tpFloorMaps.Text = "Floor Maps";
-            this.tpFloorMaps.UseVisualStyleBackColor = true;
-            // 
-            // floorMapEditor1
-            // 
-            this.floorMapEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.floorMapEditor.Enabled = false;
-            this.floorMapEditor.Location = new System.Drawing.Point(3, 3);
-            this.floorMapEditor.Name = "floorMapEditor1";
-            this.floorMapEditor.Size = new System.Drawing.Size(690, 474);
-            this.floorMapEditor.TabIndex = 0;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 577);
+            this.ClientSize = new System.Drawing.Size(824, 622);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip);
@@ -403,10 +403,10 @@
             this.statusStrip.PerformLayout();
             this.tabControl.ResumeLayout(false);
             this.tpTableData.ResumeLayout(false);
+            this.tpFloorMaps.ResumeLayout(false);
             this.tpMessages.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            this.tpFloorMaps.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

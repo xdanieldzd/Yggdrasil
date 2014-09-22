@@ -28,12 +28,38 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.pnlMap = new System.Windows.Forms.Panel();
+            this.cbMaps = new System.Windows.Forms.ComboBox();
             this.gridEditControl = new Yggdrasil.Controls.GridEditControl();
+            this.pgMapTile = new Yggdrasil.Controls.PropertyGridEx();
+            this.pnlMap.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // pnlMap
+            // 
+            this.pnlMap.AutoScroll = true;
+            this.pnlMap.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlMap.Controls.Add(this.gridEditControl);
+            this.pnlMap.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlMap.Location = new System.Drawing.Point(0, 21);
+            this.pnlMap.Name = "pnlMap";
+            this.pnlMap.Size = new System.Drawing.Size(300, 279);
+            this.pnlMap.TabIndex = 1;
+            // 
+            // cbMaps
+            // 
+            this.cbMaps.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cbMaps.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbMaps.FormattingEnabled = true;
+            this.cbMaps.Location = new System.Drawing.Point(0, 0);
+            this.cbMaps.Name = "cbMaps";
+            this.cbMaps.Size = new System.Drawing.Size(500, 21);
+            this.cbMaps.TabIndex = 4;
+            this.cbMaps.SelectedIndexChanged += new System.EventHandler(this.cbMaps_SelectedIndexChanged);
             // 
             // gridEditControl
             // 
-            this.gridEditControl.Location = new System.Drawing.Point(0, 0);
+            this.gridEditControl.Location = new System.Drawing.Point(3, 3);
             this.gridEditControl.MinimumSize = new System.Drawing.Size(16, 16);
             this.gridEditControl.Name = "gridEditControl";
             this.gridEditControl.ShowGrid = true;
@@ -43,13 +69,24 @@
             this.gridEditControl.TileClick += new System.EventHandler<Yggdrasil.Controls.TileClickEventArgs>(this.gridEditControl_TileClick);
             this.gridEditControl.Paint += new System.Windows.Forms.PaintEventHandler(this.gridEditControl_Paint);
             // 
+            // pgMapTile
+            // 
+            this.pgMapTile.Dock = System.Windows.Forms.DockStyle.Right;
+            this.pgMapTile.Location = new System.Drawing.Point(300, 21);
+            this.pgMapTile.Name = "pgMapTile";
+            this.pgMapTile.Size = new System.Drawing.Size(200, 279);
+            this.pgMapTile.TabIndex = 1;
+            // 
             // FloorMapEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.gridEditControl);
+            this.Controls.Add(this.pnlMap);
+            this.Controls.Add(this.pgMapTile);
+            this.Controls.Add(this.cbMaps);
             this.Name = "FloorMapEditor";
-            this.Size = new System.Drawing.Size(300, 300);
+            this.Size = new System.Drawing.Size(500, 300);
+            this.pnlMap.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -57,5 +94,8 @@
         #endregion
 
         private GridEditControl gridEditControl;
+        private System.Windows.Forms.Panel pnlMap;
+        private PropertyGridEx pgMapTile;
+        private System.Windows.Forms.ComboBox cbMaps;
     }
 }

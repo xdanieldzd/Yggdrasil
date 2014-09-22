@@ -34,6 +34,11 @@ namespace Yggdrasil
             "data\\Data\\Param", "data\\Data\\Battle", "data\\Data\\Event"
         };
 
+        static readonly string[] mapDataDirs = new string[]
+        {
+            "data\\Data\\MapDat"
+        };
+
         static readonly string ItemNameFile = "ItemName";
         static readonly string ItemInfoFile = "ItemInfo";
         static readonly string EnemyNameFile = "EnemyName";
@@ -100,6 +105,8 @@ namespace Yggdrasil
         public int ChangedDataCount { get { return (changedParsedData != null ? changedParsedData.Count : -1); } }
         public event PropertyChangedEventHandler ItemDataPropertyChangedEvent;
 
+        public List<MapDataFile> MapDataFiles { get; private set; }
+
         public static Dictionary<ushort, string> ItemNames { get; private set; }
         public static Dictionary<ushort, string> ItemDescriptions { get; private set; }
         public static Dictionary<ushort, string> EnemyNames { get; private set; }
@@ -164,6 +171,8 @@ namespace Yggdrasil
 
                     ParsedData = ParseDataTables();
                     changedParsedData = new List<BaseParser>();
+
+                    MapDataFiles = ReadMapDataFiles(mapDataDirs);
 
                     CleanStringDictionaries();
                     GenerateOtherDictionaries();
@@ -536,6 +545,30 @@ namespace Yggdrasil
             }
 
             return parsedData;
+        }
+
+        private List<MapDataFile> ReadMapDataFiles(string[] directories)
+        {
+            if (directories == null) throw new ArgumentNullException("Directories is null");
+
+            List<MapDataFile> mapDataFiles = new List<MapDataFile>();
+
+            foreach (string directory in directories)
+            {
+                string localDataPath = Path.Combine(DataPath, directory);
+                if (!Directory.Exists(localDataPath)) continue;
+
+                List<string> filePaths = Directory.EnumerateFiles(localDataPath, "*.ymd", SearchOption.AllDirectories).ToList();
+                foreach (string filePath in filePaths)
+                {
+                    MapDataFile ymd = new MapDataFile(this, filePath);
+                    mapDataFiles.Add(ymd);
+
+                    loadWaitWorker.ReportProgress(-1, string.Format("Reading {0}...", Path.GetFileName(filePath)));
+                }
+            }
+
+            return mapDataFiles.OrderBy(x => x.Filename).ToList();
         }
 
         private void GenerateDictionariesLists()
