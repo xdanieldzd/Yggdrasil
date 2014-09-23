@@ -45,21 +45,21 @@ namespace Yggdrasil.Helpers
             {
                 case GameDataManager.Versions.European:
                     font = new FileHandling.TilePalettePair(gameDataManager, Path.Combine(Path.GetDirectoryName(Filename), Path.GetFileNameWithoutExtension(Filename)),
-                        FileHandling.TilePalettePair.Formats.Auto, fontOrgWidth = 256, fontOrgHeight = 128);
+                        FileHandling.TilePalettePair.Formats.Auto, fontOrgWidth = 256, fontOrgHeight = 128, true);
                     font.Palette = new FileHandling.PaletteFile(gameDataManager, new MemoryStream(paletteRaw), null, -1);
                     break;
 
                 case GameDataManager.Versions.American:
                     CharacterSize = new Size(CharacterSize.Width + 2, CharacterSize.Height);
                     font = new FileHandling.TilePalettePair(gameDataManager, Path.Combine(Path.GetDirectoryName(Filename), Path.GetFileNameWithoutExtension(Filename)),
-                        FileHandling.TilePalettePair.Formats.Auto, fontOrgWidth = 128, fontOrgHeight = 64);
+                        FileHandling.TilePalettePair.Formats.Auto, fontOrgWidth = 128, fontOrgHeight = 64, true);
                     fontOrgWidth = CharacterSize.Width * 16;
                     fontOrgHeight = CharacterSize.Height * 6;
                     break;
 
                 case GameDataManager.Versions.Japanese:
                     font = new FileHandling.TilePalettePair(gameDataManager, Path.Combine(Path.GetDirectoryName(Filename), Path.GetFileNameWithoutExtension(Filename)),
-                        FileHandling.TilePalettePair.Formats.Auto, fontOrgWidth = 512, fontOrgHeight = 512);
+                        FileHandling.TilePalettePair.Formats.Auto, fontOrgWidth = 512, fontOrgHeight = 512, true);
                     break;
             }
 
@@ -94,7 +94,6 @@ namespace Yggdrasil.Helpers
                         g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                         g.DrawImage(font.Image, new Rectangle(0, 0, chrBmp.Width - 1, chrBmp.Height), new Rectangle(x + chrLeftOffset, y, chrBmp.Width - 1, chrBmp.Height), GraphicsUnit.Pixel);
                     }
-                    for (int y2 = 0; y2 < chrBmp.Height; y2++) for (int x2 = 0; x2 < chrBmp.Width; x2++) if (chrBmp.GetPixel(x2, y2) == font.Palette.Colors[0]) chrBmp.SetPixel(x2, y2, Color.Transparent);
 
                     Characters.Add(new Character(id++, chrBmp, chrLeftOffset, chrRightOffset));
 

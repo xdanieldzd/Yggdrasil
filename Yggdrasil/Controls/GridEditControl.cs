@@ -155,6 +155,8 @@ namespace Yggdrasil.Controls
         {
             selectedTileCoords = new Point((e.X / (this.zoomedTileSize.Width + this.zoomedTileGap)), (e.Y / (this.zoomedTileSize.Height + this.zoomedTileGap)));
 
+            this.Select();
+
             var handler = TileClick;
             if (handler != null) handler(this, new TileClickEventArgs(e.Button, selectedTileCoords));
         }

@@ -18,6 +18,7 @@ namespace Yggdrasil.Controls
     public partial class MessageEditor : UserControl, IEditorControl
     {
         public bool IsInitialized() { return (gameDataManager != null); }
+        public bool IsBusy() { return (treeViewWorker == null ? false : treeViewWorker.IsBusy); }
 
         GameDataManager gameDataManager;
         BackgroundWorker treeViewWorker;

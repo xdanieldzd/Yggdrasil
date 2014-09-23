@@ -50,12 +50,13 @@ namespace Yggdrasil.FileHandling
             set { palette = value; Convert(); }
         }
 
+        public bool ForcedIndex0Transparent { get; private set; }
         public Formats Format { get; private set; }
         public Bitmap Image { get; private set; }
 
         public TilePalettePair(GameDataManager gameDataManager, string path) : this(gameDataManager, path, Formats.Auto, -1, -1) { }
         public TilePalettePair(GameDataManager gameDataManager, string path, Formats format) : this(gameDataManager, path, format, -1, -1) { }
-        public TilePalettePair(GameDataManager gameDataManager, string path, Formats format, int width, int height) : this(gameDataManager, path, format, -1, -1, false) { }
+        public TilePalettePair(GameDataManager gameDataManager, string path, Formats format, int width, int height) : this(gameDataManager, path, format, width, height, false) { }
         public TilePalettePair(GameDataManager gameDataManager, string path, Formats format, int width, int height, bool forceIndex0Transparent)
         {
             string tilePath = string.Empty;
@@ -80,8 +81,7 @@ namespace Yggdrasil.FileHandling
             this.palette = new PaletteFile(gameDataManager, palettePath);
             this.tileData = new TileDataFile(gameDataManager, tilePath);
 
-            if (forceIndex0Transparent)
-                this.palette.Colors[0] = Color.FromArgb(0, this.palette.Colors[0]);
+            this.ForcedIndex0Transparent = forceIndex0Transparent;
 
             if (format == Formats.Auto)
             {
@@ -111,6 +111,8 @@ namespace Yggdrasil.FileHandling
 
         public void Convert()
         {
+            if (ForcedIndex0Transparent) this.palette.Colors[0] = Color.FromArgb(0, this.palette.Colors[0]);
+
             Formats type = (this.Format & Formats.TypeMask);
             Formats bpp = (this.Format & Formats.BPPMask);
 

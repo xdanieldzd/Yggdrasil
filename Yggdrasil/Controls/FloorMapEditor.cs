@@ -11,15 +11,18 @@ using System.Reflection;
 
 using Yggdrasil.FileHandling;
 using Yggdrasil.FileHandling.MapDataHandling;
+using Yggdrasil.TableParsing;
 
 namespace Yggdrasil.Controls
 {
     public partial class FloorMapEditor : UserControl, IEditorControl
     {
         public bool IsInitialized() { return (gameDataManager != null); }
+        public bool IsBusy() { return false; }
 
         GameDataManager gameDataManager;
         MapDataFile mapDataFile;
+        List<GatherItemParser> gatherItemParsers;
 
         SolidBrush brushEmpty, brushFloor, brushWall;
         TilePalettePair mainMapTiles, mapTileGeomagneticField, mapTileRefreshingWater;
@@ -87,6 +90,7 @@ namespace Yggdrasil.Controls
             if (comboBox.SelectedItem != null)
             {
                 mapDataFile = (comboBox.SelectedItem as MapDataFile);
+                gatherItemParsers = gameDataManager.ParsedData.Where(x => x is GatherItemParser && (x as GatherItemParser).FloorNumber == (mapDataFile.FloorNumber - 1)).Cast<GatherItemParser>().ToList();
                 pgMapTile.SelectedObject = mapDataFile.Tiles[0, 0];
             }
 
@@ -94,11 +98,49 @@ namespace Yggdrasil.Controls
             pgMapTile.Refresh();
         }
 
+        private void chkGatherOverlay_CheckedChanged(object sender, EventArgs e)
+        {
+            gridEditControl.Invalidate();
+        }
+
+        private void chkEventOverlay_CheckedChanged(object sender, EventArgs e)
+        {
+            gridEditControl.Invalidate();
+        }
+
         private void gridEditControl_TileClick(object sender, TileClickEventArgs e)
         {
             if ((e.Button & System.Windows.Forms.MouseButtons.Left) != 0)
             {
                 pgMapTile.SelectedObject = mapDataFile.Tiles[e.Coordinates.X, e.Coordinates.Y];
+            }
+            else if ((e.Button & System.Windows.Forms.MouseButtons.Right) != 0)
+            {
+                GatherItemParser gatherItemParser = gatherItemParsers.FirstOrDefault(x => x.XCoord == e.Coordinates.X && x.YCoord == e.Coordinates.Y);
+                if (gatherItemParser != null)
+                {
+                    /* Kinda messy, eh... Might wanna improve this? */
+                    TabControl tabControl = (this.Parent.Parent as TabControl);
+                    TabPage tableDataTab = tabControl.TabPages["tpTableData"];
+                    TableEntryEditor entryEditor = (tableDataTab.Controls["tableEntryEditor"] as TableEntryEditor);
+
+                    Action selectTab = new Action(() =>
+                    {
+                        entryEditor.SelectNodeByTag(gatherItemParser);
+                        tabControl.SelectTab(tableDataTab);
+                    });
+
+                    if (!entryEditor.IsInitialized())
+                    {
+                        entryEditor.Initialize(gameDataManager);
+                        Timer waitTimer = new Timer();
+                        waitTimer.Interval = 50;
+                        waitTimer.Tick += ((s, ea) => { if (!entryEditor.IsBusy()) { (s as Timer).Stop(); selectTab(); } });
+                        waitTimer.Start();
+                    }
+                    else
+                        selectTab();
+                }
             }
         }
 
@@ -174,6 +216,13 @@ namespace Yggdrasil.Controls
                             e.Graphics.DrawImage(mapTileRefreshingWater.Image, tileRect, new Rectangle(coord.X, coord.Y, 16, 16), GraphicsUnit.Pixel);
                         else
                             e.Graphics.DrawImage(mainMapTiles.Image, tileRect, new Rectangle(coord.X, coord.Y, 16, 16), GraphicsUnit.Pixel);
+                    }
+
+                    if (chkGatherOverlay.Checked)
+                    {
+                        GatherItemParser gatherItemParser = gatherItemParsers.FirstOrDefault(xx => xx.XCoord == x && xx.YCoord == y);
+                        if (gatherItemParser != null)
+                            e.Graphics.DrawImage(mainMapTiles.Image, tileRect, 32, 90, 16, 16, GraphicsUnit.Pixel);
                     }
                 }
             }
