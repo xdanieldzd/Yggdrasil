@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Drawing;
 
 using Yggdrasil.Attributes;
 using Yggdrasil.FileHandling.MapDataHandling;
@@ -47,7 +48,7 @@ namespace Yggdrasil.FileHandling
             Unknown0x19 = 0x19,
         };
 
-        public static System.Collections.Hashtable IsTileWalkable = new System.Collections.Hashtable()
+        public static Dictionary<TileTypes, bool> IsTileWalkable = new Dictionary<TileTypes, bool>()
         {
             /* Maybe not "walkable" as such - treasure chest, etc. -, but at least for the sake of wall drawing... */
             { TileTypes.Nothing, false },
@@ -76,6 +77,22 @@ namespace Yggdrasil.FileHandling
             { TileTypes.WaterLily, false },     
             { TileTypes.DamagingFloor, true },
             { TileTypes.Unknown0x19, false },
+        };
+
+        public static Dictionary<TileTypes, Point> TileImageCoords = new Dictionary<TileTypes, Point>()
+        {
+            { TileTypes.StairsUp, new Point(112, 90) },
+            { TileTypes.StairsDown, new Point(128, 90) },
+            { TileTypes.OneWayShortcutN, new Point(96, 90) },
+            { TileTypes.OneWayShortcutS, new Point(96, 90) },
+            { TileTypes.OneWayShortcutW, new Point(96, 90) },
+            { TileTypes.OneWayShortcutE, new Point(96, 90) },
+            { TileTypes.DoorNS, new Point(64, 90) },
+            { TileTypes.DoorWE, new Point(64, 90) },
+            { TileTypes.TreasureChest, new Point(16, 90) },
+            { TileTypes.GeomagneticField, new Point(0, 0) },
+            { TileTypes.CollapsingFloor, new Point(80, 90) },
+            { TileTypes.RefreshingWater, new Point(0, 0) },
         };
 
         public int FloorNumber { get { return int.Parse(System.Text.RegularExpressions.Regex.Match(Path.GetFileNameWithoutExtension(this.Filename), @"\d+").Value); } }
@@ -115,7 +132,7 @@ namespace Yggdrasil.FileHandling
                         case TileTypes.FOEFloor:
                         case TileTypes.DamagingFloor:
                         case TileTypes.CollapsingFloor:
-                            Tiles[x, y] = new FloorTile(GameDataManager, this, offset);
+                            Tiles[x, y] = new FloorTile(GameDataManager, this, offset, new Point(x, y));
                             break;
                         /*case TileTypes.StairsUp:
                         case TileTypes.StairsDown:
@@ -128,7 +145,7 @@ namespace Yggdrasil.FileHandling
                             Tiles[x, y] = new WaterLily(data, ofs);
                             break;*/
                         default:
-                            Tiles[x, y] = new BaseTile(GameDataManager, this, offset);
+                            Tiles[x, y] = new BaseTile(GameDataManager, this, offset, new Point(x, y));
                             break;
                     }
                 }

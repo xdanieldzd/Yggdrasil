@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Drawing;
 
 namespace Yggdrasil.FileHandling.MapDataHandling
 {
@@ -12,16 +13,18 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public MapDataFile MapDataFile { get; private set; }
 
         public int Offset { get; private set; }
+        public Point Coordinates { get; private set; }
 
         public byte[] Data { get; private set; }
 
         public MapDataFile.TileTypes TileType { get; private set; }
 
-        public BaseTile(GameDataManager gameDataManager, MapDataFile mapDataFile, int offset)
+        public BaseTile(GameDataManager gameDataManager, MapDataFile mapDataFile, int offset, Point coordinates)
         {
             this.GameDataManager = gameDataManager;
             this.MapDataFile = mapDataFile;
             this.Offset = offset;
+            this.Coordinates = coordinates;
 
             Load();
         }

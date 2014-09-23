@@ -7,7 +7,7 @@ namespace Yggdrasil.FileHandling.MapDataHandling
 {
     class FloorTile : BaseTile
     {
-        public FloorTile(GameDataManager gameDataManager, MapDataFile mapDataFile, int offset) : base(gameDataManager, mapDataFile, offset) { }
+        public FloorTile(GameDataManager gameDataManager, MapDataFile mapDataFile, int offset, System.Drawing.Point coordinates) : base(gameDataManager, mapDataFile, offset, coordinates) { }
 
         public byte DangerIncrement { get; private set; }
         public ushort Unknown1 { get; private set; }

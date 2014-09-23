@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.pnlMap = new System.Windows.Forms.Panel();
-            this.cbMaps = new System.Windows.Forms.ComboBox();
             this.gridEditControl = new Yggdrasil.Controls.GridEditControl();
+            this.cbMaps = new System.Windows.Forms.ComboBox();
             this.pgMapTile = new Yggdrasil.Controls.PropertyGridEx();
             this.pnlMap.SuspendLayout();
             this.SuspendLayout();
@@ -46,6 +46,17 @@
             this.pnlMap.Size = new System.Drawing.Size(300, 279);
             this.pnlMap.TabIndex = 1;
             // 
+            // gridEditControl
+            // 
+            this.gridEditControl.Location = new System.Drawing.Point(3, 3);
+            this.gridEditControl.MinimumSize = new System.Drawing.Size(16, 16);
+            this.gridEditControl.Name = "gridEditControl";
+            this.gridEditControl.Size = new System.Drawing.Size(144, 144);
+            this.gridEditControl.TabIndex = 0;
+            this.gridEditControl.TileSize = new System.Drawing.Size(16, 16);
+            this.gridEditControl.TileClick += new System.EventHandler<Yggdrasil.Controls.TileClickEventArgs>(this.gridEditControl_TileClick);
+            this.gridEditControl.Paint += new System.Windows.Forms.PaintEventHandler(this.gridEditControl_Paint);
+            // 
             // cbMaps
             // 
             this.cbMaps.Dock = System.Windows.Forms.DockStyle.Top;
@@ -56,18 +67,6 @@
             this.cbMaps.Size = new System.Drawing.Size(500, 21);
             this.cbMaps.TabIndex = 4;
             this.cbMaps.SelectedIndexChanged += new System.EventHandler(this.cbMaps_SelectedIndexChanged);
-            // 
-            // gridEditControl
-            // 
-            this.gridEditControl.Location = new System.Drawing.Point(3, 3);
-            this.gridEditControl.MinimumSize = new System.Drawing.Size(16, 16);
-            this.gridEditControl.Name = "gridEditControl";
-            this.gridEditControl.ShowGrid = true;
-            this.gridEditControl.Size = new System.Drawing.Size(128, 128);
-            this.gridEditControl.TabIndex = 0;
-            this.gridEditControl.Zoom = 2;
-            this.gridEditControl.TileClick += new System.EventHandler<Yggdrasil.Controls.TileClickEventArgs>(this.gridEditControl_TileClick);
-            this.gridEditControl.Paint += new System.Windows.Forms.PaintEventHandler(this.gridEditControl_Paint);
             // 
             // pgMapTile
             // 

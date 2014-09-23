@@ -22,6 +22,7 @@ namespace Yggdrasil.Controls
         MapDataFile mapDataFile;
 
         SolidBrush brushEmpty, brushFloor, brushWall;
+        TilePalettePair mainMapTiles, mapTileGeomagneticField, mapTileRefreshingWater;
 
         public FloorMapEditor()
         {
@@ -45,6 +46,18 @@ namespace Yggdrasil.Controls
             brushWall = new SolidBrush(Color.FromArgb(0x94, 0xFF, 0xEF));
 
             this.gameDataManager = gameDataManager;
+
+            mainMapTiles = new TilePalettePair(gameDataManager, Path.Combine(gameDataManager.DataPath, @"data\Data\Tex\Map\Bg\i_dmp_bg_01"), TilePalettePair.Formats.Auto, 256, 128, true);
+
+            mapTileGeomagneticField = new TilePalettePair(gameDataManager,
+                Path.Combine(gameDataManager.DataPath, @"data\Data\Tex\Map\Obj\p_10\i_dmp_icon12_00.nbfc"),
+                Path.Combine(gameDataManager.DataPath, @"data\Data\Tex\Map\Obj\p_10\map_obj_palette_10.nbfp"),
+                TilePalettePair.Formats.Auto, 16, 16, true);
+
+            mapTileRefreshingWater = new TilePalettePair(gameDataManager,
+                Path.Combine(gameDataManager.DataPath, @"data\Data\Tex\Map\Obj\p_09\i_dmp_icon11_00.nbfc"),
+                Path.Combine(gameDataManager.DataPath, @"data\Data\Tex\Map\Obj\p_09\map_obj_palette_09.nbfp"),
+                TilePalettePair.Formats.Auto, 16, 16, true);
 
             Rebuild();
         }
@@ -93,15 +106,18 @@ namespace Yggdrasil.Controls
         {
             if (!IsInitialized() || mapDataFile == null) return;
 
-            GridEditControl gridEditControl = (sender as GridEditControl);
+            e.Graphics.Clear(Color.FromArgb(0xFF, 0x08, 0x38, 0x58));
+
+            GridEditControl grid = (sender as GridEditControl);
             for (int y = 0; y < MapDataFile.MapHeight; y++)
             {
                 for (int x = 0; x < MapDataFile.MapWidth; x++)
                 {
-                    Rectangle tileRect = new Rectangle(gridEditControl.ZoomedTileSize.Width * x, gridEditControl.ZoomedTileSize.Height * y,
-                        gridEditControl.ZoomedTileSize.Width, gridEditControl.ZoomedTileSize.Height);
+                    Rectangle tileRect = new Rectangle((grid.ZoomedTileSize.Width + grid.ZoomedTileGap) * x, (grid.ZoomedTileSize.Height + grid.ZoomedTileGap) * y,
+                        grid.ZoomedTileSize.Width, grid.ZoomedTileSize.Height);
 
                     BaseTile tile = mapDataFile.Tiles[x, y];
+
                     switch (tile.TileType)
                     {
                         case MapDataFile.TileTypes.Nothing:
@@ -112,29 +128,19 @@ namespace Yggdrasil.Controls
                             break;
                         case MapDataFile.TileTypes.Floor:
                         case MapDataFile.TileTypes.FOEFloor:
-                            e.Graphics.FillRectangle(brushFloor, tileRect);
-                            break;
                         case MapDataFile.TileTypes.StairsUp:
-                            e.Graphics.FillRectangle(Brushes.LightGreen, tileRect);
-                            break;
                         case MapDataFile.TileTypes.StairsDown:
-                            e.Graphics.FillRectangle(Brushes.GreenYellow, tileRect);
-                            break;
                         case MapDataFile.TileTypes.OneWayShortcutN:
                         case MapDataFile.TileTypes.OneWayShortcutS:
                         case MapDataFile.TileTypes.OneWayShortcutW:
                         case MapDataFile.TileTypes.OneWayShortcutE:
-                            e.Graphics.FillRectangle(Brushes.Gray, tileRect);
-                            break;
                         case MapDataFile.TileTypes.DoorNS:
                         case MapDataFile.TileTypes.DoorWE:
-                            e.Graphics.FillRectangle(Brushes.Blue, tileRect);
-                            break;
                         case MapDataFile.TileTypes.TreasureChest:
-                            e.Graphics.FillRectangle(Brushes.Gold, tileRect);
-                            break;
                         case MapDataFile.TileTypes.GeomagneticField:
-                            e.Graphics.FillRectangle(Brushes.DeepPink, tileRect);
+                        case MapDataFile.TileTypes.CollapsingFloor:
+                        case MapDataFile.TileTypes.RefreshingWater:
+                            e.Graphics.FillRectangle(brushFloor, tileRect);
                             break;
                         case MapDataFile.TileTypes.SandConveyorN:
                         case MapDataFile.TileTypes.SandConveyorS:
@@ -142,14 +148,8 @@ namespace Yggdrasil.Controls
                         case MapDataFile.TileTypes.SandConveyorE:
                             e.Graphics.FillRectangle(Brushes.SandyBrown, tileRect);
                             break;
-                        case MapDataFile.TileTypes.CollapsingFloor:
-                            e.Graphics.FillRectangle(Brushes.PowderBlue, tileRect);
-                            break;
                         case MapDataFile.TileTypes.Water:
                             DrawWallRectangle(e.Graphics, brushWall, Brushes.DarkCyan, x, y);
-                            break;
-                        case MapDataFile.TileTypes.RefreshingWater:
-                            e.Graphics.FillRectangle(Brushes.Cyan, tileRect);
                             break;
                         case MapDataFile.TileTypes.WarpEntrance:
                             e.Graphics.FillRectangle(Brushes.Purple, tileRect);
@@ -164,39 +164,53 @@ namespace Yggdrasil.Controls
                             e.Graphics.FillRectangle(brushEmpty, tileRect);
                             break;
                     }
+
+                    if (MapDataFile.TileImageCoords.ContainsKey(tile.TileType))
+                    {
+                        Point coord = MapDataFile.TileImageCoords[tile.TileType];
+                        if (tile.TileType == MapDataFile.TileTypes.GeomagneticField)
+                            e.Graphics.DrawImage(mapTileGeomagneticField.Image, tileRect, new Rectangle(coord.X, coord.Y, 16, 16), GraphicsUnit.Pixel);
+                        else if (tile.TileType == MapDataFile.TileTypes.RefreshingWater)
+                            e.Graphics.DrawImage(mapTileRefreshingWater.Image, tileRect, new Rectangle(coord.X, coord.Y, 16, 16), GraphicsUnit.Pixel);
+                        else
+                            e.Graphics.DrawImage(mainMapTiles.Image, tileRect, new Rectangle(coord.X, coord.Y, 16, 16), GraphicsUnit.Pixel);
+                    }
                 }
             }
         }
 
         private void DrawWallRectangle(Graphics g, Brush wallBrush, Brush emptyBrush, int x, int y)
         {
-            int drawXCoord = (gridEditControl.ZoomedTileSize.Width * x);
-            int drawYCoord = (gridEditControl.ZoomedTileSize.Height * y);
+            int paddedWidth = gridEditControl.ZoomedTileSize.Width + gridEditControl.ZoomedTileGap;
+            int paddedHeight = gridEditControl.ZoomedTileSize.Height + gridEditControl.ZoomedTileGap;
+
+            int drawXCoord = paddedWidth * x;
+            int drawYCoord = paddedHeight * y;
 
             bool left, right, top, bottom;
             bool topLeft, topRight, bottomLeft, bottomRight;
 
             g.FillRectangle(emptyBrush, new Rectangle(drawXCoord, drawYCoord, gridEditControl.ZoomedTileSize.Width, gridEditControl.ZoomedTileSize.Height));
 
-            left = (x - 1 >= 0 && (bool)MapDataFile.IsTileWalkable[mapDataFile.Tiles[x - 1, y].TileType]);
-            right = (x + 1 < MapDataFile.MapWidth && (bool)MapDataFile.IsTileWalkable[mapDataFile.Tiles[x + 1, y].TileType]);
-            top = (y - 1 >= 0 && (bool)MapDataFile.IsTileWalkable[mapDataFile.Tiles[x, y - 1].TileType]);
-            bottom = (y + 1 < MapDataFile.MapHeight && (bool)MapDataFile.IsTileWalkable[mapDataFile.Tiles[x, y + 1].TileType]);
+            left = (x - 1 >= 0 && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x - 1, y].TileType]);
+            right = (x + 1 < MapDataFile.MapWidth && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x + 1, y].TileType]);
+            top = (y - 1 >= 0 && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x, y - 1].TileType]);
+            bottom = (y + 1 < MapDataFile.MapHeight && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x, y + 1].TileType]);
 
-            topLeft = (x - 1 >= 0 && y - 1 >= 0 && (bool)MapDataFile.IsTileWalkable[mapDataFile.Tiles[x - 1, y - 1].TileType]);
-            topRight = (x + 1 < MapDataFile.MapWidth && y - 1 >= 0 && (bool)MapDataFile.IsTileWalkable[mapDataFile.Tiles[x + 1, y - 1].TileType]);
-            bottomLeft = (x - 1 >= 0 && y + 1 < MapDataFile.MapHeight && (bool)MapDataFile.IsTileWalkable[mapDataFile.Tiles[x - 1, y + 1].TileType]);
-            bottomRight = (x + 1 < MapDataFile.MapWidth && y + 1 < MapDataFile.MapHeight && (bool)MapDataFile.IsTileWalkable[mapDataFile.Tiles[x + 1, y + 1].TileType]);
+            topLeft = (x - 1 >= 0 && y - 1 >= 0 && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x - 1, y - 1].TileType]);
+            topRight = (x + 1 < MapDataFile.MapWidth && y - 1 >= 0 && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x + 1, y - 1].TileType]);
+            bottomLeft = (x - 1 >= 0 && y + 1 < MapDataFile.MapHeight && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x - 1, y + 1].TileType]);
+            bottomRight = (x + 1 < MapDataFile.MapWidth && y + 1 < MapDataFile.MapHeight && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x + 1, y + 1].TileType]);
 
-            if (left) g.FillRectangle(wallBrush, new Rectangle(drawXCoord, drawYCoord, 2, gridEditControl.ZoomedTileSize.Height));
-            if (right) g.FillRectangle(wallBrush, new Rectangle(drawXCoord + (gridEditControl.ZoomedTileSize.Width - 2), drawYCoord, 2, gridEditControl.ZoomedTileSize.Height));
-            if (top) g.FillRectangle(wallBrush, new Rectangle(drawXCoord, drawYCoord, gridEditControl.ZoomedTileSize.Width, 2));
-            if (bottom) g.FillRectangle(wallBrush, new Rectangle(drawXCoord, drawYCoord + (gridEditControl.ZoomedTileSize.Width - 2), gridEditControl.ZoomedTileSize.Width, 2));
+            if (left) g.FillRectangle(wallBrush, new Rectangle(drawXCoord - gridEditControl.ZoomedTileGap, drawYCoord, 2, paddedHeight));
+            if (right) g.FillRectangle(wallBrush, new Rectangle(drawXCoord + (paddedWidth - 2), drawYCoord, 2, paddedHeight));
+            if (top) g.FillRectangle(wallBrush, new Rectangle(drawXCoord, drawYCoord - gridEditControl.ZoomedTileGap, paddedWidth, 2));
+            if (bottom) g.FillRectangle(wallBrush, new Rectangle(drawXCoord, drawYCoord + (paddedWidth - 2), paddedWidth, 2));
 
-            if (topLeft) g.FillRectangle(wallBrush, new Rectangle(drawXCoord, drawYCoord, 2, 2));
-            if (topRight) g.FillRectangle(wallBrush, new Rectangle(drawXCoord + (gridEditControl.ZoomedTileSize.Width - 2), drawYCoord, 2, 2));
-            if (bottomLeft) g.FillRectangle(wallBrush, new Rectangle(drawXCoord, drawYCoord + (gridEditControl.ZoomedTileSize.Height - 2), 2, 2));
-            if (bottomRight) g.FillRectangle(wallBrush, new Rectangle(drawXCoord + (gridEditControl.ZoomedTileSize.Width - 2), drawYCoord + (gridEditControl.ZoomedTileSize.Height - 2), 2, 2));
+            if (topLeft) g.FillRectangle(wallBrush, new Rectangle(drawXCoord - gridEditControl.ZoomedTileGap, drawYCoord - gridEditControl.ZoomedTileGap, 2, 2));
+            if (topRight) g.FillRectangle(wallBrush, new Rectangle(drawXCoord + (paddedWidth - 2), drawYCoord - gridEditControl.ZoomedTileGap, 2, 2));
+            if (bottomLeft) g.FillRectangle(wallBrush, new Rectangle(drawXCoord - gridEditControl.ZoomedTileGap, drawYCoord + (paddedHeight - 2), 2, 2));
+            if (bottomRight) g.FillRectangle(wallBrush, new Rectangle(drawXCoord + (paddedWidth - 2), drawYCoord + (paddedHeight - 2), 2, 2));
         }
     }
 }
