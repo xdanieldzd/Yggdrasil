@@ -134,16 +134,16 @@ namespace Yggdrasil.FileHandling
                         case TileTypes.CollapsingFloor:
                             Tiles[x, y] = new FloorTile(GameDataManager, this, offset, new Point(x, y));
                             break;
-                        /*case TileTypes.StairsUp:
+                        case TileTypes.StairsUp:
                         case TileTypes.StairsDown:
-                            Tiles[x, y] = new Stairs(data, ofs);
+                            Tiles[x, y] = new StairTile(GameDataManager, this, offset, new Point(x, y));
                             break;
                         case TileTypes.TreasureChest:
-                            Tiles[x, y] = new TreasureChest(data, ofs);
+                            Tiles[x, y] = new TreasureChestTile(GameDataManager, this, offset, new Point(x, y));
                             break;
                         case TileTypes.WaterLily:
-                            Tiles[x, y] = new WaterLily(data, ofs);
-                            break;*/
+                            Tiles[x, y] = new WaterLilyTile(GameDataManager, this, offset, new Point(x, y));
+                            break;
                         default:
                             Tiles[x, y] = new BaseTile(GameDataManager, this, offset, new Point(x, y));
                             break;

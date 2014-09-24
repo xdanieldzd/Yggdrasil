@@ -108,7 +108,7 @@ namespace Yggdrasil.TableParsing
         public void ResetUnknown5Flags() { this.Unknown5Flags = (dynamic)base.originalValues["Unknown5Flags"]; }
 
         uint buyPrice;
-        [DisplayName("Buy Price"), TypeConverter(typeof(TypeConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 1)]
+        [DisplayName("Buy Price"), TypeConverter(typeof(TypeConverters.UintEtrianEnConverter)), PrioritizedCategory("Cost", 1)]
         [Description("Price when buying item from Shilleka's Goods or Ceft Apothecary.")]
         public uint BuyPrice
         {
@@ -119,7 +119,7 @@ namespace Yggdrasil.TableParsing
         public void ResetBuyPrice() { this.BuyPrice = (dynamic)base.originalValues["BuyPrice"]; }
 
         uint sellPrice;
-        [DisplayName("Sell Price"), TypeConverter(typeof(TypeConverters.EtrianEnConverter)), PrioritizedCategory("Cost", 1)]
+        [DisplayName("Sell Price"), TypeConverter(typeof(TypeConverters.UintEtrianEnConverter)), PrioritizedCategory("Cost", 1)]
         [Description("Return when selling item to Shilleka's Goods.")]
         public uint SellPrice
         {

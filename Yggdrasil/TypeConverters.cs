@@ -151,9 +151,15 @@ namespace Yggdrasil
             public override string Suffix { get { return "%"; } }
         }
 
-        public class EtrianEnConverter : SuffixByteConverter
+        public class UintEtrianEnConverter : SuffixByteConverter
         {
             public override Type DataType { get { return typeof(uint); } }
+            public override string Suffix { get { return "en"; } }
+        }
+
+        public class UshortEtrianEnConverter : SuffixByteConverter
+        {
+            public override Type DataType { get { return typeof(ushort); } }
             public override string Suffix { get { return "en"; } }
         }
 
