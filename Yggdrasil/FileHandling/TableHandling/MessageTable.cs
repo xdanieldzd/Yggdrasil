@@ -52,7 +52,7 @@ namespace Yggdrasil.FileHandling.TableHandling
                 if (MessageOffsets[i] == 0)
                     Messages[i] = new EtrianString(string.Empty);
                 else
-                    Messages[i] = new EtrianString(fileData, (int)(Offset + 0x10 + MessageOffsets[i]), GameDataManager.ItemDataPropertyChanged);
+                    Messages[i] = new EtrianString(fileData, (int)(Offset + 0x10 + MessageOffsets[i]), GameDataManager.GameDataPropertyChanged);
 
                 originalMessages[i] = new EtrianString(Messages[i].RawData);
             }

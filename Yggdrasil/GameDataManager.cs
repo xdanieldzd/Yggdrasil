@@ -6,10 +6,12 @@ using System.IO;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Drawing;
 
 using Yggdrasil.Forms;
 using Yggdrasil.FileHandling;
 using Yggdrasil.FileHandling.TableHandling;
+using Yggdrasil.FileHandling.MapDataHandling;
 using Yggdrasil.Helpers;
 using Yggdrasil.TableParsing;
 using Yggdrasil.Attributes;
@@ -92,6 +94,8 @@ namespace Yggdrasil
 
         List<ArchiveFile> archives;
 
+        public event PropertyChangedEventHandler GameDataPropertyChangedEvent;
+
         public List<TableFile> MessageFiles { get; private set; }
         List<TableFile> changedMessageFiles;
         public bool MessageFileHasChanged { get { return (changedMessageFiles != null && changedMessageFiles.Count > 0); } }
@@ -103,9 +107,13 @@ namespace Yggdrasil
         List<BaseParser> changedParsedData;
         public bool DataHasChanged { get { return (changedParsedData != null && changedParsedData.Count > 0); } }
         public int ChangedDataCount { get { return (changedParsedData != null ? changedParsedData.Count : -1); } }
-        public event PropertyChangedEventHandler ItemDataPropertyChangedEvent;
 
         public List<MapDataFile> MapDataFiles { get; private set; }
+        public List<BaseTile> MapTileData { get; private set; }
+
+        List<BaseTile> changedMapTileData;
+        public bool MapTileDataHasChanged { get { return (changedMapTileData != null && changedMapTileData.Count > 0); } }
+        public int ChangedMapTileCount { get { return (changedMapTileData != null ? changedMapTileData.Count : -1); } }
 
         public static Dictionary<ushort, string> ItemNames { get; private set; }
         public static Dictionary<ushort, string> ItemDescriptions { get; private set; }
@@ -169,6 +177,8 @@ namespace Yggdrasil
                     changedParsedData = new List<BaseParser>();
 
                     MapDataFiles = ReadMapDataFiles(mapDataDirs);
+                    MapTileData = ParseMapData();
+                    changedMapTileData = new List<BaseTile>();
 
                     CleanStringDictionaries();
                     GenerateOtherDictionaries();
@@ -220,7 +230,7 @@ namespace Yggdrasil
 
         public int SaveAllChanges()
         {
-            if (ParsedData == null || changedParsedData == null) return 0;
+            if (ParsedData == null || changedParsedData == null || changedMapTileData == null) return 0;
 
             List<BaseFile> changedFiles = new List<BaseFile>();
 
@@ -232,6 +242,12 @@ namespace Yggdrasil
 
             changedFiles.AddRange(changedMessageFiles);
 
+            foreach (BaseTile tile in changedMapTileData)
+            {
+                tile.Save();
+                if (!changedFiles.Contains(tile.MapDataFile)) changedFiles.Add(tile.MapDataFile);
+            }
+
             List<ArchiveFile> distinctArchives = changedFiles.Where(x => x.ArchiveFile != null).Select(y => y.ArchiveFile).Distinct().ToList();
             changedFiles.RemoveAll(x => x.ArchiveFile != null);
             changedFiles.AddRange(distinctArchives);
@@ -240,6 +256,7 @@ namespace Yggdrasil
 
             changedParsedData.Clear();
             changedMessageFiles.Clear();
+            changedMapTileData.Clear();
 
             return changedFiles.Count();
         }
@@ -536,7 +553,7 @@ namespace Yggdrasil
 
                     DataTable table = (tableFile.Tables[attrib.TableNo] as DataTable);
                     for (int i = 0; i < table.Data.Length; i++)
-                        parsedData.Add((BaseParser)Activator.CreateInstance(type, new object[] { this, table, i, (PropertyChangedEventHandler)ItemDataPropertyChanged }));
+                        parsedData.Add((BaseParser)Activator.CreateInstance(type, new object[] { this, table, i, (PropertyChangedEventHandler)GameDataPropertyChanged }));
                 }
             }
 
@@ -565,6 +582,49 @@ namespace Yggdrasil
             }
 
             return mapDataFiles.OrderBy(x => x.Filename).ToList();
+        }
+
+        private List<BaseTile> ParseMapData()
+        {
+            List<BaseTile> mapTiles = new List<BaseTile>();
+
+            foreach (MapDataFile mapDataFile in MapDataFiles)
+            {
+                mapDataFile.Stream.Seek(MapDataFile.MapDataOffset, SeekOrigin.Begin);
+
+                for (int y = 0; y < MapDataFile.MapHeight; y++)
+                {
+                    for (int x = 0; x < MapDataFile.MapWidth; x++)
+                    {
+                        int offset = (int)mapDataFile.Stream.Position;
+                        MapDataFile.TileTypes typeId = (MapDataFile.TileTypes)mapDataFile.Stream.ReadByte();
+                        switch (typeId)
+                        {
+                            case MapDataFile.TileTypes.Floor:
+                            case MapDataFile.TileTypes.FOEFloor:
+                            case MapDataFile.TileTypes.DamagingFloor:
+                            case MapDataFile.TileTypes.CollapsingFloor:
+                                mapTiles.Add(new FloorTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged));
+                                break;
+                            case MapDataFile.TileTypes.StairsUp:
+                            case MapDataFile.TileTypes.StairsDown:
+                                mapTiles.Add(new StairsTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged));
+                                break;
+                            case MapDataFile.TileTypes.TreasureChest:
+                                mapTiles.Add(new TreasureChestTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged));
+                                break;
+                            case MapDataFile.TileTypes.Transporter:
+                                mapTiles.Add(new TransporterTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged));
+                                break;
+                            default:
+                                mapTiles.Add(new BaseTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged));
+                                break;
+                        }
+                    }
+                }
+            }
+
+            return mapTiles;
         }
 
         private void GenerateDictionariesLists()
@@ -631,10 +691,18 @@ namespace Yggdrasil
             foreach (MiscItemParser parser in ParsedData.Where(x => (x is MiscItemParser))) GeneralItemNames.Add(parser.ItemNumber, parser.Name);
         }
 
-        public void ItemDataPropertyChanged(object sender, PropertyChangedEventArgs e)
+        public void GameDataPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            changedParsedData = ParsedData.Where(x => x.HasChanged).ToList();
-            changedMessageFiles = MessageFiles.Where(x => x.Tables.Any(y => (y is MessageTable) && (y as MessageTable).HasChanges)).ToList();
+            if (sender is BaseParser || sender is EtrianString)
+            {
+                if (sender is BaseParser)
+                    changedParsedData = ParsedData.Where(x => x.HasChanged).ToList();
+
+                changedMessageFiles = MessageFiles.Where(x => x.Tables.Any(y => (y is MessageTable) && (y as MessageTable).HasChanges)).ToList();
+            }
+
+            if (sender is BaseTile)
+                changedMapTileData = MapTileData.Where(x => x.HasChanged).ToList();
 
             if (sender is EncounterParser) GenerateOtherDictionaries();
 
@@ -675,7 +743,7 @@ namespace Yggdrasil
                 }
             }
 
-            var handler = ItemDataPropertyChangedEvent;
+            var handler = GameDataPropertyChangedEvent;
             if (handler != null) handler(sender, e);
         }
 

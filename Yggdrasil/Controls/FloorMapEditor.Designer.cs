@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.pnlMap = new System.Windows.Forms.Panel();
+            this.gridEditControl = new Yggdrasil.Controls.GridEditControl();
             this.cbMaps = new System.Windows.Forms.ComboBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.pgMapTile = new Yggdrasil.Controls.PropertyGridEx();
             this.chkEventOverlay = new System.Windows.Forms.CheckBox();
             this.chkGatherOverlay = new System.Windows.Forms.CheckBox();
-            this.gridEditControl = new Yggdrasil.Controls.GridEditControl();
-            this.pgMapTile = new Yggdrasil.Controls.PropertyGridEx();
             this.pnlMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -52,6 +52,17 @@
             this.pnlMap.Name = "pnlMap";
             this.pnlMap.Size = new System.Drawing.Size(250, 400);
             this.pnlMap.TabIndex = 1;
+            // 
+            // gridEditControl
+            // 
+            this.gridEditControl.Location = new System.Drawing.Point(0, 0);
+            this.gridEditControl.MinimumSize = new System.Drawing.Size(16, 16);
+            this.gridEditControl.Name = "gridEditControl";
+            this.gridEditControl.Size = new System.Drawing.Size(144, 144);
+            this.gridEditControl.TabIndex = 0;
+            this.gridEditControl.TileSize = new System.Drawing.Size(16, 16);
+            this.gridEditControl.TileClick += new System.EventHandler<Yggdrasil.Controls.TileClickEventArgs>(this.gridEditControl_TileClick);
+            this.gridEditControl.Paint += new System.Windows.Forms.PaintEventHandler(this.gridEditControl_Paint);
             // 
             // cbMaps
             // 
@@ -86,6 +97,16 @@
             this.splitContainer1.SplitterDistance = 250;
             this.splitContainer1.TabIndex = 5;
             // 
+            // pgMapTile
+            // 
+            this.pgMapTile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pgMapTile.Location = new System.Drawing.Point(0, 73);
+            this.pgMapTile.Name = "pgMapTile";
+            this.pgMapTile.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            this.pgMapTile.Size = new System.Drawing.Size(246, 327);
+            this.pgMapTile.TabIndex = 1;
+            this.pgMapTile.ToolbarVisible = false;
+            // 
             // chkEventOverlay
             // 
             this.chkEventOverlay.AutoSize = true;
@@ -114,26 +135,6 @@
             this.chkGatherOverlay.Text = "Overlay Gathering Points";
             this.chkGatherOverlay.UseVisualStyleBackColor = true;
             this.chkGatherOverlay.CheckedChanged += new System.EventHandler(this.chkGatherOverlay_CheckedChanged);
-            // 
-            // gridEditControl
-            // 
-            this.gridEditControl.Location = new System.Drawing.Point(0, 0);
-            this.gridEditControl.MinimumSize = new System.Drawing.Size(16, 16);
-            this.gridEditControl.Name = "gridEditControl";
-            this.gridEditControl.Size = new System.Drawing.Size(144, 144);
-            this.gridEditControl.TabIndex = 0;
-            this.gridEditControl.TileSize = new System.Drawing.Size(16, 16);
-            this.gridEditControl.TileClick += new System.EventHandler<Yggdrasil.Controls.TileClickEventArgs>(this.gridEditControl_TileClick);
-            this.gridEditControl.Paint += new System.Windows.Forms.PaintEventHandler(this.gridEditControl_Paint);
-            // 
-            // pgMapTile
-            // 
-            this.pgMapTile.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pgMapTile.Location = new System.Drawing.Point(0, 73);
-            this.pgMapTile.Name = "pgMapTile";
-            this.pgMapTile.Size = new System.Drawing.Size(246, 327);
-            this.pgMapTile.TabIndex = 1;
-            this.pgMapTile.ToolbarVisible = false;
             // 
             // FloorMapEditor
             // 

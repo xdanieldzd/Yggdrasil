@@ -23,7 +23,9 @@ namespace Yggdrasil.Controls
         GameDataManager gameDataManager;
         MapDataFile mapDataFile;
         List<GatherItemParser> gatherItemParsers;
+        List<BaseTile> mapTiles;
 
+        Bitmap mapImage;
         SolidBrush brushEmpty, brushFloor, brushWall;
         TilePalettePair mainMapTiles, mapTileGeomagneticField, mapTileRefreshingWater;
 
@@ -62,6 +64,10 @@ namespace Yggdrasil.Controls
                 Path.Combine(gameDataManager.DataPath, @"data\Data\Tex\Map\Obj\p_09\map_obj_palette_09.nbfp"),
                 TilePalettePair.Formats.Auto, 16, 16, true);
 
+            mapImage = new Bitmap(
+                (gridEditControl.ZoomedTileSize.Width + gridEditControl.ZoomedTileGap) * MapDataFile.MapWidth,
+                (gridEditControl.ZoomedTileSize.Height + gridEditControl.ZoomedTileGap) * MapDataFile.MapHeight);
+
             Rebuild();
         }
 
@@ -82,6 +88,8 @@ namespace Yggdrasil.Controls
             brushEmpty.Dispose();
             brushFloor.Dispose();
             brushWall.Dispose();
+
+            mapImage.Dispose();
         }
 
         private void cbMaps_SelectedIndexChanged(object sender, EventArgs e)
@@ -90,8 +98,12 @@ namespace Yggdrasil.Controls
             if (comboBox.SelectedItem != null)
             {
                 mapDataFile = (comboBox.SelectedItem as MapDataFile);
+                mapTiles = gameDataManager.MapTileData.Where(xx => xx.MapDataFile == mapDataFile).ToList();
+
                 gatherItemParsers = gameDataManager.ParsedData.Where(x => x is GatherItemParser && (x as GatherItemParser).FloorNumber == (mapDataFile.FloorNumber - 1)).Cast<GatherItemParser>().ToList();
-                pgMapTile.SelectedObject = mapDataFile.Tiles[0, 0];
+                pgMapTile.SelectedObject = mapTiles.FirstOrDefault(xx => xx.Coordinates.X == 0 && xx.Coordinates.Y == 0);
+
+                GenerateMapImage();
             }
 
             gridEditControl.Invalidate();
@@ -100,19 +112,23 @@ namespace Yggdrasil.Controls
 
         private void chkGatherOverlay_CheckedChanged(object sender, EventArgs e)
         {
+            GenerateMapImage();
             gridEditControl.Invalidate();
         }
 
         private void chkEventOverlay_CheckedChanged(object sender, EventArgs e)
         {
+            GenerateMapImage();
             gridEditControl.Invalidate();
         }
 
         private void gridEditControl_TileClick(object sender, TileClickEventArgs e)
         {
+            // TODO: Allowing the user to actually redraw the map!
+
             if ((e.Button & System.Windows.Forms.MouseButtons.Left) != 0)
             {
-                pgMapTile.SelectedObject = mapDataFile.Tiles[e.Coordinates.X, e.Coordinates.Y];
+                pgMapTile.SelectedObject = mapTiles.FirstOrDefault(xx => xx.Coordinates.X == e.Coordinates.X && xx.Coordinates.Y == e.Coordinates.Y);
             }
             else if ((e.Button & System.Windows.Forms.MouseButtons.Right) != 0)
             {
@@ -144,88 +160,96 @@ namespace Yggdrasil.Controls
             }
         }
 
-        private void gridEditControl_Paint(object sender, PaintEventArgs e)
+        private void GenerateMapImage()
         {
             if (!IsInitialized() || mapDataFile == null) return;
 
-            e.Graphics.Clear(Color.FromArgb(0xFF, 0x08, 0x38, 0x58));
-
-            GridEditControl grid = (sender as GridEditControl);
-            for (int y = 0; y < MapDataFile.MapHeight; y++)
+            using (Graphics g = Graphics.FromImage(mapImage))
             {
-                for (int x = 0; x < MapDataFile.MapWidth; x++)
+                g.Clear(Color.FromArgb(0xFF, 0x08, 0x38, 0x58));
+
+                for (int y = 0; y < MapDataFile.MapHeight; y++)
                 {
-                    Rectangle tileRect = new Rectangle((grid.ZoomedTileSize.Width + grid.ZoomedTileGap) * x, (grid.ZoomedTileSize.Height + grid.ZoomedTileGap) * y,
-                        grid.ZoomedTileSize.Width, grid.ZoomedTileSize.Height);
-
-                    BaseTile tile = mapDataFile.Tiles[x, y];
-
-                    switch (tile.TileType)
+                    for (int x = 0; x < MapDataFile.MapWidth; x++)
                     {
-                        case MapDataFile.TileTypes.Nothing:
-                            e.Graphics.FillRectangle(Brushes.Black, tileRect);
-                            break;
-                        case MapDataFile.TileTypes.Wall:
-                            DrawWallRectangle(e.Graphics, brushWall, brushEmpty, x, y);
-                            break;
-                        case MapDataFile.TileTypes.Floor:
-                        case MapDataFile.TileTypes.FOEFloor:
-                        case MapDataFile.TileTypes.StairsUp:
-                        case MapDataFile.TileTypes.StairsDown:
-                        case MapDataFile.TileTypes.OneWayShortcutN:
-                        case MapDataFile.TileTypes.OneWayShortcutS:
-                        case MapDataFile.TileTypes.OneWayShortcutW:
-                        case MapDataFile.TileTypes.OneWayShortcutE:
-                        case MapDataFile.TileTypes.DoorNS:
-                        case MapDataFile.TileTypes.DoorWE:
-                        case MapDataFile.TileTypes.TreasureChest:
-                        case MapDataFile.TileTypes.GeomagneticField:
-                        case MapDataFile.TileTypes.CollapsingFloor:
-                        case MapDataFile.TileTypes.RefreshingWater:
-                            e.Graphics.FillRectangle(brushFloor, tileRect);
-                            break;
-                        case MapDataFile.TileTypes.SandConveyorN:
-                        case MapDataFile.TileTypes.SandConveyorS:
-                        case MapDataFile.TileTypes.SandConveyorW:
-                        case MapDataFile.TileTypes.SandConveyorE:
-                            e.Graphics.FillRectangle(Brushes.SandyBrown, tileRect);
-                            break;
-                        case MapDataFile.TileTypes.Water:
-                            DrawWallRectangle(e.Graphics, brushWall, Brushes.DarkCyan, x, y);
-                            break;
-                        case MapDataFile.TileTypes.WarpEntrance:
-                            e.Graphics.FillRectangle(Brushes.Purple, tileRect);
-                            break;
-                        case MapDataFile.TileTypes.WaterLily:
-                            e.Graphics.FillRectangle(Brushes.Pink, tileRect);
-                            break;
-                        case MapDataFile.TileTypes.DamagingFloor:
-                            e.Graphics.FillRectangle(Brushes.Red, tileRect);
-                            break;
-                        default:
-                            e.Graphics.FillRectangle(brushEmpty, tileRect);
-                            break;
-                    }
+                        Rectangle tileRect = new Rectangle((gridEditControl.ZoomedTileSize.Width + gridEditControl.ZoomedTileGap) * x, (gridEditControl.ZoomedTileSize.Height + gridEditControl.ZoomedTileGap) * y,
+                            gridEditControl.ZoomedTileSize.Width, gridEditControl.ZoomedTileSize.Height);
 
-                    if (MapDataFile.TileImageCoords.ContainsKey(tile.TileType))
-                    {
-                        Point coord = MapDataFile.TileImageCoords[tile.TileType];
-                        if (tile.TileType == MapDataFile.TileTypes.GeomagneticField)
-                            e.Graphics.DrawImage(mapTileGeomagneticField.Image, tileRect, new Rectangle(coord.X, coord.Y, 16, 16), GraphicsUnit.Pixel);
-                        else if (tile.TileType == MapDataFile.TileTypes.RefreshingWater)
-                            e.Graphics.DrawImage(mapTileRefreshingWater.Image, tileRect, new Rectangle(coord.X, coord.Y, 16, 16), GraphicsUnit.Pixel);
-                        else
-                            e.Graphics.DrawImage(mainMapTiles.Image, tileRect, new Rectangle(coord.X, coord.Y, 16, 16), GraphicsUnit.Pixel);
-                    }
+                        BaseTile tile = mapTiles.FirstOrDefault(xx => xx.Coordinates.X == x && xx.Coordinates.Y == y);
 
-                    if (chkGatherOverlay.Checked)
-                    {
-                        GatherItemParser gatherItemParser = gatherItemParsers.FirstOrDefault(xx => xx.XCoord == x && xx.YCoord == y);
-                        if (gatherItemParser != null)
-                            e.Graphics.DrawImage(mainMapTiles.Image, tileRect, 32, 90, 16, 16, GraphicsUnit.Pixel);
+                        switch (tile.TileType)
+                        {
+                            case MapDataFile.TileTypes.Nothing:
+                                g.FillRectangle(Brushes.Black, tileRect);
+                                break;
+                            case MapDataFile.TileTypes.Wall:
+                                DrawWallRectangle(g, brushWall, brushEmpty, x, y);
+                                break;
+                            case MapDataFile.TileTypes.Floor:
+                            case MapDataFile.TileTypes.FOEFloor:
+                            case MapDataFile.TileTypes.StairsUp:
+                            case MapDataFile.TileTypes.StairsDown:
+                            case MapDataFile.TileTypes.OneWayShortcutN:
+                            case MapDataFile.TileTypes.OneWayShortcutS:
+                            case MapDataFile.TileTypes.OneWayShortcutW:
+                            case MapDataFile.TileTypes.OneWayShortcutE:
+                            case MapDataFile.TileTypes.DoorNS:
+                            case MapDataFile.TileTypes.DoorWE:
+                            case MapDataFile.TileTypes.TreasureChest:
+                            case MapDataFile.TileTypes.GeomagneticField:
+                            case MapDataFile.TileTypes.CollapsingFloor:
+                            case MapDataFile.TileTypes.RefreshingWater:
+                                g.FillRectangle(brushFloor, tileRect);
+                                break;
+                            case MapDataFile.TileTypes.SandConveyorN:
+                            case MapDataFile.TileTypes.SandConveyorS:
+                            case MapDataFile.TileTypes.SandConveyorW:
+                            case MapDataFile.TileTypes.SandConveyorE:
+                                g.FillRectangle(Brushes.SandyBrown, tileRect);
+                                break;
+                            case MapDataFile.TileTypes.Water:
+                                DrawWallRectangle(g, brushWall, Brushes.DarkCyan, x, y);
+                                break;
+                            case MapDataFile.TileTypes.WarpEntrance:
+                                g.FillRectangle(Brushes.Purple, tileRect);
+                                break;
+                            case MapDataFile.TileTypes.Transporter:
+                                g.FillRectangle(Brushes.Orange, tileRect);
+                                break;
+                            case MapDataFile.TileTypes.DamagingFloor:
+                                g.FillRectangle(Brushes.Red, tileRect);
+                                break;
+                            default:
+                                g.FillRectangle(brushEmpty, tileRect);
+                                break;
+                        }
+
+                        if (MapDataFile.TileImageCoords.ContainsKey(tile.TileType))
+                        {
+                            Point coord = MapDataFile.TileImageCoords[tile.TileType];
+                            if (tile.TileType == MapDataFile.TileTypes.GeomagneticField)
+                                g.DrawImage(mapTileGeomagneticField.Image, tileRect, new Rectangle(coord.X, coord.Y, 16, 16), GraphicsUnit.Pixel);
+                            else if (tile.TileType == MapDataFile.TileTypes.RefreshingWater)
+                                g.DrawImage(mapTileRefreshingWater.Image, tileRect, new Rectangle(coord.X, coord.Y, 16, 16), GraphicsUnit.Pixel);
+                            else
+                                g.DrawImage(mainMapTiles.Image, tileRect, new Rectangle(coord.X, coord.Y, 16, 16), GraphicsUnit.Pixel);
+                        }
+
+                        if (chkGatherOverlay.Checked)
+                        {
+                            GatherItemParser gatherItemParser = gatherItemParsers.FirstOrDefault(xx => xx.XCoord == x && xx.YCoord == y);
+                            if (gatherItemParser != null)
+                                g.DrawImage(mainMapTiles.Image, tileRect, 32, 90, 16, 16, GraphicsUnit.Pixel);
+                        }
                     }
                 }
             }
+        }
+
+        private void gridEditControl_Paint(object sender, PaintEventArgs e)
+        {
+            if (!IsInitialized() || mapDataFile == null) return;
+            e.Graphics.DrawImage(mapImage, Point.Empty);
         }
 
         private void DrawWallRectangle(Graphics g, Brush wallBrush, Brush emptyBrush, int x, int y)
@@ -241,15 +265,15 @@ namespace Yggdrasil.Controls
 
             g.FillRectangle(emptyBrush, new Rectangle(drawXCoord, drawYCoord, gridEditControl.ZoomedTileSize.Width, gridEditControl.ZoomedTileSize.Height));
 
-            left = (x - 1 >= 0 && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x - 1, y].TileType]);
-            right = (x + 1 < MapDataFile.MapWidth && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x + 1, y].TileType]);
-            top = (y - 1 >= 0 && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x, y - 1].TileType]);
-            bottom = (y + 1 < MapDataFile.MapHeight && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x, y + 1].TileType]);
+            left = (x - 1 >= 0 && MapDataFile.IsTileWalkable[mapTiles.FirstOrDefault(xx => xx.Coordinates.X == x - 1 && xx.Coordinates.Y == y).TileType]);
+            right = (x + 1 < MapDataFile.MapWidth && MapDataFile.IsTileWalkable[mapTiles.FirstOrDefault(xx => xx.Coordinates.X == x + 1 && xx.Coordinates.Y == y).TileType]);
+            top = (y - 1 >= 0 && MapDataFile.IsTileWalkable[mapTiles.FirstOrDefault(xx => xx.Coordinates.X == x && xx.Coordinates.Y == y - 1).TileType]);
+            bottom = (y + 1 < MapDataFile.MapHeight && MapDataFile.IsTileWalkable[mapTiles.FirstOrDefault(xx => xx.Coordinates.X == x && xx.Coordinates.Y == y + 1).TileType]);
 
-            topLeft = (x - 1 >= 0 && y - 1 >= 0 && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x - 1, y - 1].TileType]);
-            topRight = (x + 1 < MapDataFile.MapWidth && y - 1 >= 0 && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x + 1, y - 1].TileType]);
-            bottomLeft = (x - 1 >= 0 && y + 1 < MapDataFile.MapHeight && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x - 1, y + 1].TileType]);
-            bottomRight = (x + 1 < MapDataFile.MapWidth && y + 1 < MapDataFile.MapHeight && MapDataFile.IsTileWalkable[mapDataFile.Tiles[x + 1, y + 1].TileType]);
+            topLeft = (x - 1 >= 0 && y - 1 >= 0 && MapDataFile.IsTileWalkable[mapTiles.FirstOrDefault(xx => xx.Coordinates.X == x - 1 && xx.Coordinates.Y == y - 1).TileType]);
+            topRight = (x + 1 < MapDataFile.MapWidth && y - 1 >= 0 && MapDataFile.IsTileWalkable[mapTiles.FirstOrDefault(xx => xx.Coordinates.X == x + 1 && xx.Coordinates.Y == y - 1).TileType]);
+            bottomLeft = (x - 1 >= 0 && y + 1 < MapDataFile.MapHeight && MapDataFile.IsTileWalkable[mapTiles.FirstOrDefault(xx => xx.Coordinates.X == x - 1 && xx.Coordinates.Y == y + 1).TileType]);
+            bottomRight = (x + 1 < MapDataFile.MapWidth && y + 1 < MapDataFile.MapHeight && MapDataFile.IsTileWalkable[mapTiles.FirstOrDefault(xx => xx.Coordinates.X == x + 1 && xx.Coordinates.Y == y + 1).TileType]);
 
             if (left) g.FillRectangle(wallBrush, new Rectangle(drawXCoord - gridEditControl.ZoomedTileGap, drawYCoord, 2, paddedHeight));
             if (right) g.FillRectangle(wallBrush, new Rectangle(drawXCoord + (paddedWidth - 2), drawYCoord, 2, paddedHeight));

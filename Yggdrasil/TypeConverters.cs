@@ -406,5 +406,165 @@ namespace Yggdrasil
                     return base.ConvertFrom(context, culture, value);
             }
         }
+
+        public class FriendlyEnumConverter : EnumConverter
+        {
+            private Type enumType;
+
+            public FriendlyEnumConverter(Type type) : base(type) { enumType = type; }
+
+            public override bool CanConvertTo(ITypeDescriptorContext context, Type destType)
+            {
+                return (destType == typeof(string));
+            }
+
+            public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destType)
+            {
+                FieldInfo fieldInfo = enumType.GetField(Enum.GetName(enumType, value));
+                DescriptionAttribute descriptionAttrib = (DescriptionAttribute)Attribute.GetCustomAttribute(fieldInfo, typeof(DescriptionAttribute));
+                if (descriptionAttrib != null) return descriptionAttrib.Description;
+                else return value.ToString();
+            }
+
+            public override bool CanConvertFrom(ITypeDescriptorContext context, Type srcType)
+            {
+                return (srcType == typeof(string));
+            }
+
+            public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+            {
+                foreach (FieldInfo fieldInfo in enumType.GetFields())
+                {
+                    DescriptionAttribute descriptionAttrib = (DescriptionAttribute)Attribute.GetCustomAttribute(fieldInfo, typeof(DescriptionAttribute));
+                    if (descriptionAttrib != null && (string)value == descriptionAttrib.Description) return Enum.Parse(enumType, fieldInfo.Name);
+                }
+
+                return Enum.Parse(enumType, (string)value);
+            }
+        }
+
+        public class FlagsEnumConverter : EnumConverter
+        {
+            protected class EnumFieldDescriptor : SimplePropertyDescriptor
+            {
+                ITypeDescriptorContext typeDescContext;
+
+                public EnumFieldDescriptor(Type componentType, string name, ITypeDescriptorContext context)
+                    : base(componentType, name, typeof(bool))
+                {
+                    typeDescContext = context;
+                }
+
+                public override object GetValue(object component)
+                {
+                    dynamic v = (dynamic)Enum.Parse(ComponentType, Name);
+                    return (((dynamic)component) & v) == v;
+                }
+
+                public override void SetValue(object component, object value)
+                {
+                    bool boolValue = (bool)value;
+                    dynamic newValue;
+
+                    if (boolValue)
+                        newValue = ((dynamic)component) | (dynamic)Enum.Parse(ComponentType, Name);
+                    else
+                        newValue = ((dynamic)component) & ~(dynamic)Enum.Parse(ComponentType, Name);
+
+                    FieldInfo fieldInfo = component.GetType().GetField("value__", BindingFlags.Instance | BindingFlags.Public);
+                    fieldInfo.SetValue(component, newValue);
+                    typeDescContext.PropertyDescriptor.SetValue(typeDescContext.Instance, component);
+                }
+
+                public override bool ShouldSerializeValue(object component)
+                {
+                    return (bool)GetValue(component) != GetDefaultValue();
+                }
+
+                public override void ResetValue(object component)
+                {
+                    SetValue(component, GetDefaultValue());
+                }
+
+                public override bool CanResetValue(object component)
+                {
+                    return ShouldSerializeValue(component);
+                }
+
+                private bool GetDefaultValue()
+                {
+                    object defaultValue = null;
+                    string propertyName = typeDescContext.PropertyDescriptor.Name;
+                    Type componentType = typeDescContext.PropertyDescriptor.ComponentType;
+
+                    DefaultValueAttribute defaultValueAttribute = (DefaultValueAttribute)Attribute.GetCustomAttribute(
+                        componentType.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic),
+                        typeof(DefaultValueAttribute));
+
+                    if (defaultValueAttribute != null)
+                        defaultValue = defaultValueAttribute.Value;
+
+                    if (defaultValue != null)
+                        return ((dynamic)defaultValue & (dynamic)Enum.Parse(ComponentType, Name)) != 0;
+
+                    return false;
+                }
+
+                public override AttributeCollection Attributes
+                {
+                    get { return new AttributeCollection(new Attribute[] { RefreshPropertiesAttribute.Repaint }); }
+                }
+            }
+
+            bool enumHasFlags;
+
+            public FlagsEnumConverter(Type type)
+                : base(type)
+            {
+                enumHasFlags = (type.IsEnum && type.GetCustomAttributes(typeof(FlagsAttribute), false).Length != 0);
+            }
+
+            public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes)
+            {
+                if (enumHasFlags)
+                {
+                    if (context != null)
+                    {
+                        Type valueType = value.GetType();
+                        Type enumUnderlyingType = Enum.GetUnderlyingType(valueType);
+                        string[] enumNames = Enum.GetNames(valueType);
+                        Array enumValues = Enum.GetValues(valueType);
+
+                        if (enumNames != null)
+                        {
+                            PropertyDescriptorCollection propertyDescCollection = new PropertyDescriptorCollection(null);
+                            for (int i = 0; i < enumNames.Length; i++)
+                            {
+                                if ((dynamic)Convert.ChangeType(enumValues.GetValue(i), enumUnderlyingType) != 0 && enumNames[i] != "All")
+                                    propertyDescCollection.Add(new EnumFieldDescriptor(valueType, enumNames[i], context));
+                            }
+                            return propertyDescCollection;
+                        }
+                    }
+                }
+                return base.GetProperties(context, value, attributes);
+            }
+
+            public override bool GetPropertiesSupported(ITypeDescriptorContext context)
+            {
+                if (enumHasFlags && context != null)
+                    return true;
+                else
+                    return base.GetPropertiesSupported(context);
+            }
+
+            public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+            {
+                if (enumHasFlags)
+                    return false;
+                else
+                    return base.GetStandardValuesSupported(context);
+            }
+        }
     }
 }

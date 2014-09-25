@@ -20,34 +20,96 @@ namespace Yggdrasil.FileHandling.MapDataHandling
 
     class TreasureChestTile : BaseTile
     {
-        public TreasureChestTile(GameDataManager gameDataManager, MapDataFile mapDataFile, int offset, System.Drawing.Point coordinates) : base(gameDataManager, mapDataFile, offset, coordinates) { }
+        public TreasureChestTile(GameDataManager gameDataManager, MapDataFile mapDataFile, int offset, System.Drawing.Point coordinates, PropertyChangedEventHandler propertyChanged = null) :
+            base(gameDataManager, mapDataFile, offset, coordinates, propertyChanged) { }
 
-        public TreasureType TreasureType { get; private set; }
-        public byte TreasureChestID { get; private set; }
-        public TreasureItemCategory TreasureItemCategory { get; private set; }
+        TreasureType treasureType;
+        public TreasureType TreasureType
+        {
+            get { return treasureType; }
+            set { base.SetProperty(ref treasureType, value, () => this.TreasureType); }
+        }
+        public bool ShouldSerializeTreasureType() { return !(this.TreasureType == (dynamic)base.originalValues["TreasureType"]); }
+        public void ResetTreasureType() { this.TreasureType = (dynamic)base.originalValues["TreasureType"]; }
 
+        byte treasureChestID;
+        public byte TreasureChestID
+        {
+            get { return treasureChestID; }
+            set { base.SetProperty(ref treasureChestID, value, () => this.TreasureChestID); }
+        }
+        public bool ShouldSerializeTreasureChestID() { return !(this.TreasureChestID == (dynamic)base.originalValues["TreasureChestID"]); }
+        public void ResetTreasureChestID() { this.TreasureChestID = (dynamic)base.originalValues["TreasureChestID"]; }
+
+        TreasureItemCategory treasureItemCategory;
+        [Browsable(true)]
+        public TreasureItemCategory TreasureItemCategory
+        {
+            get { return treasureItemCategory; }
+            set { base.SetProperty(ref treasureItemCategory, value, () => this.TreasureItemCategory); }
+        }
+        public bool ShouldSerializeTreasureItemCategory() { return !(this.TreasureItemCategory == (dynamic)base.originalValues["TreasureItemCategory"]); }
+        public void ResetTreasureItemCategory() { this.TreasureItemCategory = (dynamic)base.originalValues["TreasureItemCategory"]; }
+
+        ushort treasureItemID;
+        [Browsable(true)]
         [TypeConverter(typeof(TypeConverters.ItemNameConverter))]
-        public ushort TreasureItemID { get; private set; }
+        public ushort TreasureItemID
+        {
+            get { return treasureItemID; }
+            set { base.SetProperty(ref treasureItemID, value, () => this.TreasureItemID); }
+        }
+        public bool ShouldSerializeTreasureItemID() { return !(this.TreasureItemID == (dynamic)base.originalValues["TreasureItemID"]); }
+        public void ResetTreasureItemID() { this.TreasureItemID = (dynamic)base.originalValues["TreasureItemID"]; }
 
+        ushort treasureMoney;
+        [Browsable(true)]
         [TypeConverter(typeof(TypeConverters.UshortEtrianEnConverter))]
-        public ushort TreasureMoney { get; private set; }
+        public ushort TreasureMoney
+        {
+            get { return treasureMoney; }
+            set { base.SetProperty(ref treasureMoney, value, () => this.TreasureMoney); }
+        }
+        public bool ShouldSerializeTreasureMoney() { return !(this.TreasureMoney == (dynamic)base.originalValues["TreasureMoney"]); }
+        public void ResetTreasureMoney() { this.TreasureMoney = (dynamic)base.originalValues["TreasureMoney"]; }
 
         protected override void Load()
         {
-            base.Load();
+            treasureType = (TreasureType)(this.Data[15] >> 4);
+            treasureChestID = (byte)(this.Data[15] & 0xF);
 
-            TreasureType = (TreasureType)(this.Data[15] >> 4);
-            TreasureChestID = (byte)(this.Data[15] & 0xF);
-            switch (TreasureType)
+            // TODO: ChangeBrowsableAttribute buggy? Always hides Money, never ItemCategory/-ID?
+            switch (treasureType)
             {
                 case TreasureType.Item:
-                    TreasureItemCategory = (TreasureItemCategory)(this.Data[13] >> 4);
-                    TreasureItemID = BitConverter.ToUInt16(this.Data, 12);
+                    //this.ChangeBrowsableAttribute("TreasureItemCategory", true);
+                    //this.ChangeBrowsableAttribute("TreasureItemID", true);
+                    treasureItemCategory = (TreasureItemCategory)(this.Data[13] >> 4);
+                    treasureItemID = BitConverter.ToUInt16(this.Data, 12);
+
+                    //this.ChangeBrowsableAttribute("TreasureMoney", false);
                     break;
+
                 case TreasureType.Money:
-                    TreasureMoney = BitConverter.ToUInt16(this.Data, 12);
+                    //this.ChangeBrowsableAttribute("TreasureItemCategory", false);
+                    //this.ChangeBrowsableAttribute("TreasureItemID", false);
+
+                    //this.ChangeBrowsableAttribute("TreasureMoney", true);
+                    treasureMoney = BitConverter.ToUInt16(this.Data, 12);
                     break;
             }
+
+            base.Load();
+        }
+
+        public override void Save()
+        {
+            byte tempData = (byte)((Convert.ToByte(treasureType) << 4) | (treasureChestID & 0xF));
+            tempData.CopyTo(this.Data, 15);
+
+            //
+
+            base.Save();
         }
     }
 }

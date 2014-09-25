@@ -43,7 +43,7 @@ namespace Yggdrasil
             gameDataManager = new GameDataManager();
             gameDataManager.Language = Configuration.Language;
 
-            gameDataManager.ItemDataPropertyChangedEvent += new PropertyChangedEventHandler(gameDataManager_ItemDataPropertyChangedEvent);
+            gameDataManager.GameDataPropertyChangedEvent += new PropertyChangedEventHandler(gameDataManager_ItemDataPropertyChangedEvent);
             gameDataManager.SelectedLanguageChangedEvent += new EventHandler(gameDataManager_SelectedLanguageChangedEvent);
 
             foreach (GameDataManager.Languages language in Enum.GetValues(typeof(GameDataManager.Languages)))
@@ -160,10 +160,10 @@ namespace Yggdrasil
 
         private void gameDataManager_ItemDataPropertyChangedEvent(object sender, PropertyChangedEventArgs e)
         {
-            if (gameDataManager.DataHasChanged || gameDataManager.MessageFileHasChanged)
+            if (gameDataManager.DataHasChanged || gameDataManager.MessageFileHasChanged || gameDataManager.MapTileDataHasChanged)
             {
-                int changeCount = (gameDataManager.ChangedDataCount + gameDataManager.ChangedMessageFileCount);
-                StatusText = string.Format("Ready; {0} {1} changed", changeCount, (changeCount != 1 ? "entries" : "entry"));
+                int changeCount = (gameDataManager.ChangedDataCount + gameDataManager.ChangedMessageFileCount + gameDataManager.ChangedMapTileCount);
+                StatusText = string.Format("Ready; {0} changes", changeCount);
                 saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = true;
             }
             else
@@ -191,7 +191,7 @@ namespace Yggdrasil
 
         private void CommandSave()
         {
-            if (gameDataManager.DataHasChanged || gameDataManager.MessageFileHasChanged)
+            if (gameDataManager.DataHasChanged || gameDataManager.MessageFileHasChanged || gameDataManager.MapTileDataHasChanged)
             {
                 int changedFiles = gameDataManager.SaveAllChanges();
 
@@ -201,6 +201,7 @@ namespace Yggdrasil
                     StatusText = string.Format("Data saved; {0} {1} changed", changedFiles, (changedFiles == 1 ? "file" : "files"));
 
                 tableEntryEditor.Refresh();
+                floorMapEditor.Refresh();
                 saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = false;
             }
         }
@@ -237,7 +238,7 @@ namespace Yggdrasil
             string inputPath;
             if (GUIHelpers.ShowFolderBrowser("Select game folder", "Please select folder with extracted game data.", Configuration.LastDataPath, out inputPath) != System.Windows.Forms.DialogResult.OK) return;
 
-            if (gameDataManager.IsInitialized && inputPath == gameDataManager.DataPath && (gameDataManager.DataHasChanged || gameDataManager.MessageFileHasChanged))
+            if (gameDataManager.IsInitialized && inputPath == gameDataManager.DataPath && (gameDataManager.DataHasChanged || gameDataManager.MessageFileHasChanged || gameDataManager.MapTileDataHasChanged))
             {
                 if (MessageBox.Show("Data has been changed. Save changes before creating ROM file?", "Unsaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
                     CommandSave();

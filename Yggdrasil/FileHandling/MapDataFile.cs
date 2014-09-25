@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Drawing;
+using System.ComponentModel;
 
 using Yggdrasil.Attributes;
 using Yggdrasil.FileHandling.MapDataHandling;
@@ -17,34 +18,55 @@ namespace Yggdrasil.FileHandling
 
         public const int MapWidth = 35;
         public const int MapHeight = 30;
+        public const int MapDataOffset = 0x10;
 
         public enum TileTypes : byte
         {
             Nothing = 0x0,
             Floor = 0x1,
             Wall = 0x2,
+            [Description("Stairs (Up)")]
             StairsUp = 0x3,
+            [Description("Stairs (Down)")]
             StairsDown = 0x4,
+            [Description("One-way Shortcut (N)")]
             OneWayShortcutN = 0x5,
+            [Description("One-way Shortcut (S)")]
             OneWayShortcutS = 0x6,
+            [Description("One-way Shortcut (W)")]
             OneWayShortcutW = 0x7,
+            [Description("One-way Shortcut (E)")]
             OneWayShortcutE = 0x8,
+            [Description("Door (N-S)")]
             DoorNS = 0x9,
+            [Description("Door (W-E)")]
             DoorWE = 0xA,
+            [Description("Treasure Chest")]
             TreasureChest = 0xB,
+            [Description("Geomagnetic Field")]
             GeomagneticField = 0xC,
+            [Description("Conveyor (N)")]
             SandConveyorN = 0xD,
+            [Description("Conveyor (S)")]
             SandConveyorS = 0xE,
+            [Description("Conveyor (W)")]
             SandConveyorW = 0xF,
+            [Description("Conveyor (E)")]
             SandConveyorE = 0x10,
+            [Description("F.O.E. Floor")]
             FOEFloor = 0x11, /* not sure, but seems FOE-related */
+            [Description("Collapsing Floor")]
             CollapsingFloor = 0x12,
             Water = 0x13,
             Elevator = 0x14,
+            [Description("Refreshing Water")]
             RefreshingWater = 0x15,
+            [Description("Warp Entrance")]
             WarpEntrance = 0x16,
-            WaterLily = 0x17,
+            Transporter = 0x17,
+            [Description("Damaging Floor")]
             DamagingFloor = 0x18,
+            [Description("Unknown (0x19)")]
             Unknown0x19 = 0x19,
         };
 
@@ -74,7 +96,7 @@ namespace Yggdrasil.FileHandling
             { TileTypes.Elevator, true },
             { TileTypes.RefreshingWater, true },
             { TileTypes.WarpEntrance, true },
-            { TileTypes.WaterLily, false },     
+            { TileTypes.Transporter, false },     
             { TileTypes.DamagingFloor, true },
             { TileTypes.Unknown0x19, false },
         };
@@ -102,7 +124,8 @@ namespace Yggdrasil.FileHandling
         public uint Unknown1 { get; private set; }
         public uint Unknown2 { get; private set; }
         public uint Unknown3 { get; private set; }
-        public BaseTile[,] Tiles { get; private set; }
+
+        public byte[] UnknownBlock { get; private set; }
 
         public override void Parse()
         {
@@ -118,36 +141,30 @@ namespace Yggdrasil.FileHandling
             Unknown2 = reader.ReadUInt32();
             Unknown3 = reader.ReadUInt32();
 
-            Tiles = new BaseTile[MapWidth, MapHeight];
+            reader.BaseStream.Seek(MapDataOffset + (MapWidth * MapHeight * 0x10), SeekOrigin.Begin);
+            UnknownBlock = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
+        }
 
-            for (int y = 0; y < MapHeight; y++)
+        public override void Save()
+        {
+            List<byte> rebuilt = new List<byte>();
+
+            rebuilt.AddRange(Encoding.ASCII.GetBytes(FileSignature));
+            rebuilt.AddRange(BitConverter.GetBytes(Unknown1));
+            rebuilt.AddRange(BitConverter.GetBytes(Unknown2));
+            rebuilt.AddRange(BitConverter.GetBytes(Unknown3));
+
+            List<BaseTile> mapTiles = GameDataManager.MapTileData.Where(x => x.MapDataFile == this).OrderBy(x => x.Coordinates.X).OrderBy(x => x.Coordinates.Y).ToList();
+            foreach (BaseTile mapTile in mapTiles) rebuilt.AddRange(mapTile.Data);
+
+            rebuilt.AddRange(UnknownBlock);
+
+            Stream = new MemoryStream(rebuilt.ToArray());
+            if (!base.InArchive && base.FileNumber == -1)
             {
-                for (int x = 0; x < MapWidth; x++)
+                using (FileStream fileStream = new FileStream(Filename, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
                 {
-                    int offset = (int)Stream.Position;
-                    TileTypes typeId = (TileTypes)reader.ReadByte();
-                    switch (typeId)
-                    {
-                        case TileTypes.Floor:
-                        case TileTypes.FOEFloor:
-                        case TileTypes.DamagingFloor:
-                        case TileTypes.CollapsingFloor:
-                            Tiles[x, y] = new FloorTile(GameDataManager, this, offset, new Point(x, y));
-                            break;
-                        case TileTypes.StairsUp:
-                        case TileTypes.StairsDown:
-                            Tiles[x, y] = new StairTile(GameDataManager, this, offset, new Point(x, y));
-                            break;
-                        case TileTypes.TreasureChest:
-                            Tiles[x, y] = new TreasureChestTile(GameDataManager, this, offset, new Point(x, y));
-                            break;
-                        case TileTypes.WaterLily:
-                            Tiles[x, y] = new WaterLilyTile(GameDataManager, this, offset, new Point(x, y));
-                            break;
-                        default:
-                            Tiles[x, y] = new BaseTile(GameDataManager, this, offset, new Point(x, y));
-                            break;
-                    }
+                    Stream.CopyTo(fileStream);
                 }
             }
         }

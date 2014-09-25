@@ -113,8 +113,24 @@ namespace Yggdrasil
         {
             PropertyDescriptor descriptor = TypeDescriptor.GetProperties(obj.GetType())[fieldName];
             ReadOnlyAttribute attribute = (ReadOnlyAttribute)descriptor.Attributes[typeof(ReadOnlyAttribute)];
-            FieldInfo fieldToChange = attribute.GetType().GetField("isReadOnly", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo fieldToChange = attribute.GetType().GetField("IsReadOnly", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase);
             fieldToChange.SetValue(attribute, newState);
+        }
+
+        public static void ChangeBrowsableAttribute(this object obj, string fieldName, bool newState)
+        {
+            PropertyDescriptor descriptor = TypeDescriptor.GetProperties(obj.GetType())[fieldName];
+            BrowsableAttribute attribute = (BrowsableAttribute)descriptor.Attributes[typeof(BrowsableAttribute)];
+            FieldInfo fieldToChange = attribute.GetType().GetField("Browsable", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase);
+            fieldToChange.SetValue(attribute, newState);
+        }
+
+        public static void ChangeDefaultValueAttribute(this object obj, string fieldName, object newValue)
+        {
+            PropertyDescriptor descriptor = TypeDescriptor.GetProperties(obj.GetType())[fieldName];
+            DefaultValueAttribute attribute = (DefaultValueAttribute)descriptor.Attributes[typeof(DefaultValueAttribute)];
+            FieldInfo fieldToChange = attribute.GetType().GetField("Value", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase);
+            fieldToChange.SetValue(attribute, newValue);
         }
 
         public static IEnumerable<TreeNode> FlattenTree(this TreeView tv)
