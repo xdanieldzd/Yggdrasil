@@ -154,8 +154,9 @@ namespace Yggdrasil.FileHandling
             rebuilt.AddRange(BitConverter.GetBytes(Unknown2));
             rebuilt.AddRange(BitConverter.GetBytes(Unknown3));
 
-            List<BaseTile> mapTiles = GameDataManager.MapTileData.Where(x => x.MapDataFile == this).OrderBy(x => x.Coordinates.X).OrderBy(x => x.Coordinates.Y).ToList();
-            foreach (BaseTile mapTile in mapTiles) rebuilt.AddRange(mapTile.Data);
+            for (int y = 0; y < MapDataFile.MapHeight; y++)
+                for (int x = 0; x < MapDataFile.MapWidth; x++)
+                    rebuilt.AddRange(GameDataManager.MapTileData[this][x, y].Data);
 
             rebuilt.AddRange(UnknownBlock);
 

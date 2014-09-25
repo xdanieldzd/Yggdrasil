@@ -109,11 +109,13 @@ namespace Yggdrasil
         public int ChangedDataCount { get { return (changedParsedData != null ? changedParsedData.Count : -1); } }
 
         public List<MapDataFile> MapDataFiles { get; private set; }
-        public List<BaseTile> MapTileData { get; private set; }
+        public Dictionary<MapDataFile, BaseTile[,]> MapTileData { get; private set; }
 
         List<BaseTile> changedMapTileData;
         public bool MapTileDataHasChanged { get { return (changedMapTileData != null && changedMapTileData.Count > 0); } }
         public int ChangedMapTileCount { get { return (changedMapTileData != null ? changedMapTileData.Count : -1); } }
+
+        public bool AnyDataHasChanged { get { return (DataHasChanged || MessageFileHasChanged || MapTileDataHasChanged); } }
 
         public static Dictionary<ushort, string> ItemNames { get; private set; }
         public static Dictionary<ushort, string> ItemDescriptions { get; private set; }
@@ -584,12 +586,14 @@ namespace Yggdrasil
             return mapDataFiles.OrderBy(x => x.Filename).ToList();
         }
 
-        private List<BaseTile> ParseMapData()
+        private Dictionary<MapDataFile, BaseTile[,]> ParseMapData()
         {
-            List<BaseTile> mapTiles = new List<BaseTile>();
+            Dictionary<MapDataFile, BaseTile[,]> dataDict = new Dictionary<MapDataFile, BaseTile[,]>();
 
             foreach (MapDataFile mapDataFile in MapDataFiles)
             {
+                BaseTile[,] mapData = new BaseTile[MapDataFile.MapWidth, MapDataFile.MapHeight];
+
                 mapDataFile.Stream.Seek(MapDataFile.MapDataOffset, SeekOrigin.Begin);
 
                 for (int y = 0; y < MapDataFile.MapHeight; y++)
@@ -604,27 +608,29 @@ namespace Yggdrasil
                             case MapDataFile.TileTypes.FOEFloor:
                             case MapDataFile.TileTypes.DamagingFloor:
                             case MapDataFile.TileTypes.CollapsingFloor:
-                                mapTiles.Add(new FloorTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged));
+                                mapData[x, y] = new FloorTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged);
                                 break;
                             case MapDataFile.TileTypes.StairsUp:
                             case MapDataFile.TileTypes.StairsDown:
-                                mapTiles.Add(new StairsTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged));
+                                mapData[x, y] = new StairsTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged);
                                 break;
                             case MapDataFile.TileTypes.TreasureChest:
-                                mapTiles.Add(new TreasureChestTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged));
+                                mapData[x, y] = new TreasureChestTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged);
                                 break;
                             case MapDataFile.TileTypes.Transporter:
-                                mapTiles.Add(new TransporterTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged));
+                                mapData[x, y] = new TransporterTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged);
                                 break;
                             default:
-                                mapTiles.Add(new BaseTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged));
+                                mapData[x, y] = new BaseTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged);
                                 break;
                         }
                     }
                 }
+
+                dataDict.Add(mapDataFile, mapData);
             }
 
-            return mapTiles;
+            return dataDict;
         }
 
         private void GenerateDictionariesLists()
@@ -702,7 +708,15 @@ namespace Yggdrasil
             }
 
             if (sender is BaseTile)
-                changedMapTileData = MapTileData.Where(x => x.HasChanged).ToList();
+            {
+                changedMapTileData.Clear();
+                foreach (KeyValuePair<MapDataFile, BaseTile[,]> pair in MapTileData)
+                {
+                    for (int y = 0; y < MapDataFile.MapHeight; y++)
+                        for (int x = 0; x < MapDataFile.MapWidth; x++)
+                            if (pair.Value[x, y].HasChanged) changedMapTileData.Add(pair.Value[x, y]);
+                }
+            }
 
             if (sender is EncounterParser) GenerateOtherDictionaries();
 

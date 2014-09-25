@@ -61,7 +61,7 @@ namespace Yggdrasil
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            e.Cancel = ((gameDataManager.DataHasChanged || gameDataManager.MessageFileHasChanged) &&
+            e.Cancel = ((gameDataManager.AnyDataHasChanged) &&
                 MessageBox.Show("Data has been changed. Discard changes and quit without saving?", "Unsaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No);
         }
 
@@ -160,7 +160,7 @@ namespace Yggdrasil
 
         private void gameDataManager_ItemDataPropertyChangedEvent(object sender, PropertyChangedEventArgs e)
         {
-            if (gameDataManager.DataHasChanged || gameDataManager.MessageFileHasChanged || gameDataManager.MapTileDataHasChanged)
+            if (gameDataManager.AnyDataHasChanged)
             {
                 int changeCount = (gameDataManager.ChangedDataCount + gameDataManager.ChangedMessageFileCount + gameDataManager.ChangedMapTileCount);
                 StatusText = string.Format("Ready; {0} changes", changeCount);
@@ -191,7 +191,7 @@ namespace Yggdrasil
 
         private void CommandSave()
         {
-            if (gameDataManager.DataHasChanged || gameDataManager.MessageFileHasChanged || gameDataManager.MapTileDataHasChanged)
+            if (gameDataManager.AnyDataHasChanged)
             {
                 int changedFiles = gameDataManager.SaveAllChanges();
 
@@ -238,7 +238,7 @@ namespace Yggdrasil
             string inputPath;
             if (GUIHelpers.ShowFolderBrowser("Select game folder", "Please select folder with extracted game data.", Configuration.LastDataPath, out inputPath) != System.Windows.Forms.DialogResult.OK) return;
 
-            if (gameDataManager.IsInitialized && inputPath == gameDataManager.DataPath && (gameDataManager.DataHasChanged || gameDataManager.MessageFileHasChanged || gameDataManager.MapTileDataHasChanged))
+            if (gameDataManager.IsInitialized && inputPath == gameDataManager.DataPath && (gameDataManager.AnyDataHasChanged))
             {
                 if (MessageBox.Show("Data has been changed. Save changes before creating ROM file?", "Unsaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
                     CommandSave();

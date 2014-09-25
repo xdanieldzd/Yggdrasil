@@ -106,6 +106,7 @@
             this.pgMapTile.Size = new System.Drawing.Size(246, 327);
             this.pgMapTile.TabIndex = 1;
             this.pgMapTile.ToolbarVisible = false;
+            this.pgMapTile.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgMapTile_PropertyValueChanged);
             // 
             // chkEventOverlay
             // 
