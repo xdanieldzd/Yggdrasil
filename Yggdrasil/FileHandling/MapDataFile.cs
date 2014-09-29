@@ -141,8 +141,12 @@ namespace Yggdrasil.FileHandling
             Unknown2 = reader.ReadUInt32();
             Unknown3 = reader.ReadUInt32();
 
-            reader.BaseStream.Seek(MapDataOffset + (MapWidth * MapHeight * 0x10), SeekOrigin.Begin);
-            UnknownBlock = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
+            int unknownBlockOffset = MapDataOffset + (MapWidth * MapHeight * 0x10);
+            if (unknownBlockOffset < reader.BaseStream.Length)
+            {
+                reader.BaseStream.Seek(unknownBlockOffset, SeekOrigin.Begin);
+                UnknownBlock = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
+            }
         }
 
         public override void Save()

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
+using Yggdrasil.Attributes;
+
 namespace Yggdrasil.FileHandling.MapDataHandling
 {
     public enum TreasureType : byte
@@ -24,6 +26,8 @@ namespace Yggdrasil.FileHandling.MapDataHandling
             base(gameDataManager, mapDataFile, offset, coordinates, propertyChanged) { }
 
         TreasureType treasureType;
+        [DisplayName("Type"), PrioritizedCategory("General", 3)]
+        [Description("")]
         public TreasureType TreasureType
         {
             get { return treasureType; }
@@ -33,6 +37,8 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public void ResetTreasureType() { this.TreasureType = (dynamic)base.originalValues["TreasureType"]; }
 
         byte treasureChestID;
+        [DisplayName("Chest ID"), TypeConverter(typeof(TypeConverters.HexByteConverter)), PrioritizedCategory("General", 3)]
+        [Description("")]
         public byte TreasureChestID
         {
             get { return treasureChestID; }
@@ -42,6 +48,8 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public void ResetTreasureChestID() { this.TreasureChestID = (dynamic)base.originalValues["TreasureChestID"]; }
 
         TreasureItemCategory treasureItemCategory;
+        [DisplayName("Category"), PrioritizedCategory("Item Parameters", 2)]
+        [Description("")]
         [Browsable(true)]
         public TreasureItemCategory TreasureItemCategory
         {
@@ -52,8 +60,9 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public void ResetTreasureItemCategory() { this.TreasureItemCategory = (dynamic)base.originalValues["TreasureItemCategory"]; }
 
         ushort treasureItemID;
+        [DisplayName("Item"), TypeConverter(typeof(TypeConverters.ItemNameConverter)), PrioritizedCategory("Item Parameters", 2)]
+        [Description("")]
         [Browsable(true)]
-        [TypeConverter(typeof(TypeConverters.ItemNameConverter))]
         public ushort TreasureItemID
         {
             get { return treasureItemID; }
@@ -63,8 +72,9 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public void ResetTreasureItemID() { this.TreasureItemID = (dynamic)base.originalValues["TreasureItemID"]; }
 
         ushort treasureMoney;
+        [DisplayName("Money"), TypeConverter(typeof(TypeConverters.UshortEtrianEnConverter)), PrioritizedCategory("Money Parameters", 1)]
+        [Description("")]
         [Browsable(true)]
-        [TypeConverter(typeof(TypeConverters.UshortEtrianEnConverter))]
         public ushort TreasureMoney
         {
             get { return treasureMoney; }

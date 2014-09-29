@@ -4,14 +4,18 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
+using Yggdrasil.Attributes;
+
 namespace Yggdrasil.FileHandling.MapDataHandling
 {
     class FloorTile : BaseTile
     {
         public FloorTile(GameDataManager gameDataManager, MapDataFile mapDataFile, int offset, System.Drawing.Point coordinates, PropertyChangedEventHandler propertyChanged = null) :
             base(gameDataManager, mapDataFile, offset, coordinates, propertyChanged) { }
-        
+
         byte dangerIncrement;
+        [DisplayName("Danger Increment"), PrioritizedCategory("Encounter Parameters", 2)]
+        [Description("")]
         public byte DangerIncrement
         {
             get { return dangerIncrement; }
@@ -21,6 +25,8 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public void ResetDangerIncrement() { this.DangerIncrement = (dynamic)base.originalValues["DangerIncrement"]; }
 
         ushort unknown1;
+        [DisplayName("Unknown 1"), TypeConverter(typeof(TypeConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 1)]
+        [Description("")]
         public ushort Unknown1
         {
             get { return unknown1; }
@@ -30,6 +36,8 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public void ResetUnknown1() { this.Unknown1 = (dynamic)base.originalValues["Unknown1"]; }
 
         ushort unknown2;
+        [DisplayName("Unknown 2"), TypeConverter(typeof(TypeConverters.HexUshortConverter)), PrioritizedCategory("Unknown", 1)]
+        [Description("")]
         public ushort Unknown2
         {
             get { return unknown2; }
@@ -39,6 +47,8 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public void ResetUnknown2() { this.Unknown2 = (dynamic)base.originalValues["Unknown2"]; }
 
         ushort encounterGroup;
+        [DisplayName("Encounter Group"), PrioritizedCategory("Encounter Parameters", 2)]
+        [Description("")]
         public ushort EncounterGroup
         {
             get { return encounterGroup; }
@@ -48,6 +58,8 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public void ResetEncounterGroup() { this.EncounterGroup = (dynamic)base.originalValues["EncounterGroup"]; }
 
         uint unknown3;
+        [DisplayName("Unknown 3"), TypeConverter(typeof(TypeConverters.HexUintConverter)), PrioritizedCategory("Unknown", 1)]
+        [Description("")]
         public uint Unknown3
         {
             get { return unknown3; }
@@ -57,6 +69,8 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public void ResetUnknown3() { this.Unknown3 = (dynamic)base.originalValues["Unknown3"]; }
 
         uint unknown4;
+        [DisplayName("Unknown 4"), TypeConverter(typeof(TypeConverters.HexUintConverter)), PrioritizedCategory("Unknown", 1)]
+        [Description("")]
         public uint Unknown4
         {
             get { return unknown4; }

@@ -5,6 +5,8 @@ using System.Text;
 using System.Drawing;
 using System.ComponentModel;
 
+using Yggdrasil.Attributes;
+
 namespace Yggdrasil.FileHandling.MapDataHandling
 {
     class TransporterTile : BaseTile
@@ -13,7 +15,8 @@ namespace Yggdrasil.FileHandling.MapDataHandling
             base(gameDataManager, mapDataFile, offset, coordinates, propertyChanged) { }
 
         byte destinationFloor;
-        [TypeConverter(typeof(TypeConverters.FloorNumberConverter))]
+        [DisplayName("Floor Number"), TypeConverter(typeof(TypeConverters.FloorNumberConverter)), PrioritizedCategory("Destination Parameters", 1)]
+        [Description("")]
         public byte DestinationFloor
         {
             get { return destinationFloor; }
@@ -23,6 +26,8 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public void ResetDestinationFloor() { this.DestinationFloor = (dynamic)base.originalValues["DestinationFloor"]; }
 
         Point destinationCoords;
+        [DisplayName("Coordinates"), PrioritizedCategory("Destination Parameters", 1)]
+        [Description("")]
         public Point DestinationCoords
         {
             get { return destinationCoords; }

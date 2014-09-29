@@ -5,10 +5,12 @@ using System.Text;
 using System.Drawing;
 using System.ComponentModel;
 
+using Yggdrasil.Attributes;
+
 namespace Yggdrasil.FileHandling.MapDataHandling
 {
     [Flags]
-    public enum UsableFromDirection : byte
+    public enum UseableFromDirection : byte
     {
         North = 0x1,
         South = 0x2,
@@ -32,7 +34,8 @@ namespace Yggdrasil.FileHandling.MapDataHandling
             base(gameDataManager, mapDataFile, offset, coordinates, propertyChanged) { }
 
         byte destinationFloor;
-        [TypeConverter(typeof(TypeConverters.FloorNumberConverter))]
+        [DisplayName("Floor Number"), TypeConverter(typeof(TypeConverters.FloorNumberConverter)), PrioritizedCategory("Destination Parameters", 1)]
+        [Description("")]
         public byte DestinationFloor
         {
             get { return destinationFloor; }
@@ -42,6 +45,8 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public void ResetDestinationFloor() { this.DestinationFloor = (dynamic)base.originalValues["DestinationFloor"]; }
 
         Point destinationCoords;
+        [DisplayName("Coordinates"), PrioritizedCategory("Destination Parameters", 1)]
+        [Description("")]
         public Point DestinationCoords
         {
             get { return destinationCoords; }
@@ -50,18 +55,21 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public bool ShouldSerializeDestinationCoords() { return !(this.DestinationCoords == (dynamic)base.originalValues["DestinationCoords"]); }
         public void ResetDestinationCoords() { this.DestinationCoords = (dynamic)base.originalValues["DestinationCoords"]; }
 
-        UsableFromDirection usableFromDirection;
-        [TypeConverter(typeof(TypeConverters.FlagsEnumConverter))]
-        [DefaultValue(typeof(UsableFromDirection), "All")]
-        public UsableFromDirection UsableFromDirection
+        UseableFromDirection useableFromDirection;
+        [DisplayName("Usable From Directions"), TypeConverter(typeof(TypeConverters.FlagsEnumConverter)), PrioritizedCategory("Destination Parameters", 1)]
+        [DefaultValue(typeof(UseableFromDirection), "All")]
+        [Description("")]
+        public UseableFromDirection UseableFromDirection
         {
-            get { return usableFromDirection; }
-            set { base.SetProperty(ref usableFromDirection, value, () => this.UsableFromDirection); }
+            get { return useableFromDirection; }
+            set { base.SetProperty(ref useableFromDirection, value, () => this.UseableFromDirection); }
         }
-        public bool ShouldSerializeUsableFromDirection() { return !(this.UsableFromDirection == (dynamic)base.originalValues["UsableFromDirection"]); }
-        public void ResetUsableFromDirection() { this.UsableFromDirection = (dynamic)base.originalValues["UsableFromDirection"]; }
+        public bool ShouldSerializeUseableFromDirection() { return !(this.UseableFromDirection == (dynamic)base.originalValues["UseableFromDirection"]); }
+        public void ResetUseableFromDirection() { this.UseableFromDirection = (dynamic)base.originalValues["UseableFromDirection"]; }
 
         FacingAtDestination facingAtDestination;
+        [DisplayName("Facing at Destination"), PrioritizedCategory("Destination Parameters", 1)]
+        [Description("")]
         public FacingAtDestination FacingAtDestination
         {
             get { return facingAtDestination; }
@@ -70,16 +78,18 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public bool ShouldSerializeFacingAtDestination() { return !(this.FacingAtDestination == (dynamic)base.originalValues["FacingAtDestination"]); }
         public void ResetFacingAtDestination() { this.FacingAtDestination = (dynamic)base.originalValues["FacingAtDestination"]; }
 
+        [DisplayName("(Stairs Lead Outside?)"), PrioritizedCategory("Miscellaneous", byte.MaxValue - 1)]
+        [Description("")]
         public bool StairsGoOutside { get { return (destinationFloor == 0 && destinationCoords.X == 0 && destinationCoords.Y == 0 && facingAtDestination == 0); } }
 
         protected override void Load()
         {
             destinationFloor = this.Data[8];
             destinationCoords = new Point(this.Data[9], this.Data[10]);
-            usableFromDirection = (UsableFromDirection)(this.Data[11] >> 4);
+            useableFromDirection = (UseableFromDirection)(this.Data[11] >> 4);
             facingAtDestination = (FacingAtDestination)(this.Data[11] & 0xF);
 
-            this.ChangeDefaultValueAttribute("UsableFromDirection", usableFromDirection);
+            this.ChangeDefaultValueAttribute("UseableFromDirection", useableFromDirection);
 
             base.Load();
         }
@@ -89,10 +99,10 @@ namespace Yggdrasil.FileHandling.MapDataHandling
             destinationFloor.CopyTo(this.Data, 8);
             destinationCoords.X.CopyTo(this.Data, 9);
             destinationCoords.Y.CopyTo(this.Data, 10);
-            byte tempData = (byte)((Convert.ToByte(usableFromDirection) << 4) | (Convert.ToByte(facingAtDestination) & 0xF));
+            byte tempData = (byte)((Convert.ToByte(useableFromDirection) << 4) | (Convert.ToByte(facingAtDestination) & 0xF));
             tempData.CopyTo(this.Data, 11);
 
-            this.ChangeDefaultValueAttribute("UsableFromDirection", usableFromDirection);
+            this.ChangeDefaultValueAttribute("UseableFromDirection", useableFromDirection);
 
             base.Save();
         }
