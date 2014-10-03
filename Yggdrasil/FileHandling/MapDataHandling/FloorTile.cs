@@ -13,6 +13,9 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public FloorTile(GameDataManager gameDataManager, MapDataFile mapDataFile, int offset, System.Drawing.Point coordinates, PropertyChangedEventHandler propertyChanged = null) :
             base(gameDataManager, mapDataFile, offset, coordinates, propertyChanged) { }
 
+        public FloorTile(BaseTile originalTile, MapDataFile.TileTypes newTileType) :
+            base(originalTile, newTileType) { }
+
         byte dangerIncrement;
         [DisplayName("Danger Increment"), PrioritizedCategory("Encounter Parameters", 2)]
         [Description("")]

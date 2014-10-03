@@ -602,28 +602,11 @@ namespace Yggdrasil
                     {
                         int offset = (int)mapDataFile.Stream.Position;
                         MapDataFile.TileTypes typeId = (MapDataFile.TileTypes)mapDataFile.Stream.ReadByte();
-                        switch (typeId)
-                        {
-                            case MapDataFile.TileTypes.Floor:
-                            case MapDataFile.TileTypes.FOEFloor:
-                            case MapDataFile.TileTypes.DamagingFloor:
-                            case MapDataFile.TileTypes.CollapsingFloor:
-                                mapData[x, y] = new FloorTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged);
-                                break;
-                            case MapDataFile.TileTypes.StairsUp:
-                            case MapDataFile.TileTypes.StairsDown:
-                                mapData[x, y] = new StairsTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged);
-                                break;
-                            case MapDataFile.TileTypes.TreasureChest:
-                                mapData[x, y] = new TreasureChestTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged);
-                                break;
-                            case MapDataFile.TileTypes.Transporter:
-                                mapData[x, y] = new TransporterTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged);
-                                break;
-                            default:
-                                mapData[x, y] = new BaseTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged);
-                                break;
-                        }
+
+                        if (MapDataFile.TileTypeClassMapping.ContainsKey(typeId))
+                            mapData[x, y] = (BaseTile)Activator.CreateInstance(MapDataFile.TileTypeClassMapping[typeId], new object[] { this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged });
+                        else
+                            mapData[x, y] = new BaseTile(this, mapDataFile, offset, new Point(x, y), (PropertyChangedEventHandler)GameDataPropertyChanged);
                     }
                 }
 
@@ -714,7 +697,17 @@ namespace Yggdrasil
                 {
                     for (int y = 0; y < MapDataFile.MapHeight; y++)
                         for (int x = 0; x < MapDataFile.MapWidth; x++)
-                            if (pair.Value[x, y].HasChanged) changedMapTileData.Add(pair.Value[x, y]);
+                            if (pair.Value[x, y].HasChanged)
+                            {
+                                MapDataFile.TileTypes typeId = pair.Value[x, y].TileType;
+
+                                if (MapDataFile.TileTypeClassMapping.ContainsKey(typeId))
+                                    pair.Value[x, y] = (BaseTile)Activator.CreateInstance(MapDataFile.TileTypeClassMapping[typeId], new object[] { pair.Value[x, y], typeId });
+                                else
+                                    pair.Value[x, y] = new BaseTile(pair.Value[x, y], typeId);
+
+                                changedMapTileData.Add(pair.Value[x, y]);
+                            }
                 }
             }
 

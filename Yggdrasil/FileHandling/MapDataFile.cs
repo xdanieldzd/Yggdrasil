@@ -70,6 +70,18 @@ namespace Yggdrasil.FileHandling
             Unknown0x19 = 0x19,
         };
 
+        public static Dictionary<TileTypes, Type> TileTypeClassMapping = new Dictionary<TileTypes, Type>()
+        {
+            { TileTypes.Floor, typeof(FloorTile) },
+            { TileTypes.FOEFloor, typeof(FloorTile) },
+            { TileTypes.DamagingFloor, typeof(FloorTile) },
+            { TileTypes.CollapsingFloor, typeof(FloorTile) },
+            { TileTypes.StairsUp, typeof(StairsTile) },
+            { TileTypes.StairsDown, typeof(StairsTile) },
+            { TileTypes.TreasureChest, typeof(TreasureChestTile) },
+            { TileTypes.Transporter, typeof(TransporterTile) },
+        };
+
         public static Dictionary<TileTypes, bool> IsTileWalkable = new Dictionary<TileTypes, bool>()
         {
             /* Maybe not "walkable" as such - treasure chest, etc. -, but at least for the sake of wall drawing... */

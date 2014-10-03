@@ -33,6 +33,8 @@ namespace Yggdrasil.Controls
 
             gridEditControl.Columns = 35;
             gridEditControl.Rows = 30;
+
+            gridEditControl.Debug = true;
         }
 
         public override void Refresh()
@@ -101,7 +103,13 @@ namespace Yggdrasil.Controls
         private void pgMapTile_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             if (e.ChangedItem.PropertyDescriptor.PropertyType == typeof(MapDataFile.TileTypes))
+            {
+                int x = (pgMapTile.SelectedObject as BaseTile).Coordinates.X;
+                int y = (pgMapTile.SelectedObject as BaseTile).Coordinates.Y;
+                pgMapTile.SelectedObject = gameDataManager.MapTileData[mapDataFile][x, y];
                 gridEditControl.Invalidate();
+                pgMapTile.Refresh();
+            }
         }
 
         private void chkGatherOverlay_CheckedChanged(object sender, EventArgs e)

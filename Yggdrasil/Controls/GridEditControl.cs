@@ -8,18 +8,6 @@ using System.Drawing;
 
 namespace Yggdrasil.Controls
 {
-    class TileClickEventArgs : EventArgs
-    {
-        public MouseButtons Button { get; private set; }
-        public Point Coordinates { get; private set; }
-
-        public TileClickEventArgs(MouseButtons button, Point coords)
-        {
-            this.Button = button;
-            this.Coordinates = coords;
-        }
-    }
-
     class GridEditControl : Panel
     {
         public event EventHandler<TileClickEventArgs> TileClick;
@@ -99,8 +87,12 @@ namespace Yggdrasil.Controls
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public int ZoomedTileGap { get { return zoomedTileGap; } }
 
+        bool debug;
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public bool Debug { get { return debug; } set { debug = value; this.UpdateDisplay(); } }
+
         Point hoverTileCoords, selectedTileCoords;
-        Rectangle selectionRect;
+        Rectangle hoverTileRect, selectedTileRect;
 
         public GridEditControl()
         {
@@ -119,7 +111,9 @@ namespace Yggdrasil.Controls
             this.zoomedTileSize = Size.Empty;
             this.zoomedTileGap = -1;
             this.hoverTileCoords = this.selectedTileCoords = Point.Empty;
-            this.selectionRect = Rectangle.Empty;
+            this.hoverTileRect = this.selectedTileRect = Rectangle.Empty;
+
+            this.debug = false;
         }
 
         private void UpdateDisplay()
@@ -145,15 +139,19 @@ namespace Yggdrasil.Controls
             base.OnMouseMove(e);
 
             hoverTileCoords = new Point((e.X / (this.zoomedTileSize.Width + this.zoomedTileGap)), (e.Y / (this.zoomedTileSize.Height + this.zoomedTileGap)));
-            selectionRect = new Rectangle(
+            hoverTileRect = new Rectangle(
                 hoverTileCoords.X * (this.zoomedTileSize.Width + this.zoomedTileGap), hoverTileCoords.Y * (this.zoomedTileSize.Height + this.zoomedTileGap),
                 zoomedTileSize.Width - 1, zoomedTileSize.Height - 1);
+
             this.Invalidate();
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
             selectedTileCoords = new Point((e.X / (this.zoomedTileSize.Width + this.zoomedTileGap)), (e.Y / (this.zoomedTileSize.Height + this.zoomedTileGap)));
+            selectedTileRect = new Rectangle(
+                selectedTileCoords.X * (this.zoomedTileSize.Width + this.zoomedTileGap), selectedTileCoords.Y * (this.zoomedTileSize.Height + this.zoomedTileGap),
+                zoomedTileSize.Width - 1, zoomedTileSize.Height - 1);
 
             this.Select();
 
@@ -196,14 +194,36 @@ namespace Yggdrasil.Controls
                 }
             }
 
-            e.Graphics.DrawRectangle(Pens.Red, selectionRect);
-            e.Graphics.DrawLine(Pens.Red, Point.Empty, selectionRect.Location);
-            e.Graphics.DrawString(string.Format("Hover:{0}, Selected:{1}", hoverTileCoords, selectedTileCoords), SystemFonts.MessageBoxFont, Brushes.Yellow, Point.Empty);
+            using (Pen pen = new Pen(Color.FromArgb(160, Color.Orange), 3.0f))
+            {
+                e.Graphics.DrawRectangle(pen, hoverTileRect);
+                if (debug) e.Graphics.DrawLine(pen, Point.Empty, hoverTileRect.Location);
+            }
+
+            using (Pen pen = new Pen(Color.FromArgb(160, Color.Red), 3.0f))
+            {
+                e.Graphics.DrawRectangle(pen, selectedTileRect);
+                if (debug) e.Graphics.DrawLine(pen, new Point(this.ClientRectangle.Right, this.ClientRectangle.Bottom), new Point(selectedTileRect.Right, selectedTileRect.Bottom));
+            }
+
+            if (debug) e.Graphics.DrawString(string.Format("Hover:{0}, Selected:{1}", hoverTileCoords, selectedTileCoords), SystemFonts.MessageBoxFont, Brushes.Yellow, Point.Empty);
         }
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             e.Graphics.Clear(this.BackColor);
+        }
+    }
+
+    class TileClickEventArgs : EventArgs
+    {
+        public MouseButtons Button { get; private set; }
+        public Point Coordinates { get; private set; }
+
+        public TileClickEventArgs(MouseButtons button, Point coords)
+        {
+            this.Button = button;
+            this.Coordinates = coords;
         }
     }
 }

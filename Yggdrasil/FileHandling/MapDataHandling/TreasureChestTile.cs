@@ -25,6 +25,9 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public TreasureChestTile(GameDataManager gameDataManager, MapDataFile mapDataFile, int offset, System.Drawing.Point coordinates, PropertyChangedEventHandler propertyChanged = null) :
             base(gameDataManager, mapDataFile, offset, coordinates, propertyChanged) { }
 
+        public TreasureChestTile(BaseTile originalTile, MapDataFile.TileTypes newTileType) :
+            base(originalTile, newTileType) { }
+
         TreasureType treasureType;
         [DisplayName("Type"), PrioritizedCategory("General", 3)]
         [Description("")]

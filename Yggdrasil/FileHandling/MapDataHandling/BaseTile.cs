@@ -30,7 +30,7 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public byte[] Data { get; private set; }
 
         MapDataFile.TileTypes tileType;
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         [DisplayName("(Tile Type)"), TypeConverter(typeof(TypeConverters.FriendlyEnumConverter)), PrioritizedCategory("Information", byte.MaxValue)]
         [Description("Type of selected map tile.")]
         public MapDataFile.TileTypes TileType
@@ -60,6 +60,21 @@ namespace Yggdrasil.FileHandling.MapDataHandling
             this.MapDataFile.Stream.Read(this.Data, 0, this.Data.Length);
 
             this.tileType = (MapDataFile.TileTypes)this.Data[0];
+
+            Load();
+        }
+
+        public BaseTile(BaseTile originalTile, MapDataFile.TileTypes newTileType)
+        {
+            this.GameDataManager = originalTile.GameDataManager;
+            this.MapDataFile = originalTile.MapDataFile;
+            this.Offset = originalTile.Offset;
+            this.Coordinates = originalTile.Coordinates;
+
+            this.PropertyChanged = originalTile.PropertyChanged;
+
+            this.Data = originalTile.Data;
+            this.Data[0] = (byte)(this.tileType = newTileType);
 
             Load();
         }

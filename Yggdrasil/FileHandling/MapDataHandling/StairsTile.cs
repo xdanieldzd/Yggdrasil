@@ -33,6 +33,9 @@ namespace Yggdrasil.FileHandling.MapDataHandling
         public StairsTile(GameDataManager gameDataManager, MapDataFile mapDataFile, int offset, System.Drawing.Point coordinates, PropertyChangedEventHandler propertyChanged = null) :
             base(gameDataManager, mapDataFile, offset, coordinates, propertyChanged) { }
 
+        public StairsTile(BaseTile originalTile, MapDataFile.TileTypes newTileType) :
+            base(originalTile, newTileType) { }
+
         byte destinationFloor;
         [DisplayName("Floor Number"), TypeConverter(typeof(TypeConverters.FloorNumberConverter)), PrioritizedCategory("Destination Parameters", 1)]
         [Description("")]
