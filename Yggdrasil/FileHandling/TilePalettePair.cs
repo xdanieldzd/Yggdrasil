@@ -74,8 +74,8 @@ namespace Yggdrasil.FileHandling
 
         private void Load(GameDataManager gameDataManager, string tilePath, string palettePath, Formats format, int width, int height, bool forceIndex0Transparent)
         {
-            if (!File.Exists(tilePath)) throw new Exception("Tile data file not found");
-            if (!File.Exists(palettePath)) throw new Exception("Palette data file not found");
+            if (!File.Exists(tilePath)) throw new FileNotFoundException("Tile data file not found");
+            if (!File.Exists(palettePath)) throw new FileNotFoundException("Palette data file not found");
 
             this.GameDataManager = gameDataManager;
             this.palette = new PaletteFile(gameDataManager, palettePath);

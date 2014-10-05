@@ -41,6 +41,11 @@ namespace Yggdrasil
             "data\\Data\\MapDat"
         };
 
+        static readonly string[] textureDataDirs = new string[]
+        {
+            "data\\Data\\Tex"
+        };
+
         static readonly string ItemNameFile = "ItemName";
         static readonly string ItemInfoFile = "ItemInfo";
         static readonly string EnemyNameFile = "EnemyName";
@@ -110,6 +115,8 @@ namespace Yggdrasil
 
         public List<MapDataFile> MapDataFiles { get; private set; }
         public Dictionary<MapDataFile, BaseTile[,]> MapTileData { get; private set; }
+
+        public List<string> TextureFilePaths { get; private set; }
 
         List<BaseTile> changedMapTileData;
         public bool MapTileDataHasChanged { get { return (changedMapTileData != null && changedMapTileData.Count > 0); } }
@@ -181,6 +188,8 @@ namespace Yggdrasil
                     MapDataFiles = ReadMapDataFiles(mapDataDirs);
                     MapTileData = ParseMapData();
                     changedMapTileData = new List<BaseTile>();
+
+                    TextureFilePaths = FindTextureFiles(textureDataDirs);
 
                     CleanStringDictionaries();
                     GenerateOtherDictionaries();
@@ -315,6 +324,7 @@ namespace Yggdrasil
                     new Tuple<string, string, string, bool, bool>("data\\Data\\Event", ".cmp", ".evt", false, false),
                     new Tuple<string, string, string, bool, bool>("data\\Data\\MapDat", "_ydd.cmp", ".ydd", false, false),
                     new Tuple<string, string, string, bool, bool>("data\\Data\\MapDat", "_ymd.cmp", ".ymd", false, false),
+                    new Tuple<string, string, string, bool, bool>("data\\Data\\Tex\\Enemy", ".cmp", ".bin", false, false),
 
                     new Tuple<string, string, string, bool, bool>("data\\Data\\Param", "BarQuestData.cmp", "BarQuestData.tbb", false, true),
                     new Tuple<string, string, string, bool, bool>("data\\Data\\Param", "BarQuestMess.cmp", "BarQuestMess.mbb", true, true),
@@ -427,6 +437,14 @@ namespace Yggdrasil
                         mapsPatched = true;
                     }
                 }
+
+                /* Enemy textures */
+                if (i < arm9Data.Length - 16)
+                {
+                    check = Encoding.ASCII.GetString(arm9Data, i, 16);
+                    if (check == "/Enemy/en_%s.cmp") Buffer.BlockCopy(Encoding.ASCII.GetBytes("/Enemy/en_%s.bin"), 0, arm9Data, i, 16);
+                    /* Cannot use bool like above, need to check for multiple occurrences: USA/JPN versions have the string 3x, but EUR only once! */
+                }
             }
 
             /* Data/message tables */
@@ -501,10 +519,10 @@ namespace Yggdrasil
 
                 foreach (string filePath in filePaths)
                 {
+                    loadWaitWorker.ReportProgress(-1, string.Format("Reading {0}...", Path.GetFileName(filePath)));
+
                     TableFile tbb = new TableFile(this, filePath);
                     dataTables.Add(tbb);
-
-                    loadWaitWorker.ReportProgress(-1, string.Format("Reading {0}...", Path.GetFileName(filePath)));
                 }
             }
 
@@ -576,10 +594,10 @@ namespace Yggdrasil
                 List<string> filePaths = Directory.EnumerateFiles(localDataPath, "*.ymd", SearchOption.AllDirectories).ToList();
                 foreach (string filePath in filePaths)
                 {
+                    loadWaitWorker.ReportProgress(-1, string.Format("Reading {0}...", Path.GetFileName(filePath)));
+
                     MapDataFile ymd = new MapDataFile(this, filePath);
                     mapDataFiles.Add(ymd);
-
-                    loadWaitWorker.ReportProgress(-1, string.Format("Reading {0}...", Path.GetFileName(filePath)));
                 }
             }
 
@@ -614,6 +632,38 @@ namespace Yggdrasil
             }
 
             return dataDict;
+        }
+
+        private List<string> FindTextureFiles(string[] directories)
+        {
+            if (directories == null) throw new ArgumentNullException("Directories is null");
+
+            List<string> textureFiles = new List<string>();
+
+            foreach (string directory in directories)
+            {
+                loadWaitWorker.ReportProgress(-1, string.Format("Looking for textures in {0}...", directory));
+
+                string localDataPath = Path.Combine(DataPath, directory);
+                if (!Directory.Exists(localDataPath)) continue;
+
+                List<string> filePaths = Directory.EnumerateFiles(localDataPath, "*.*", SearchOption.AllDirectories)
+                    .Where(x => (Path.GetExtension(x) == ".ntfp" || Path.GetExtension(x) == ".nbfp"))
+                    .ToList();
+
+                foreach (string filePath in filePaths)
+                {
+                    if (File.Exists(Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileNameWithoutExtension(filePath) + ".cmp")) ||
+                        File.Exists(Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileNameWithoutExtension(filePath) + ".ntft")) ||
+                        File.Exists(Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileNameWithoutExtension(filePath) + ".nbfc")))
+                        textureFiles.Add(Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileNameWithoutExtension(filePath)));
+                }
+
+                //TilePalettePair t = new TilePalettePair(this, textureFiles.FirstOrDefault(x => x.EndsWith("i_cam_paladin_01")), TilePalettePair.Formats.Auto, 64, 128);
+                //t.Image.Save(t.TileData.Filename + ".png");
+            }
+
+            return textureFiles;
         }
 
         private void GenerateDictionariesLists()
