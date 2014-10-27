@@ -158,6 +158,11 @@ namespace Yggdrasil
             CommandAbout();
         }
 
+        private void buildInformationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CommandBuildInfo();
+        }
+
         private void gameDataManager_ItemDataPropertyChangedEvent(object sender, PropertyChangedEventArgs e)
         {
             if (gameDataManager.AnyDataHasChanged)
@@ -305,6 +310,19 @@ namespace Yggdrasil
             builder.AppendLine();
             builder.Append("Contains ndstool 1.31 by Rafael Vuijk (DarkFader)");
             MessageBox.Show(builder.ToString(), "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void CommandBuildInfo()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat("{0} ({1}), {2}", Program.TitleString, Application.ProductVersion, BuildInformation.GitBranch);
+            if (BuildInformation.HasPendingChanges)
+                builder.AppendFormat("(-{0}-dirty)", BuildInformation.LatestCommitHash);
+            else
+                builder.AppendFormat("-{0}", BuildInformation.LatestCommitHash);
+            builder.AppendLine();
+            builder.AppendFormat(System.Globalization.CultureInfo.InvariantCulture, "{0} UTC; {1} ({2}, {3} v{4})\n", BuildInformation.BuildDate, BuildInformation.BuildMachineName, BuildInformation.BuildMachineProcessorArchitecture, BuildInformation.BuildMachineOSPlatform, BuildInformation.BuildMachineOSVersion);
+            MessageBox.Show(builder.ToString(), "Build Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void SetFormTitle()
