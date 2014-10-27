@@ -252,13 +252,13 @@
       <Output TaskParameter="OSPlatform" PropertyName="BuildMachineOSPlatform" />
       <Output TaskParameter="OSVersion" PropertyName="BuildMachineOSVersion" />
     </Computer>
-    <GitVersion LocalPath="$(ProjectDir)">
+    <GitVersion LocalPath="$(SolutionDir)">
       <Output TaskParameter="CommitHash" PropertyName="LatestCommitHash" />
     </GitVersion>
-    <GitBranch LocalPath="$(ProjectDir)">
+    <GitBranch LocalPath="$(SolutionDir)">
       <Output TaskParameter="Branch" PropertyName="GitBranch" />
     </GitBranch>
-    <GitPendingChanges LocalPath="$(ProjectDir)">
+    <GitPendingChanges LocalPath="$(SolutionDir)">
       <Output TaskParameter="HasPendingChanges" PropertyName="HasPendingChanges" />
     </GitPendingChanges>
     <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(BuildDate = )([^;]*)" ReplacementText="$1new DateTime($(CurrentDate))" />
