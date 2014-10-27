@@ -316,7 +316,7 @@ namespace Yggdrasil
         {
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat("{0} ({1}), {2}", Program.TitleString, Application.ProductVersion, BuildInformation.GitBranch);
-            if (BuildInformation.HasPendingChanges)
+            if (bool.Parse(BuildInformation.HasPendingChanges))
                 builder.AppendFormat("(-{0}-dirty)", BuildInformation.LatestCommitHash);
             else
                 builder.AppendFormat("-{0}", BuildInformation.LatestCommitHash);
