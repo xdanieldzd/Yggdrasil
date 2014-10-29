@@ -158,11 +158,6 @@ namespace Yggdrasil
             CommandAbout();
         }
 
-        private void buildInformationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CommandBuildInfo();
-        }
-
         private void gameDataManager_ItemDataPropertyChangedEvent(object sender, PropertyChangedEventArgs e)
         {
             if (gameDataManager.AnyDataHasChanged)
@@ -304,21 +299,19 @@ namespace Yggdrasil
             string description = System.Reflection.Assembly.GetExecutingAssembly().GetAttribute<System.Reflection.AssemblyDescriptionAttribute>().Description;
             string copyright = System.Reflection.Assembly.GetExecutingAssembly().GetAttribute<System.Reflection.AssemblyCopyrightAttribute>().Copyright;
 
-            StringBuilder builder = new StringBuilder();
-            builder.AppendFormat("{0} - {1}\n", Program.TitleString, description);
-            builder.AppendLine(copyright);
-            builder.AppendLine();
-            builder.Append("Contains ndstool 1.31 by Rafael Vuijk (DarkFader)");
-            MessageBox.Show(builder.ToString(), "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
+            StringBuilder aboutBuilder = new StringBuilder();
+            aboutBuilder.AppendFormat("{0} - {1}\n", Program.TitleString, description);
+            aboutBuilder.AppendLine();
+            aboutBuilder.AppendLine(copyright);
 
-        private void CommandBuildInfo()
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.AppendFormat("{0} ({1}), {2}-{3}", Program.TitleString, Application.ProductVersion, BuildInformation.GitBranch, BuildInformation.LatestCommitHash);
-            builder.AppendLine();
-            builder.AppendFormat(System.Globalization.CultureInfo.InvariantCulture, "{0} UTC; {1} ({2}, {3} v{4})\n", BuildInformation.BuildDate, BuildInformation.BuildMachineName, BuildInformation.BuildMachineProcessorArchitecture, BuildInformation.BuildMachineOSPlatform, BuildInformation.BuildMachineOSVersion);
-            MessageBox.Show(builder.ToString(), "Build Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            StringBuilder buildInfoBuilder = new StringBuilder();
+            buildInfoBuilder.AppendFormat("{0} ({1}), {2}-{3}", Program.TitleString, Application.ProductVersion, BuildInformation.Properties["GitBranch"], BuildInformation.Properties["LatestCommitHash"]);
+            buildInfoBuilder.AppendLine();
+            buildInfoBuilder.AppendFormat(System.Globalization.CultureInfo.InvariantCulture, "{0} UTC; {1} ({2}, {3} v{4})",
+                BuildInformation.Properties["BuildDate"], BuildInformation.Properties["BuildMachineName"],
+                BuildInformation.Properties["BuildMachineProcessorArchitecture"], BuildInformation.Properties["BuildMachineOSPlatform"], BuildInformation.Properties["BuildMachineOSVersion"]);
+
+            GUIHelpers.ShowInformationMessage("About", string.Format("About {0}", Application.ProductName), aboutBuilder.ToString().TrimEnd('\r', '\n'), string.Empty, buildInfoBuilder.ToString(), this.Handle);
         }
 
         private void SetFormTitle()

@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Yggdrasil")]
-[assembly: AssemblyCopyright("Written 2014 by xdaniel - https://github.com/xdanieldzd/\n\nGame: (C) 2007/2008 by Atlus and Lancarse")]
+[assembly: AssemblyCopyright("Written 2014 by xdaniel - https://github.com/xdanieldzd/\nContains ndstool 1.31 by Rafael Vuijk (DarkFader)\n\nGame: (C) 2007/2008 by Atlus and Lancarse")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

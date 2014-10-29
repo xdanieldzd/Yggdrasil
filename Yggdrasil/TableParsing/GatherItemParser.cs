@@ -11,7 +11,7 @@ using Yggdrasil.Attributes;
 
 namespace Yggdrasil.TableParsing
 {
-    [TreeNodeCategory("Items")]
+    [PrioritizedCategory("Items", 0)]
     [ParserDescriptor("SkillItemCutData.tbb", 0, "Gathering Points\\Chop Skill", 3)]
     [ParserDescriptor("SkillItemMiningData.tbb", 0, "Gathering Points\\Mine Skill", 3)]
     [ParserDescriptor("SkillItemPickData.tbb", 0, "Gathering Points\\Take Skill", 3)]

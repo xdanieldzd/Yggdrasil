@@ -10,7 +10,7 @@ using Yggdrasil.Attributes;
 
 namespace Yggdrasil.TableParsing
 {
-    [TreeNodeCategory("Enemies")]
+    [PrioritizedCategory("Enemies", 1)]
     [ParserDescriptor("EncountData.tbb", 0, "Enemy Encounters", 1)]
     public class EncounterParser : BaseParser
     {

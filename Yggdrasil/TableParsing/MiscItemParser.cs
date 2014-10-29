@@ -10,7 +10,7 @@ using Yggdrasil.Attributes;
 
 namespace Yggdrasil.TableParsing
 {
-    [TreeNodeCategory("Items")]
+    [PrioritizedCategory("Items", 0)]
     [ParserDescriptor("Item.tbb", 1, "General Items", 1)]
     public class MiscItemParser : BaseItemParser
     {

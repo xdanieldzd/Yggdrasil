@@ -11,7 +11,7 @@ using Yggdrasil.Attributes;
 
 namespace Yggdrasil.TableParsing
 {
-    [TreeNodeCategory("Enemies")]
+    [PrioritizedCategory("Enemies", 1)]
     [ParserDescriptor("EnemyData.tbb", 0, "Enemy Data", 0)]
     public class EnemyDataParser : BaseParser
     {

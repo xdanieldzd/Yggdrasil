@@ -74,8 +74,8 @@
     <Compile Include="Attributes\MagicNumber.cs" />
     <Compile Include="Attributes\ParserDescriptor.cs" />
     <Compile Include="Attributes\PrioritizedCategory.cs" />
-    <Compile Include="Attributes\TreeNodeCategory.cs" />
-    <None Include="BuildInformation.cs" />
+    <None Include="BuildInformationTemplate.cs" />
+    <Compile Include="BuildInformation.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Controls\FloorMapEditor.cs">
       <SubType>UserControl</SubType>
@@ -241,8 +241,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+  <PropertyGroup>
+    <UseHostCompilerIfAvailable>False</UseHostCompilerIfAvailable>
+  </PropertyGroup>
   <Target Name="BeforeBuild">
-    <Copy SourceFiles="$(ProjectDir)\BuildInformation.cs" DestinationFiles="$(ProjectDir)\GeneratedBuildInformation.cs" />
+    <Copy SourceFiles="$(ProjectDir)\BuildInformationTemplate.cs" DestinationFiles="$(ProjectDir)\GeneratedBuildInformation.cs" />
     <PropertyGroup>
       <CurrentDate>$([System.DateTime]::UtcNow.Ticks)</CurrentDate>
       <BuildMachineProcessorArchitecture>$(registry:HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment@PROCESSOR_ARCHITECTURE)</BuildMachineProcessorArchitecture>
@@ -258,13 +261,13 @@
     <GitBranch LocalPath="$(ProjectDir)">
       <Output TaskParameter="Branch" PropertyName="GitBranch" />
     </GitBranch>
-    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(BuildDate = )([^;]*)" ReplacementText="$1new DateTime($(CurrentDate))" />
-    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(GitBranch = )([^;]*)" ReplacementText="$1&quot;$(GitBranch)&quot;" />
-    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(LatestCommitHash = )([^;]*)" ReplacementText="$1&quot;$(LatestCommitHash)&quot;" />
-    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(BuildMachineName = )([^;]*)" ReplacementText="$1&quot;$(BuildMachineName)&quot;" />
-    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(BuildMachineOSPlatform = )([^;]*)" ReplacementText="$1&quot;$(BuildMachineOSPlatform)&quot;" />
-    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(BuildMachineOSVersion = )([^;]*)" ReplacementText="$1&quot;$(BuildMachineOSVersion)&quot;" />
-    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(BuildMachineProcessorArchitecture = )([^;]*)" ReplacementText="$1&quot;$(BuildMachineProcessorArchitecture)&quot;" />
+    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(BuildDate[&quot;, ]*)([^;]*)([)])" ReplacementText="$1new DateTime($(CurrentDate))$3" />
+    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(GitBranch[&quot;, ]*)([^;]*)([)])" ReplacementText="$1&quot;$(GitBranch)&quot;$3" />
+    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(LatestCommitHash[&quot;, ]*)([^;]*)([)])" ReplacementText="$1&quot;$(LatestCommitHash)&quot;$3" />
+    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(BuildMachineName[&quot;, ]*)([^;]*)([)])" ReplacementText="$1&quot;$(BuildMachineName)&quot;$3" />
+    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(BuildMachineOSPlatform[&quot;, ]*)([^;]*)([)])" ReplacementText="$1&quot;$(BuildMachineOSPlatform)&quot;$3" />
+    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(BuildMachineOSVersion[&quot;, ]*)([^;]*)([)])" ReplacementText="$1&quot;$(BuildMachineOSVersion)&quot;$3" />
+    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(BuildMachineProcessorArchitecture[&quot;, ]*)([^;]*)([)])" ReplacementText="$1&quot;$(BuildMachineProcessorArchitecture)&quot;$3" />
     <ItemGroup>
       <Compile Include="$(ProjectDir)\GeneratedBuildInformation.cs" />
     </ItemGroup>

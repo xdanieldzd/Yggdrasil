@@ -82,6 +82,77 @@ namespace Yggdrasil.Helpers
             }
         }
 
+        public static void ShowInformationMessage(string caption, string instructionText, string text)
+        {
+            ShowInformationMessage(caption, instructionText, text, string.Empty, string.Empty, IntPtr.Zero);
+        }
+
+        public static void ShowInformationMessage(string caption, string instructionText, string text, string footerText)
+        {
+            ShowInformationMessage(caption, instructionText, text, footerText, string.Empty, IntPtr.Zero);
+        }
+
+        public static void ShowInformationMessage(string caption, string instructionText, string text, string footerText, string details)
+        {
+            ShowInformationMessage(caption, instructionText, text, footerText, details, IntPtr.Zero);
+        }
+
+        public static void ShowInformationMessage(string caption, string instructionText, string text, IntPtr ownerHandle)
+        {
+            ShowInformationMessage(caption, instructionText, text, string.Empty, string.Empty, ownerHandle);
+        }
+
+        public static void ShowInformationMessage(string caption, string instructionText, string text, string footerText, IntPtr ownerHandle)
+        {
+            ShowInformationMessage(caption, instructionText, text, footerText, string.Empty, ownerHandle);
+        }
+
+        public static void ShowInformationMessage(string caption, string instructionText, string text, string footerText, string details, IntPtr ownerHandle)
+        {
+            if (TaskDialog.IsPlatformSupported)
+            {
+                TaskDialog dialog = new TaskDialog();
+                dialog.OwnerWindowHandle = ownerHandle;
+
+                dialog.DetailsExpanded = false;
+                dialog.Cancelable = false;
+                dialog.Icon = TaskDialogStandardIcon.Information;
+                dialog.FooterIcon = TaskDialogStandardIcon.Information;
+                dialog.ExpansionMode = TaskDialogExpandedDetailsLocation.ExpandFooter;
+
+                dialog.Caption = caption;
+                dialog.InstructionText = instructionText;
+                dialog.Text = text;
+                dialog.DetailsExpandedText = details;
+                dialog.FooterText = footerText;
+
+                dialog.Opened += ((s, e) =>
+                {
+                    TaskDialog taskDialog = (s as TaskDialog);
+                    taskDialog.Icon = taskDialog.Icon;
+                    if (dialog.FooterText != string.Empty) taskDialog.FooterIcon = taskDialog.FooterIcon;
+                    taskDialog.InstructionText = taskDialog.InstructionText;
+                });
+
+                dialog.Show();
+            }
+            else
+            {
+                string message = string.Format("{1}{0}{0}{2}", Environment.NewLine, instructionText, text);
+                if (details != string.Empty)
+                {
+                    message += string.Format("{0}{0}Do you want to see more details?", Environment.NewLine);
+                    if (MessageBox.Show(message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                    {
+                        MessageBox.Show(details, "Details", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else
+                    MessageBox.Show(message, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+        }
+
         public static DialogResult ShowFolderBrowser(string title, string description, string initialPath, out string selectedPath)
         {
             if (CommonOpenFileDialog.IsPlatformSupported)

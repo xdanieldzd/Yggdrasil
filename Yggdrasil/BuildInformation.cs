@@ -1,15 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Yggdrasil
 {
-	static class BuildInformation
+    static partial class BuildInformation
     {
-        public static readonly DateTime BuildDate = new DateTime(0);
-		public static readonly string GitBranch = string.Empty;
-        public static readonly string LatestCommitHash = string.Empty;
-		public static readonly string BuildMachineName = string.Empty;
-		public static readonly string BuildMachineOSPlatform = string.Empty;
-		public static readonly string BuildMachineOSVersion = string.Empty;
-		public static readonly string BuildMachineProcessorArchitecture = string.Empty;
+        static Dictionary<string, dynamic> data = new Dictionary<string, dynamic>();
+
+        /* https://stackoverflow.com/a/3510547 */
+        public sealed class BuildInformationIndexer
+        {
+            public dynamic this[string name]
+            {
+                get { return (BuildInformation.data.ContainsKey(name) ? BuildInformation.data[name] : "unset"); }
+            }
+        }
+
+        static BuildInformationIndexer indexer;
+        public static BuildInformationIndexer Properties
+        {
+            get { return indexer ?? (indexer = new BuildInformationIndexer()); }
+        }
     }
 }

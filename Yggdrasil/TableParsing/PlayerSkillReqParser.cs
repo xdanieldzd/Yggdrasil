@@ -10,7 +10,7 @@ using Yggdrasil.Attributes;
 
 namespace Yggdrasil.TableParsing
 {
-    [TreeNodeCategory("Player Skills")]
+    [PrioritizedCategory("Player Skills", 2)]
     [ParserDescriptor("Class2Skill.tbb", 0, "Skill Requirements", 1)]
     public class PlayerSkillReqParser : BaseParser
     {

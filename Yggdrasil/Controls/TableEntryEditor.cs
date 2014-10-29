@@ -105,20 +105,25 @@ namespace Yggdrasil.Controls
 
                 List<TreeNode> categories = new List<TreeNode>();
 
-                List<Type> typesWithAttrib = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.GetCustomAttributes(typeof(ParserDescriptor), false).Length > 0).ToList();
-                foreach (Type type in typesWithAttrib.OrderBy(x => ((ParserDescriptor)x.GetAttribute<ParserDescriptor>()).Priority))
+                List<Type> typesWithAttrib = Assembly.GetExecutingAssembly().GetTypes()
+                    .Where(x => x.GetCustomAttributes(typeof(PrioritizedCategory), false).Length > 0 && x.GetCustomAttributes(typeof(ParserDescriptor), false).Length > 0)
+                    .OrderBy(x => ((PrioritizedCategory)x.GetAttribute<PrioritizedCategory>()).Priority)
+                    .ThenBy(x => ((ParserDescriptor)x.GetAttribute<ParserDescriptor>()).Priority)
+                    .ToList();
+
+                foreach (Type type in typesWithAttrib)
                 {
-                    TreeNodeCategory categoryAttrib = type.GetAttribute<TreeNodeCategory>();
+                    PrioritizedCategory categoryAttrib = type.GetAttribute<PrioritizedCategory>();
 
                     List<TreeNode> dataNodes = gameDataManager.GenerateTreeNodes(type, customChildCreators.ContainsKey(type) ? customChildCreators[type] : null);
 
                     tvParsers.Invoke(new Action(() =>
                     {
-                        if (tvParsers.Nodes[categoryAttrib.CategoryName] == null)
-                            tvParsers.Nodes.Add(new TreeNode(categoryAttrib.CategoryName) { Name = categoryAttrib.CategoryName });
+                        if (tvParsers.Nodes[categoryAttrib.Category] == null)
+                            tvParsers.Nodes.Add(new TreeNode(categoryAttrib.Category) { Name = categoryAttrib.Category });
 
-                        tvParsers.Nodes[categoryAttrib.CategoryName].Nodes.AddRange(dataNodes.ToArray());
-                        tvParsers.Nodes[categoryAttrib.CategoryName].Expand();
+                        tvParsers.Nodes[categoryAttrib.Category].Nodes.AddRange(dataNodes.ToArray());
+                        tvParsers.Nodes[categoryAttrib.Category].Expand();
                     }));
                 }
 
