@@ -40,6 +40,9 @@ namespace Yggdrasil
             SetFormTitle();
             StatusText = "Ready";
 
+            foreach (KeyValuePair<string, dynamic> entry in BuildInformation.Properties.GetProperties())
+                Program.Logger.LogMessage(Logger.Level.Debug, "{0} = {1}", entry.Key, entry.Value);
+
             gameDataManager = new GameDataManager();
             gameDataManager.Language = Configuration.Language;
 

@@ -14,7 +14,7 @@ namespace Yggdrasil.Forms
     public partial class LogForm : ModernForm
     {
         bool isInitialized;
-        List<Tuple<DateTime, Logger.Level, string>> logEntries;
+        List<Logger.LogEntry> logEntries;
 
         public LogForm()
         {
@@ -28,7 +28,7 @@ namespace Yggdrasil.Forms
             isInitialized = true;
         }
 
-        public LogForm(List<Tuple<DateTime, Logger.Level, string>> logEntries)
+        public LogForm(List<Logger.LogEntry> logEntries)
             : this()
         {
             this.logEntries = logEntries;
@@ -40,12 +40,12 @@ namespace Yggdrasil.Forms
             if (logEntries == null) return string.Empty;
 
             StringBuilder builder = new StringBuilder();
-            foreach (Tuple<DateTime, Logger.Level, string> entry in logEntries.Where(x => x.Item2 <= level))
+            foreach (Logger.LogEntry entry in logEntries.Where(x => x.Level <= level))
             {
-                if (entry.Item2 != Logger.Level.Info)
-                    builder.AppendLine(string.Format(System.Globalization.CultureInfo.InvariantCulture, "[{0}] {1}: {2}", entry.Item1, entry.Item2.ToString().ToUpperInvariant(), entry.Item3));
+                if (entry.Level != Logger.Level.Info)
+                    builder.AppendLine(string.Format(System.Globalization.CultureInfo.InvariantCulture, "[{0}] {1}: {2}", entry.Timestamp, entry.Level.ToString().ToUpperInvariant(), entry.Message));
                 else
-                    builder.AppendLine(string.Format(System.Globalization.CultureInfo.InvariantCulture, "[{0}] {1}", entry.Item1, entry.Item3));
+                    builder.AppendLine(string.Format(System.Globalization.CultureInfo.InvariantCulture, "[{0}] {1}", entry.Timestamp, entry.Message));
             }
 
             return builder.ToString();

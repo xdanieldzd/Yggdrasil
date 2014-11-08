@@ -14,6 +14,11 @@ namespace Yggdrasil
             {
                 get { return (BuildInformation.data.ContainsKey(name) ? BuildInformation.data[name] : "unset"); }
             }
+
+            public Dictionary<string, dynamic> GetProperties()
+            {
+                return data;
+            }
         }
 
         static BuildInformationIndexer indexer;
