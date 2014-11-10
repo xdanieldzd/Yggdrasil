@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.IO;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Yggdrasil.FileHandling
 {
@@ -53,6 +55,9 @@ namespace Yggdrasil.FileHandling
         public bool ForcedIndex0Transparent { get; private set; }
         public Formats Format { get; private set; }
         public Bitmap Image { get; private set; }
+
+        BitmapData bmpData;
+        byte[] pixelData;
 
         public TilePalettePair(GameDataManager gameDataManager, string path) : this(gameDataManager, path, Formats.Auto, -1, -1) { }
         public TilePalettePair(GameDataManager gameDataManager, string path, Formats format) : this(gameDataManager, path, format, -1, -1) { }
@@ -105,7 +110,22 @@ namespace Yggdrasil.FileHandling
                 height *= modifiers[this.Format & Formats.BPPMask];
             }
 
-            this.Image = new Bitmap(width, height);
+            switch (this.Format & Formats.BPPMask)
+            {
+                case Formats._2bpp:
+                    /* TODO: no native 2bpp format in .NET, keep using 8bpp or make 4bpp? */
+                    this.Image = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
+                    break;
+
+                case Formats._4bpp:
+                    this.Image = new Bitmap(width, height, PixelFormat.Format4bppIndexed);
+                    break;
+
+                case Formats._8bpp:
+                    this.Image = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
+                    break;
+            }
+
             Convert();
         }
 
@@ -113,69 +133,64 @@ namespace Yggdrasil.FileHandling
         {
             if (ForcedIndex0Transparent) this.palette.Colors[0] = Color.FromArgb(0, this.palette.Colors[0]);
 
+            ColorPalette imagePalette = this.Image.Palette;
+            for (int i = 0; i < Math.Min(this.palette.Colors.Count, imagePalette.Entries.Length); i++) imagePalette.Entries[i] = this.palette.Colors[i];
+            this.Image.Palette = imagePalette;
+
+            bmpData = this.Image.LockBits(new Rectangle(0, 0, this.Image.Width, this.Image.Height), ImageLockMode.ReadWrite, this.Image.PixelFormat);
+            pixelData = new byte[bmpData.Height * bmpData.Stride];
+            Marshal.Copy(bmpData.Scan0, pixelData, 0, pixelData.Length);
+
             Formats type = (this.Format & Formats.TypeMask);
             Formats bpp = (this.Format & Formats.BPPMask);
 
-            int offset = 0;
             if (type == Formats.Texture)
             {
-                for (int y = 0; y < this.Image.Height; y++) ConvertRow(bpp, ref offset, 0, 0, y, this.Image.Width);
+                switch (bpp)
+                {
+                    case Formats._2bpp:
+                        for (int i = 0; i < this.tileData.Data.Length; i++)
+                        {
+                            for (int j = 3; j >= 0; j--)
+                            {
+                                byte idx = (byte)((this.tileData.Data[i] >> (j << 1)) & 0x03);
+                                pixelData[(i * 4) + j] = idx;
+                            }
+                        }
+                        break;
+
+                    case Formats._4bpp:
+                        Buffer.BlockCopy(this.tileData.Data, 0, pixelData, 0, pixelData.Length);
+                        for (int i = 0; i < pixelData.Length; i++) pixelData[i] = (byte)((pixelData[i] >> 4) | (pixelData[i] << 4));
+                        break;
+
+                    case Formats._8bpp:
+                        Buffer.BlockCopy(this.tileData.Data, 0, pixelData, 0, pixelData.Length);
+                        break;
+                }
             }
             else if (type == Formats.Tiled)
             {
-                for (int gy = 0; gy < this.Image.Height; gy += 8)
+                int offset = 0;
+                switch (bpp)
                 {
-                    for (int gx = 0; gx < this.Image.Width; gx += 8)
-                    {
-                        for (int y = 0; y < 8; y++) ConvertRow(bpp, ref offset, gx, gy, y, 8);
-                    }
+                    case Formats._4bpp:
+                        for (int yGlobal = 0; yGlobal < this.Image.Height; yGlobal += 8)
+                            for (int xGlobal = 0; xGlobal < bmpData.Stride; xGlobal += 4)
+                                for (int yTile = 0; yTile < 8; yTile++)
+                                    for (int xTile = 0; xTile < 4; xTile++)
+                                        pixelData[(yGlobal * bmpData.Stride) + (yTile * bmpData.Stride) + (xGlobal + xTile)] = this.tileData.Data[offset++];
+
+                        for (int i = 0; i < pixelData.Length; i++) pixelData[i] = (byte)((pixelData[i] >> 4) | (pixelData[i] << 4));
+                        break;
+
+                    default:
+                        throw new NotImplementedException("Conversion of non-8bpp tiled images not implemented");
                 }
             }
 
-            //this.Image.Save(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.TileData.Filename), System.IO.Path.GetFileNameWithoutExtension(this.TileData.Filename) + ".png"));
-        }
-
-        private void ConvertRow(Formats bpp, ref int offset, int gx, int gy, int y, int width)
-        {
-            byte idx;
-            switch (bpp)
-            {
-                case Formats._2bpp:
-                    for (int x = 0; x < width; x += modifiers[bpp])
-                    {
-                        for (int i = 3; i >= 0; i--)
-                        {
-                            idx = (byte)((this.tileData.Data[offset] >> (i << 1)) & 0x03);
-                            if (idx >= this.Palette.Colors.Count) this.Image.SetPixel(gx + x, gy + y, Color.Gray);
-                            else this.Image.SetPixel(gx + x + i, gy + y, this.Palette.Colors[idx]);
-                        }
-                        offset++;
-                    }
-                    break;
-
-                case Formats._4bpp:
-                    for (int x = 0; x < width; x += modifiers[bpp])
-                    {
-                        for (int i = 1; i >= 0; i--)
-                        {
-                            idx = (byte)((this.tileData.Data[offset] >> (i << 2)) & 0x0F);
-                            if (idx >= this.Palette.Colors.Count) this.Image.SetPixel(gx + x, gy + y, Color.Gray);
-                            else this.Image.SetPixel(gx + x + i, gy + y, this.Palette.Colors[idx]);
-                        }
-                        offset++;
-                    }
-                    break;
-
-                case Formats._8bpp:
-                    for (int x = 0; x < width; x++)
-                    {
-                        idx = this.tileData.Data[offset];
-                        if (idx >= this.Palette.Colors.Count) this.Image.SetPixel(gx + x, gy + y, Color.Gray);
-                        else this.Image.SetPixel(gx + x, gy + y, this.Palette.Colors[idx]);
-                        offset++;
-                    }
-                    break;
-            }
+            Marshal.Copy(pixelData, 0, bmpData.Scan0, pixelData.Length);
+            this.Image.UnlockBits(bmpData);
         }
     }
 }

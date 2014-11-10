@@ -659,7 +659,23 @@ namespace Yggdrasil
                         textureFiles.Add(Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileNameWithoutExtension(filePath)));
                 }
 
-                //TilePalettePair t = new TilePalettePair(this, textureFiles.FirstOrDefault(x => x.EndsWith("i_cam_paladin_01")), TilePalettePair.Formats.Auto, 64, 128);
+                TilePalettePair t = null;
+
+                //tiled 256x128 auto(4bpp)
+                //t = new TilePalettePair(this, textureFiles.FirstOrDefault(x => x.EndsWith("i_dmp_bg_01")), TilePalettePair.Formats.Auto, 256, 128);
+
+                //texture auto auto(8bpp)
+                //t = new TilePalettePair(this, textureFiles.FirstOrDefault(x => x.EndsWith("SampleCamp")), TilePalettePair.Formats.Auto);
+
+                //texture auto auto(4bpp)
+                //t = new TilePalettePair(this, textureFiles.FirstOrDefault(x => x.EndsWith("i_cam_font01")), TilePalettePair.Formats.Auto);
+
+                //texture auto 8bpp
+                //t = new TilePalettePair(this, textureFiles.FirstOrDefault(x => x.EndsWith("nt_logo")), TilePalettePair.Formats._8bpp);
+
+                //texture auto auto(8bpp)
+                //t = new TilePalettePair(this, textureFiles.FirstOrDefault(x => x.EndsWith("i_es_over1a")), TilePalettePair.Formats.Auto);
+
                 //t.Image.Save(t.TileData.Filename + ".png");
             }
 
