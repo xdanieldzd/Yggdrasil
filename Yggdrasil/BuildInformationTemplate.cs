@@ -8,6 +8,7 @@ namespace Yggdrasil
 		{
 			data.Add("BuildDate", new DateTime(0));
 			data.Add("GitBranch", string.Empty);
+			data.Add("GitPendingChanges", false);
 			data.Add("LatestCommitHash", string.Empty);
 			data.Add("BuildMachineName", string.Empty);
 			data.Add("BuildMachineOSPlatform", string.Empty);

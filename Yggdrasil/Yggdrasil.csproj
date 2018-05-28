@@ -263,8 +263,12 @@
     <GitBranch LocalPath="$(ProjectDir)">
       <Output TaskParameter="Branch" PropertyName="GitBranch" />
     </GitBranch>
+	<GitPendingChanges LocalPath="$(ProjectDir)">
+      <Output TaskParameter="HasPendingChanges" PropertyName="GitPendingChanges" />
+	</GitPendingChanges>
     <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(BuildDate[&quot;, ]*)([^;]*)([)])" ReplacementText="$1new DateTime($(CurrentDate))$3" />
-    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(GitBranch[&quot;, ]*)([^;]*)([)])" ReplacementText="$1&quot;$(GitBranch)&quot;$3" />
+    <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(GitPendingChanges[&quot;, ]*)([^;]*)([)])" ReplacementText="$1bool.Parse(&quot;$(GitPendingChanges)&quot;)$3" />
+	<FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(GitBranch[&quot;, ]*)([^;]*)([)])" ReplacementText="$1&quot;$(GitBranch)&quot;$3" />
     <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(LatestCommitHash[&quot;, ]*)([^;]*)([)])" ReplacementText="$1&quot;$(LatestCommitHash)&quot;$3" />
     <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(BuildMachineName[&quot;, ]*)([^;]*)([)])" ReplacementText="$1&quot;$(BuildMachineName)&quot;$3" />
     <FileUpdate Files="$(ProjectDir)\GeneratedBuildInformation.cs" Regex="(BuildMachineOSPlatform[&quot;, ]*)([^;]*)([)])" ReplacementText="$1&quot;$(BuildMachineOSPlatform)&quot;$3" />

@@ -317,7 +317,7 @@ namespace Yggdrasil
 			aboutBuilder.AppendLine(copyright);
 
 			StringBuilder buildInfoBuilder = new StringBuilder();
-			buildInfoBuilder.AppendFormat("{0} ({1}), {2}-{3}", Program.TitleString, Application.ProductVersion, BuildInformation.Properties["GitBranch"], BuildInformation.Properties["LatestCommitHash"]);
+			buildInfoBuilder.AppendFormat("{0} ({1}), {2}-{3}{4}", Program.TitleString, Application.ProductVersion, BuildInformation.Properties["GitBranch"], BuildInformation.Properties["LatestCommitHash"], (BuildInformation.Properties["GitPendingChanges"] ? "-dirty" : string.Empty));
 			buildInfoBuilder.AppendLine();
 			buildInfoBuilder.AppendFormat(System.Globalization.CultureInfo.InvariantCulture, "{0} UTC; {1} ({2}, {3} v{4})",
 				BuildInformation.Properties["BuildDate"], BuildInformation.Properties["BuildMachineName"],
