@@ -10,7 +10,6 @@ using System.IO;
 
 using Yggdrasil.FileHandling;
 using Yggdrasil.FileHandling.TableHandling;
-using Yggdrasil.TextHandling;
 using Yggdrasil.Helpers;
 
 namespace Yggdrasil.Controls
@@ -166,14 +165,13 @@ namespace Yggdrasil.Controls
 
 			SaveFileDialog sfd = new SaveFileDialog
 			{
-				InitialDirectory = Configuration.LastDataPath,
+				InitialDirectory = ApplicationConfig.Instance.LastDataPath,
 				Title = "Save HTML dump",
 				Filter = "HTML Files (*.htm;*.html)|*.htm;*.html"
 			};
 			if (sfd.ShowDialog() == DialogResult.OK)
 			{
-				List<TableFile> files = new List<TableFile>();
-				files.Add(file);
+				List<TableFile> files = new List<TableFile> { file };
 
 				if (gameDataManager.Version == GameDataManager.Versions.European &&
 					MessageBox.Show("Fetch every language version of this file to dump?", "Language Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)

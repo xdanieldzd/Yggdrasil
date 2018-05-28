@@ -23,7 +23,7 @@ namespace Yggdrasil.Forms
 			InitializeComponent();
 
 			cmbLogLevel.DataSource = Enum.GetValues(typeof(Logger.Level));
-			cmbLogLevel.SelectedItem = Configuration.LogLevel;
+			cmbLogLevel.SelectedItem = ApplicationConfig.Instance.LogLevel;
 
 			isInitialized = true;
 		}
@@ -32,7 +32,7 @@ namespace Yggdrasil.Forms
 			: this()
 		{
 			this.logEntries = logEntries;
-			txtLog.Text = BuildLog(Configuration.LogLevel);
+			txtLog.Text = BuildLog(ApplicationConfig.Instance.LogLevel);
 		}
 
 		private string BuildLog(Logger.Level level)
@@ -60,7 +60,7 @@ namespace Yggdrasil.Forms
 
 		private void btnOK_Click(object sender, EventArgs e)
 		{
-			this.Close();
+			Close();
 		}
 
 		private void LogForm_Shown(object sender, EventArgs e)
@@ -70,9 +70,9 @@ namespace Yggdrasil.Forms
 
 		private void cmbLogLevel_SelectedValueChanged(object sender, EventArgs e)
 		{
-			if (isInitialized) Configuration.LogLevel = (Logger.Level)((sender as ComboBox).SelectedItem);
+			if (isInitialized) ApplicationConfig.Instance.LogLevel = (Logger.Level)((sender as ComboBox).SelectedItem);
 
-			txtLog.Text = BuildLog(Configuration.LogLevel);
+			txtLog.Text = BuildLog(ApplicationConfig.Instance.LogLevel);
 			RefreshTextBox();
 		}
 	}

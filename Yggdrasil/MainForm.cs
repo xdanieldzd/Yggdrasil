@@ -42,7 +42,7 @@ namespace Yggdrasil
 				Program.Logger.LogMessage(Logger.Level.Debug, "{0} = {1}", entry.Key, entry.Value);
 
 			gameDataManager = new GameDataManager();
-			gameDataManager.Language = Configuration.Language;
+			gameDataManager.Language = ApplicationConfig.Instance.Language;
 
 			gameDataManager.GameDataPropertyChangedEvent += new PropertyChangedEventHandler(gameDataManager_ItemDataPropertyChangedEvent);
 			gameDataManager.SelectedLanguageChangedEvent += new EventHandler(gameDataManager_SelectedLanguageChangedEvent);
@@ -52,12 +52,12 @@ namespace Yggdrasil
 				gameLanguageToolStripMenuItem.DropDownItems.Add(new ToolStripMenuItem(language.ToString(), null, new EventHandler((s, e) =>
 				{
 					ToolStripMenuItem menuItem = (s as ToolStripMenuItem);
-					Configuration.Language = gameDataManager.Language = (GameDataManager.Languages)menuItem.Tag;
+					ApplicationConfig.Instance.Language = gameDataManager.Language = (GameDataManager.Languages)menuItem.Tag;
 
 					foreach (ToolStripMenuItem checkMenuItem in gameLanguageToolStripMenuItem.DropDownItems)
-						checkMenuItem.Checked = (checkMenuItem.Tag is GameDataManager.Languages && (GameDataManager.Languages)checkMenuItem.Tag == Configuration.Language);
+						checkMenuItem.Checked = (checkMenuItem.Tag is GameDataManager.Languages && (GameDataManager.Languages)checkMenuItem.Tag == ApplicationConfig.Instance.Language);
 				}))
-				{ Tag = language, Checked = (language == Configuration.Language) });
+				{ Tag = language, Checked = (language == ApplicationConfig.Instance.Language) });
 			}
 		}
 
@@ -191,7 +191,7 @@ namespace Yggdrasil
 		private void CommandOpenFolder()
 		{
 			string selectedPath;
-			if (GUIHelpers.ShowFolderBrowser("Select game folder", "Please select folder with extracted Etrian Odyssey game data.", Configuration.LastDataPath, out selectedPath) == System.Windows.Forms.DialogResult.OK)
+			if (GUIHelpers.ShowFolderBrowser("Select game folder", "Please select folder with extracted Etrian Odyssey game data.", ApplicationConfig.Instance.LastDataPath, out selectedPath) == System.Windows.Forms.DialogResult.OK)
 				LoadGameData(selectedPath);
 		}
 
@@ -218,13 +218,13 @@ namespace Yggdrasil
 			{
 				Title = "Select source ROM",
 				Filter = "Nintendo DS ROMs (*.nds)|*.nds|All Files (*.*)|*.*",
-				InitialDirectory = Path.GetDirectoryName(Configuration.LastROMPath),
-				FileName = Path.GetFileName(Configuration.LastROMPath)
+				InitialDirectory = Path.GetDirectoryName(ApplicationConfig.Instance.LastROMPath),
+				FileName = Path.GetFileName(ApplicationConfig.Instance.LastROMPath)
 			};
 			if (ofd.ShowDialog() == DialogResult.OK)
 			{
 				string outputPath;
-				if (GUIHelpers.ShowFolderBrowser("Select output folder", "Please select folder for extracted game data.", Configuration.LastDataPath, out outputPath) != System.Windows.Forms.DialogResult.OK) return;
+				if (GUIHelpers.ShowFolderBrowser("Select output folder", "Please select folder for extracted game data.", ApplicationConfig.Instance.LastDataPath, out outputPath) != System.Windows.Forms.DialogResult.OK) return;
 
 				if (Directory.EnumerateFileSystemEntries(outputPath).Any() &&
 					MessageBox.Show("The selected folder is not empty. Continue anyway?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.No)
@@ -236,7 +236,7 @@ namespace Yggdrasil
 					@"-x ""{0}"" -9 ""{1}\\arm9.bin"" -7 ""{1}\\arm7.bin"" -y9 ""{1}\\y9.bin"" -y7 ""{1}\\y7.bin"" -d ""{1}\\data"" -y ""{1}\\overlay"" -t ""{1}\\banner.bin"" -h ""{1}\\header.bin""",
 					ofd.FileName, outputPath));
 
-				Configuration.LastROMPath = ofd.FileName;
+				ApplicationConfig.Instance.LastROMPath = ofd.FileName;
 				LoadGameData(outputPath);
 			}
 		}
@@ -244,7 +244,7 @@ namespace Yggdrasil
 		private void CommandRepackROM()
 		{
 			string inputPath;
-			if (GUIHelpers.ShowFolderBrowser("Select game folder", "Please select folder with extracted game data.", Configuration.LastDataPath, out inputPath) != System.Windows.Forms.DialogResult.OK) return;
+			if (GUIHelpers.ShowFolderBrowser("Select game folder", "Please select folder with extracted game data.", ApplicationConfig.Instance.LastDataPath, out inputPath) != System.Windows.Forms.DialogResult.OK) return;
 
 			if (gameDataManager.IsInitialized && inputPath == gameDataManager.DataPath && (gameDataManager.AnyDataHasChanged))
 			{
@@ -256,8 +256,8 @@ namespace Yggdrasil
 			{
 				Title = "Select destination ROM",
 				Filter = "Nintendo DS ROMs (*.nds)|*.nds|All Files (*.*)|*.*",
-				InitialDirectory = Path.GetDirectoryName(Configuration.LastROMPath),
-				FileName = Path.GetFileName(Configuration.LastROMPath)
+				InitialDirectory = Path.GetDirectoryName(ApplicationConfig.Instance.LastROMPath),
+				FileName = Path.GetFileName(ApplicationConfig.Instance.LastROMPath)
 			};
 			if (sfd.ShowDialog() == DialogResult.OK)
 			{
@@ -280,7 +280,7 @@ namespace Yggdrasil
 					@"-c ""{0}"" -9 ""{1}\\arm9.bin"" -7 ""{1}\\arm7.bin"" -y9 ""{1}\\y9.bin"" -y7 ""{1}\\y7.bin"" -d ""{1}\\data"" -y ""{1}\\overlay"" -t ""{1}\\banner.bin"" -h ""{1}\\header.bin""",
 					sfd.FileName, inputPath));
 
-				Configuration.LastROMPath = sfd.FileName;
+				ApplicationConfig.Instance.LastROMPath = sfd.FileName;
 				Program.Logger.LogMessage(true, "Ready; file created");
 			}
 		}
@@ -343,7 +343,7 @@ namespace Yggdrasil
 				tabPage.Tag = null;
 			}
 
-			gameDataManager.ReadGameDirectory(Configuration.LastDataPath = path);
+			gameDataManager.ReadGameDirectory(ApplicationConfig.Instance.LastDataPath = path);
 
 			tableEntryEditor.Enabled = messageEditor.Enabled = floorMapEditor.Enabled = (gameDataManager != null && gameDataManager.IsInitialized);
 			gameLanguageToolStripMenuItem.Enabled = (gameDataManager != null && gameDataManager.Version == GameDataManager.Versions.European);

@@ -6,10 +6,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
 using System.Reflection;
 
-using Yggdrasil.FileHandling;
 using Yggdrasil.Helpers;
 using Yggdrasil.TableParsing;
 using Yggdrasil.Attributes;
@@ -249,7 +247,7 @@ namespace Yggdrasil.Controls
 		{
 			SaveFileDialog sfd = new SaveFileDialog
 			{
-				InitialDirectory = Configuration.LastDataPath,
+				InitialDirectory = ApplicationConfig.Instance.LastDataPath,
 				Title = "Save HTML dump",
 				Filter = "HTML Files (*.htm;*.html)|*.htm;*.html"
 			};
