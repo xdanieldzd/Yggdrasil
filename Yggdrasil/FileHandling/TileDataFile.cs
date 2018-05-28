@@ -15,9 +15,9 @@ namespace Yggdrasil.FileHandling
 
         public override void Parse()
         {
-            this.Stream.Seek(0, SeekOrigin.Begin);
-            Data = new byte[this.Stream.Length];
-            this.Stream.Read(Data, 0, Data.Length);
+            Stream.Seek(0, SeekOrigin.Begin);
+            Data = new byte[Stream.Length];
+            Stream.Read(Data, 0, Data.Length);
         }
     }
 }

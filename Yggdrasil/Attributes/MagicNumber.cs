@@ -5,14 +5,14 @@ using System.Text;
 
 namespace Yggdrasil.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class MagicNumber : Attribute
-    {
-        public object Magic;
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+	public class MagicNumber : Attribute
+	{
+		public object Magic;
 
-        public MagicNumber(object magic)
-        {
-            this.Magic = magic;
-        }
-    }
+		public MagicNumber(object magic)
+		{
+			this.Magic = magic;
+		}
+	}
 }

@@ -10,58 +10,59 @@ using Yggdrasil.Attributes;
 
 namespace Yggdrasil.TableParsing
 {
-    public abstract class BaseItemParser : BaseParser
-    {
-        string name;
-        [DisplayName("(Name)"), PrioritizedCategory("Information", byte.MaxValue)]
-        [Description("In-game item name.")]
-        [CausesNodeUpdate(true)]
-        public string Name
-        {
-            get { return name; }
-            set { base.SetProperty(ref name, value, () => this.Name); }
-        }
-        public bool ShouldSerializeName() { return !(this.Name == (dynamic)base.originalValues["Name"]); }
-        public void ResetName() { this.Name = (dynamic)base.originalValues["Name"]; }
+	public abstract class BaseItemParser : BaseParser
+	{
+		string name;
+		[DisplayName("(Name)"), PrioritizedCategory("Information", byte.MaxValue)]
+		[Description("In-game item name.")]
+		[CausesNodeUpdate(true)]
+		public string Name
+		{
+			get { return name; }
+			set { SetProperty(ref name, value, () => Name); }
+		}
+		public bool ShouldSerializeName() { return !(Name == (dynamic)originalValues["Name"]); }
+		public void ResetName() { Name = (dynamic)originalValues["Name"]; }
 
-        string description;
-        [DisplayName("(Description)"), Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor)), PrioritizedCategory("Information", byte.MaxValue)]
-        [Description("In-game item description.")]
-        public string Description
-        {
-            get { return description; }
-            set { base.SetProperty(ref description, value, () => this.Description); }
-        }
-        public bool ShouldSerializeDescription() { return !(this.Description == (dynamic)base.originalValues["Description"]); }
-        public void ResetDescription() { this.Description = (dynamic)base.originalValues["Description"]; }
+		string description;
+		[DisplayName("(Description)"), Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor)), PrioritizedCategory("Information", byte.MaxValue)]
+		[Description("In-game item description.")]
+		public string Description
+		{
+			get { return description; }
+			set { SetProperty(ref description, value, () => Description); }
+		}
+		public bool ShouldSerializeDescription() { return !(Description == (dynamic)originalValues["Description"]); }
+		public void ResetDescription() { Description = (dynamic)originalValues["Description"]; }
 
-        ushort itemNumber;
-        [DisplayName("(ID)"), ReadOnly(true), PrioritizedCategory("Information", byte.MaxValue)]
-        [Description("Internal ID number of item.")]
-        public ushort ItemNumber
-        {
-            get { return itemNumber; }
-            set { base.SetProperty(ref itemNumber, value, () => this.ItemNumber); }
-        }
+		ushort itemNumber;
+		[DisplayName("(ID)"), ReadOnly(true), PrioritizedCategory("Information", byte.MaxValue)]
+		[Description("Internal ID number of item.")]
+		public ushort ItemNumber
+		{
+			get { return itemNumber; }
+			set { SetProperty(ref itemNumber, value, () => ItemNumber); }
+		}
 
-        public BaseItemParser(GameDataManager gameDataManager, DataTable table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
-            base(gameDataManager, table, entryNumber, propertyChanged) { Load(); }
+		public BaseItemParser(GameDataManager gameDataManager, DataTable table, int entryNumber, PropertyChangedEventHandler propertyChanged = null) :
+			base(gameDataManager, table, entryNumber, propertyChanged)
+		{ Load(); }
 
-        protected override void Load()
-        {
-            itemNumber = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 0);
+		protected override void Load()
+		{
+			itemNumber = BitConverter.ToUInt16(ParentTable.Data[EntryNumber], 0);
 
-            name = GameDataManager.ItemNames[ItemNumber];
-            description = GameDataManager.ItemDescriptions[ItemNumber];
+			name = GameDataManager.ItemNames[ItemNumber];
+			description = GameDataManager.ItemDescriptions[ItemNumber];
 
-            base.Load();
-        }
+			base.Load();
+		}
 
-        public override void Save()
-        {
-            itemNumber.CopyTo(ParentTable.Data[EntryNumber], 0);
+		public override void Save()
+		{
+			itemNumber.CopyTo(ParentTable.Data[EntryNumber], 0);
 
-            base.Save();
-        }
-    }
+			base.Save();
+		}
+	}
 }

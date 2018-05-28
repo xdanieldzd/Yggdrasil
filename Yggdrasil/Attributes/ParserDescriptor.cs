@@ -5,20 +5,20 @@ using System.Text;
 
 namespace Yggdrasil.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class ParserDescriptor : Attribute
-    {
-        public string FileName;
-        public int TableNo;
-        public string Description;
-        public byte Priority;
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+	public class ParserDescriptor : Attribute
+	{
+		public string FileName;
+		public int TableNo;
+		public string Description;
+		public byte Priority;
 
-        public ParserDescriptor(string fileName, int tableNo, string description, byte priority)
-        {
-            this.FileName = fileName;
-            this.TableNo = tableNo;
-            this.Description = description;
-            this.Priority = priority;
-        }
-    }
+		public ParserDescriptor(string fileName, int tableNo, string description, byte priority)
+		{
+			this.FileName = fileName;
+			this.TableNo = tableNo;
+			this.Description = description;
+			this.Priority = priority;
+		}
+	}
 }

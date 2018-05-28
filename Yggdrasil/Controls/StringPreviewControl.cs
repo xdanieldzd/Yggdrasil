@@ -13,86 +13,86 @@ using Yggdrasil.Helpers;
 
 namespace Yggdrasil.Controls
 {
-    public partial class StringPreviewControl : UserControl
-    {
-        GameDataManager gameDataManager;
-        MessageTable messageTable;
-        int messageNo;
+	public partial class StringPreviewControl : UserControl
+	{
+		GameDataManager gameDataManager;
+		MessageTable messageTable;
+		int messageNo;
 
-        EtrianString etrianString;
+		EtrianString etrianString;
 
-        bool isBusy;
-        Bitmap renderedString;
+		bool isBusy;
+		Bitmap renderedString;
 
-        public StringPreviewControl()
-        {
-            InitializeComponent();
+		public StringPreviewControl()
+		{
+			InitializeComponent();
 
-            if (LicenseManager.UsageMode == LicenseUsageMode.Runtime) Application.Idle += ((s, e) => { pbPreview.Invalidate(); });
+			if (LicenseManager.UsageMode == LicenseUsageMode.Runtime) Application.Idle += ((s, e) => { pbPreview.Invalidate(); });
 
-            this.txtString.TextChanged += new EventHandler(txtString_TextChanged);
-        }
+			txtString.TextChanged += new EventHandler(txtString_TextChanged);
+		}
 
-        public void Initialize(GameDataManager gameDataManager, MessageTable messageTable, int messageNo)
-        {
-            isBusy = true;
+		public void Initialize(GameDataManager gameDataManager, MessageTable messageTable, int messageNo)
+		{
+			isBusy = true;
 
-            this.gameDataManager = gameDataManager;
-            this.messageTable = messageTable;
-            this.messageNo = messageNo;
+			this.gameDataManager = gameDataManager;
+			this.messageTable = messageTable;
+			this.messageNo = messageNo;
 
-            this.etrianString = this.messageTable.Messages[this.messageNo];
-            txtString.Text = this.etrianString.ConvertedString;
+			etrianString = this.messageTable.Messages[this.messageNo];
+			txtString.Text = etrianString.ConvertedString;
 
-            RenderString();
+			RenderString();
 
-            isBusy = false;
-        }
+			isBusy = false;
+		}
 
-        public void Terminate()
-        {
-            isBusy = true;
+		public void Terminate()
+		{
+			isBusy = true;
 
-            etrianString = null;
-            pbPreview.Image = null;
-            if (renderedString != null) renderedString.Dispose();
-            txtString.Text = string.Empty;
+			etrianString = null;
+			pbPreview.Image = null;
+			if (renderedString != null) renderedString.Dispose();
+			txtString.Text = string.Empty;
 
-            isBusy = false;
-        }
+			isBusy = false;
+		}
 
-        private void RenderString()
-        {
-            if (renderedString != null) renderedString.Dispose();
+		private void RenderString()
+		{
+			if (renderedString != null) renderedString.Dispose();
 
-            renderedString =
-                (chkSmallFont.Checked ? this.gameDataManager.SmallFontRenderer : this.gameDataManager.MainFontRenderer)
-                .RenderString(this.etrianString, 256, (chkSpacing.Checked ? 1 : 0), (chkZoom.Checked ? 2 : 1));
+			renderedString =
+				(chkSmallFont.Checked ? gameDataManager.SmallFontRenderer : gameDataManager.MainFontRenderer)
+				.RenderString(etrianString, 256, (chkSpacing.Checked ? 1 : 0), (chkZoom.Checked ? 2 : 1));
 
-            pbPreview.Image = renderedString;
-        }
+			pbPreview.Image = renderedString;
+		}
 
-        private void txtString_TextChanged(object sender, EventArgs e)
-        {
-            if (isBusy || this.etrianString == null) return;
+		private void txtString_TextChanged(object sender, EventArgs e)
+		{
+			if (isBusy || etrianString == null) return;
 
-            this.gameDataManager.SetMessageString(messageTable, messageNo, txtString.Text);
-            RenderString();
-        }
+			gameDataManager.SetMessageString(messageTable, messageNo, txtString.Text);
+			RenderString();
+		}
 
-        private void chkSpacing_CheckedChanged(object sender, EventArgs e)
-        {
-            RenderString();
-        }
+		private void chkSpacing_CheckedChanged(object sender, EventArgs e)
+		{
+			RenderString();
+		}
 
-        private void chkSmallFont_CheckedChanged(object sender, EventArgs e)
-        {
-            RenderString();
-        }
+		private void chkSmallFont_CheckedChanged(object sender, EventArgs e)
+		{
+			RenderString();
+		}
 
-        private void chkZoom_CheckedChanged(object sender, EventArgs e)
-        {
-            RenderString();
-        }
-    }
+		private void chkZoom_CheckedChanged(object sender, EventArgs e)
+		{
+			RenderString();
+		}
+	}
 }

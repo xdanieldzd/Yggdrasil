@@ -18,10 +18,10 @@ namespace Yggdrasil.FileHandling
         {
             Colors = new List<Color>();
 
-            this.Stream.Seek(0, SeekOrigin.Begin);
-            while (this.Stream.Position < this.Stream.Length)
+            Stream.Seek(0, SeekOrigin.Begin);
+            while (Stream.Position < Stream.Length)
             {
-                ushort color = (ushort)(this.Stream.ReadByte() | (this.Stream.ReadByte() << 8));
+                ushort color = (ushort)(Stream.ReadByte() | (Stream.ReadByte() << 8));
                 Colors.Add(ConvertBGR565(color));
             }
         }

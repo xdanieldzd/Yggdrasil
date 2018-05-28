@@ -5,14 +5,14 @@ using System.Text;
 
 namespace Yggdrasil.Attributes
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public abstract class Boolean : Attribute
-    {
-        public bool Value;
+	[AttributeUsage(AttributeTargets.Property)]
+	public abstract class Boolean : Attribute
+	{
+		public bool Value;
 
-        public Boolean(bool value)
-        {
-            this.Value = value;
-        }
-    }
+		public Boolean(bool value)
+		{
+			Value = value;
+		}
+	}
 }

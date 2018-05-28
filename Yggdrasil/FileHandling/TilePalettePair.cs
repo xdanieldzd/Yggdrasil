@@ -82,47 +82,47 @@ namespace Yggdrasil.FileHandling
             if (!File.Exists(tilePath)) throw new FileNotFoundException("Tile data file not found");
             if (!File.Exists(palettePath)) throw new FileNotFoundException("Palette data file not found");
 
-            this.GameDataManager = gameDataManager;
-            this.palette = new PaletteFile(gameDataManager, palettePath);
-            this.tileData = new TileDataFile(gameDataManager, tilePath);
+            GameDataManager = gameDataManager;
+            palette = new PaletteFile(gameDataManager, palettePath);
+            tileData = new TileDataFile(gameDataManager, tilePath);
 
-            this.ForcedIndex0Transparent = forceIndex0Transparent;
+            ForcedIndex0Transparent = forceIndex0Transparent;
 
             if (format == Formats.Auto)
             {
-                if (this.Palette.Colors.Count <= 2) format = Formats._2bpp;
-                else if (this.Palette.Colors.Count <= 16) format = Formats._4bpp;
-                else if (this.Palette.Colors.Count <= 256) format = Formats._8bpp;
+                if (Palette.Colors.Count <= 2) format = Formats._2bpp;
+                else if (Palette.Colors.Count <= 16) format = Formats._4bpp;
+                else if (Palette.Colors.Count <= 256) format = Formats._8bpp;
             }
 
             format |= (Path.GetExtension(palettePath) == ".nbfp" ? Formats.Tiled : Formats.Texture);
 
-            this.Format = format;
+            Format = format;
 
             if (width == -1 || height == -1)
             {
-                int baseWidth = (int)Math.Round(Math.Sqrt(this.TileData.Data.Length));
+                int baseWidth = (int)Math.Round(Math.Sqrt(TileData.Data.Length));
                 width = 1;
                 while (width < baseWidth) width <<= 1;
 
-                height = (this.TileData.Data.Length / width);
+                height = (TileData.Data.Length / width);
                 if (height == 0) height = 1;
-                height *= modifiers[this.Format & Formats.BPPMask];
+                height *= modifiers[Format & Formats.BPPMask];
             }
 
-            switch (this.Format & Formats.BPPMask)
+            switch (Format & Formats.BPPMask)
             {
                 case Formats._2bpp:
                     /* TODO: no native 2bpp format in .NET, keep using 8bpp or make 4bpp? */
-                    this.Image = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
+                    Image = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
                     break;
 
                 case Formats._4bpp:
-                    this.Image = new Bitmap(width, height, PixelFormat.Format4bppIndexed);
+                    Image = new Bitmap(width, height, PixelFormat.Format4bppIndexed);
                     break;
 
                 case Formats._8bpp:
-                    this.Image = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
+                    Image = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
                     break;
             }
 
@@ -131,41 +131,41 @@ namespace Yggdrasil.FileHandling
 
         public void Convert()
         {
-            if (ForcedIndex0Transparent) this.palette.Colors[0] = Color.FromArgb(0, this.palette.Colors[0]);
+            if (ForcedIndex0Transparent) palette.Colors[0] = Color.FromArgb(0, palette.Colors[0]);
 
-            ColorPalette imagePalette = this.Image.Palette;
-            for (int i = 0; i < Math.Min(this.palette.Colors.Count, imagePalette.Entries.Length); i++) imagePalette.Entries[i] = this.palette.Colors[i];
-            this.Image.Palette = imagePalette;
+            ColorPalette imagePalette = Image.Palette;
+            for (int i = 0; i < Math.Min(palette.Colors.Count, imagePalette.Entries.Length); i++) imagePalette.Entries[i] = palette.Colors[i];
+            Image.Palette = imagePalette;
 
-            bmpData = this.Image.LockBits(new Rectangle(0, 0, this.Image.Width, this.Image.Height), ImageLockMode.ReadWrite, this.Image.PixelFormat);
+            bmpData = Image.LockBits(new Rectangle(0, 0, Image.Width, Image.Height), ImageLockMode.ReadWrite, Image.PixelFormat);
             pixelData = new byte[bmpData.Height * bmpData.Stride];
             Marshal.Copy(bmpData.Scan0, pixelData, 0, pixelData.Length);
 
-            Formats type = (this.Format & Formats.TypeMask);
-            Formats bpp = (this.Format & Formats.BPPMask);
+            Formats type = (Format & Formats.TypeMask);
+            Formats bpp = (Format & Formats.BPPMask);
 
             if (type == Formats.Texture)
             {
                 switch (bpp)
                 {
                     case Formats._2bpp:
-                        for (int i = 0; i < this.tileData.Data.Length; i++)
+                        for (int i = 0; i < tileData.Data.Length; i++)
                         {
                             for (int j = 3; j >= 0; j--)
                             {
-                                byte idx = (byte)((this.tileData.Data[i] >> (j << 1)) & 0x03);
+                                byte idx = (byte)((tileData.Data[i] >> (j << 1)) & 0x03);
                                 pixelData[(i * 4) + j] = idx;
                             }
                         }
                         break;
 
                     case Formats._4bpp:
-                        Buffer.BlockCopy(this.tileData.Data, 0, pixelData, 0, pixelData.Length);
+                        Buffer.BlockCopy(tileData.Data, 0, pixelData, 0, pixelData.Length);
                         for (int i = 0; i < pixelData.Length; i++) pixelData[i] = (byte)((pixelData[i] >> 4) | (pixelData[i] << 4));
                         break;
 
                     case Formats._8bpp:
-                        Buffer.BlockCopy(this.tileData.Data, 0, pixelData, 0, pixelData.Length);
+                        Buffer.BlockCopy(tileData.Data, 0, pixelData, 0, pixelData.Length);
                         break;
                 }
             }
@@ -175,11 +175,11 @@ namespace Yggdrasil.FileHandling
                 switch (bpp)
                 {
                     case Formats._4bpp:
-                        for (int yGlobal = 0; yGlobal < this.Image.Height; yGlobal += 8)
+                        for (int yGlobal = 0; yGlobal < Image.Height; yGlobal += 8)
                             for (int xGlobal = 0; xGlobal < bmpData.Stride; xGlobal += 4)
                                 for (int yTile = 0; yTile < 8; yTile++)
                                     for (int xTile = 0; xTile < 4; xTile++)
-                                        pixelData[(yGlobal * bmpData.Stride) + (yTile * bmpData.Stride) + (xGlobal + xTile)] = this.tileData.Data[offset++];
+                                        pixelData[(yGlobal * bmpData.Stride) + (yTile * bmpData.Stride) + (xGlobal + xTile)] = tileData.Data[offset++];
 
                         for (int i = 0; i < pixelData.Length; i++) pixelData[i] = (byte)((pixelData[i] >> 4) | (pixelData[i] << 4));
                         break;
@@ -190,7 +190,7 @@ namespace Yggdrasil.FileHandling
             }
 
             Marshal.Copy(pixelData, 0, bmpData.Scan0, pixelData.Length);
-            this.Image.UnlockBits(bmpData);
+            Image.UnlockBits(bmpData);
         }
     }
 }

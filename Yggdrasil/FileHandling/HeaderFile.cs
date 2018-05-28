@@ -57,53 +57,53 @@ namespace Yggdrasil.FileHandling
 
         public override void Parse()
         {
-            this.GameTitle = Encoding.ASCII.GetString(Stream.ToArray(), 0, 12).TrimEnd('\0');
-            this.GameCode = Encoding.ASCII.GetString(Stream.ToArray(), 12, 4).TrimEnd('\0');
-            this.MakerCode = Encoding.ASCII.GetString(Stream.ToArray(), 16, 2).TrimEnd('\0');
+            GameTitle = Encoding.ASCII.GetString(Stream.ToArray(), 0, 12).TrimEnd('\0');
+            GameCode = Encoding.ASCII.GetString(Stream.ToArray(), 12, 4).TrimEnd('\0');
+            MakerCode = Encoding.ASCII.GetString(Stream.ToArray(), 16, 2).TrimEnd('\0');
 
             BinaryReader reader = new BinaryReader(Stream);
 
             reader.BaseStream.Seek(0x12, SeekOrigin.Begin);
-            this.UnitCode = reader.ReadByte();
-            this.EncryptionSeedSelect = reader.ReadByte();
-            this.DeviceCapacity = reader.ReadByte();
+            UnitCode = reader.ReadByte();
+            EncryptionSeedSelect = reader.ReadByte();
+            DeviceCapacity = reader.ReadByte();
 
             reader.BaseStream.Seek(0x1E, SeekOrigin.Begin);
-            this.ROMVersion = reader.ReadByte();
-            this.Autostart = reader.ReadByte();
-            this.ARM9_ROMOffset = reader.ReadUInt32();
-            this.ARM9_EntryAddress = reader.ReadUInt32();
-            this.ARM9_RAMAddress = reader.ReadUInt32();
-            this.ARM9_Size = reader.ReadUInt32();
-            this.ARM7_ROMOffset = reader.ReadUInt32();
-            this.ARM7_EntryAddress = reader.ReadUInt32();
-            this.ARM7_RAMAddress = reader.ReadUInt32();
-            this.ARM7_Size = reader.ReadUInt32();
-            this.FNT_Offset = reader.ReadUInt32();
-            this.FNT_Size = reader.ReadUInt32();
-            this.FAT_Offset = reader.ReadUInt32();
-            this.FAT_Size = reader.ReadUInt32();
-            this.ARM9_OverlayOffset = reader.ReadUInt32();
-            this.ARM9_OverlaySize = reader.ReadUInt32();
-            this.ARM7_OverlayOffset = reader.ReadUInt32();
-            this.ARM7_OverlaySize = reader.ReadUInt32();
-            this.Port40001A4_NormalCommands = reader.ReadUInt32();
-            this.Port40001A4_KEY1Commands = reader.ReadUInt32();
-            this.IconTitleOffset = reader.ReadUInt32();
-            this.SecureArea_CRC16 = reader.ReadUInt16();
-            this.SecureArea_LoadingTimeout = reader.ReadUInt16();
-            this.ARM9_AutoLoadListRAMAddress = reader.ReadUInt32();
-            this.ARM7_AutoLoadListRAMAddress = reader.ReadUInt32();
-            this.SecureArea_Disable = reader.ReadUInt64();
-            this.TotalUsedROMSize = reader.ReadUInt32();
-            this.ROMHeaderSize = reader.ReadUInt32();
+            ROMVersion = reader.ReadByte();
+            Autostart = reader.ReadByte();
+            ARM9_ROMOffset = reader.ReadUInt32();
+            ARM9_EntryAddress = reader.ReadUInt32();
+            ARM9_RAMAddress = reader.ReadUInt32();
+            ARM9_Size = reader.ReadUInt32();
+            ARM7_ROMOffset = reader.ReadUInt32();
+            ARM7_EntryAddress = reader.ReadUInt32();
+            ARM7_RAMAddress = reader.ReadUInt32();
+            ARM7_Size = reader.ReadUInt32();
+            FNT_Offset = reader.ReadUInt32();
+            FNT_Size = reader.ReadUInt32();
+            FAT_Offset = reader.ReadUInt32();
+            FAT_Size = reader.ReadUInt32();
+            ARM9_OverlayOffset = reader.ReadUInt32();
+            ARM9_OverlaySize = reader.ReadUInt32();
+            ARM7_OverlayOffset = reader.ReadUInt32();
+            ARM7_OverlaySize = reader.ReadUInt32();
+            Port40001A4_NormalCommands = reader.ReadUInt32();
+            Port40001A4_KEY1Commands = reader.ReadUInt32();
+            IconTitleOffset = reader.ReadUInt32();
+            SecureArea_CRC16 = reader.ReadUInt16();
+            SecureArea_LoadingTimeout = reader.ReadUInt16();
+            ARM9_AutoLoadListRAMAddress = reader.ReadUInt32();
+            ARM7_AutoLoadListRAMAddress = reader.ReadUInt32();
+            SecureArea_Disable = reader.ReadUInt64();
+            TotalUsedROMSize = reader.ReadUInt32();
+            ROMHeaderSize = reader.ReadUInt32();
 
             reader.BaseStream.Seek(0x15C, SeekOrigin.Begin);
-            this.NintendoLogoCRC16 = reader.ReadUInt16();
-            this.HeaderCRC16 = reader.ReadUInt16();
-            this.Debug_ROMOffset = reader.ReadUInt32();
-            this.Debug_Size = reader.ReadUInt32();
-            this.Debug_RAMAddress = reader.ReadUInt32();
+            NintendoLogoCRC16 = reader.ReadUInt16();
+            HeaderCRC16 = reader.ReadUInt16();
+            Debug_ROMOffset = reader.ReadUInt32();
+            Debug_Size = reader.ReadUInt32();
+            Debug_RAMAddress = reader.ReadUInt32();
         }
     }
 }

@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Yggdrasil.Attributes
 {
-    class CausesNodeUpdate : Boolean
-    {
-        public CausesNodeUpdate(bool value) : base(value) { }
-    }
+	class CausesNodeUpdate : Boolean
+	{
+		public CausesNodeUpdate(bool value) : base(value) { }
+	}
 }

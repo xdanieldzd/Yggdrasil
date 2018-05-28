@@ -7,16 +7,16 @@ using System.Drawing;
 
 namespace Yggdrasil.Forms
 {
-    public class ModernForm : Form
-    {
-        protected override void OnCreateControl()
-        {
-            base.OnCreateControl();
+	public class ModernForm : Form
+	{
+		protected override void OnCreateControl()
+		{
+			base.OnCreateControl();
 
-            foreach (Control control in this.Controls)
-            {
-                if (control.Font == Form.DefaultFont) control.Font = SystemFonts.MessageBoxFont;
-            }
-        }
-    }
+			foreach (Control control in this.Controls)
+			{
+				if (control.Font == Form.DefaultFont) control.Font = SystemFonts.MessageBoxFont;
+			}
+		}
+	}
 }

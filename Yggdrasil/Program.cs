@@ -7,27 +7,27 @@ using Yggdrasil.Helpers;
 
 namespace Yggdrasil
 {
-    static class Program
-    {
-        public static string TitleString = string.Format("{0} {1}", Application.ProductName, VersionManagement.CreateVersionString(Application.ProductVersion));
+	static class Program
+	{
+		public static string TitleString = string.Format("{0} {1}", Application.ProductName, VersionManagement.CreateVersionString(Application.ProductVersion));
 
-        public static MainForm MainForm = null;
-        public static Logger Logger = null;
+		public static MainForm MainForm = null;
+		public static Logger Logger = null;
 
-        [STAThread]
-        static void Main()
-        {
-            Logger = new Logger();
-            Logger.LogMessage("{0} starting up...", TitleString);
+		[STAThread]
+		static void Main()
+		{
+			Logger = new Logger();
+			Logger.LogMessage("{0} starting up...", TitleString);
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
 
-            //Yggdrasil.DataCompression.RLEStream.Test();
-            //Yggdrasil.DataCompression.LZ77Stream.Test();
+			//Yggdrasil.DataCompression.RLEStream.Test();
+			//Yggdrasil.DataCompression.LZ77Stream.Test();
 
-            // temporary stupid "file where I ident kanji -> file with C#-dictionary-like text" converter
-            /*using (System.IO.StreamReader sr = System.IO.File.OpenText(@"C:\Users\Daniel\Desktop\eo-jpn.txt"))
+			// temporary stupid "file where I ident kanji -> file with C#-dictionary-like text" converter
+			/*using (System.IO.StreamReader sr = System.IO.File.OpenText(@"C:\Users\Daniel\Desktop\eo-jpn.txt"))
             {
                 System.Text.StringBuilder sb = new System.Text.StringBuilder();
                 int id = 0x12D;
@@ -49,8 +49,8 @@ namespace Yggdrasil
             }
             */
 
-            // temporary stupid "sort-of auto-generate tableparser property code" code
-            /*using (System.IO.StreamWriter w = System.IO.File.CreateText(@"C:\temp\__eo-codetemp.txt"))
+			// temporary stupid "sort-of auto-generate tableparser property code" code
+			/*using (System.IO.StreamWriter w = System.IO.File.CreateText(@"C:\temp\__eo-codetemp.txt"))
             {
                 System.Reflection.FieldInfo[] fis = typeof(Yggdrasil.FileHandling.MapDataHandling.TransporterTile).GetFields(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                 foreach (System.Reflection.FieldInfo fi in fis.Where(x => x.FieldType != typeof(Dictionary<string, object>)))
@@ -73,7 +73,7 @@ namespace Yggdrasil
                 }
             }*/
 
-            Application.Run(MainForm = new MainForm());
-        }
-    }
+			Application.Run(MainForm = new MainForm());
+		}
+	}
 }

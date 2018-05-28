@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Yggdrasil.Attributes
 {
-    public class CausesTreeRebuild : Boolean
-    {
-        public CausesTreeRebuild(bool value) : base(value) { }
-    }
+	public class CausesTreeRebuild : Boolean
+	{
+		public CausesTreeRebuild(bool value) : base(value) { }
+	}
 }

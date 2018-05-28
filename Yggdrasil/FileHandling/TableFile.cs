@@ -89,7 +89,7 @@ namespace Yggdrasil.FileHandling
             rebuilt.AddRange(tableData);
 
             Stream = new MemoryStream(rebuilt.ToArray());
-            if (!base.InArchive && base.FileNumber == -1)
+            if (!InArchive && FileNumber == -1)
             {
                 using (FileStream fileStream = new FileStream(Filename, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
                 {
