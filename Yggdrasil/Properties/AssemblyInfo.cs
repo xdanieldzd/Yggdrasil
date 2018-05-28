@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Yggdrasil")]
-[assembly: AssemblyCopyright("Written 2014 by xdaniel - https://github.com/xdanieldzd/\nContains ndstool 1.31 by Rafael Vuijk (DarkFader)\n\nGame: (C) 2007/2008 by Atlus and Lancarse")]
+[assembly: AssemblyCopyright("Written 2014-2018 by xdaniel\nhttps://github.com/xdanieldzd/\n\nContains ndstool 1.31 by Rafael Vuijk (DarkFader)\n\nGame: (C) 2007/2008 by Atlus and Lancarse")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // Sie können alle Werte angeben oder die standardmäßigen Build- und Revisionsnummern 
 // übernehmen, indem Sie "*" eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.6.1.256")]
-[assembly: AssemblyFileVersion("0.6.1.256")]
+[assembly: AssemblyVersion("0.6.1.512")]
+[assembly: AssemblyFileVersion("0.6.1.512")]
