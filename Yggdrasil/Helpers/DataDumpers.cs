@@ -28,8 +28,8 @@ namespace Yggdrasil.Helpers
 			"a { text-decoration:none; }" +
 			".container { width:50em; }\n" +
 			".header { background-color:rgb(196,196,196); }\n" +
-			".header-text { text-align:left; float:left; }\n" +
-			".header-toggle { text-align:right; display:block; }\n" +
+			".header-text { display:inline-block; text-align:left; }\n" +
+			".header-toggle { display:inline-block; float:right; }\n" +
 			"table { width:100%; border:1px solid black; display:none; border-collapse:collapse; }\n" +
 			"tr { border-bottom:1px solid rgb(191,191,191); vertical-align:top; }\n" +
 			".desc-column { width:20em; border-bottom:1px solid rgb(191,191,191); }\n" +
